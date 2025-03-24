@@ -9,7 +9,7 @@ import { ref } from 'vue'
 </script>
 
 <template>
-  <v-responsive class="border rounded">
+  <v-responsive>
     <v-app :theme="theme">
       <v-app-bar
         class="px-3"
@@ -30,7 +30,9 @@ import { ref } from 'vue'
         <v-container><slot name="content"></slot></v-container>
       </v-main>
 
-      <v-footer color="deep-orange" border app>2024 - CCIS Syllabus Management System</v-footer>
+      <v-footer class="font-weight-bold" color="deep-orange" border app
+        >2024 - CCIS Syllabus Management System</v-footer
+      >
     </v-app>
   </v-responsive>
 </template>
