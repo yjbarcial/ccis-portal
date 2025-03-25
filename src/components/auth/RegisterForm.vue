@@ -1,8 +1,9 @@
 <template>
   <v-form fast-fail @submit.prevent>
-    <v-text-field label="First Name" variant="outlined"></v-text-field>
-
-    <v-text-field label="Last Name" variant="outlined"></v-text-field>
+    <v-row>
+      <v-col cols="6" md="6"><v-text-field label="First Name" variant="outlined"></v-text-field> </v-col>
+      <v-col cols="6" md="6"><v-text-field label="Last Name" variant="outlined"></v-text-field></v-col>
+    </v-row>
 
     <v-text-field label="Email" variant="outlined"></v-text-field>
 
