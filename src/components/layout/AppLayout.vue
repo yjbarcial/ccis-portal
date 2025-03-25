@@ -11,11 +11,7 @@ import { ref } from 'vue'
 <template>
   <v-responsive>
     <v-app :theme="theme">
-      <v-app-bar
-        class="px-3"
-        color="deep-orange
-"
-      >
+      <v-app-bar class="px-3" color="">
         <v-spacer></v-spacer>
 
         <!-- <v-btn
@@ -30,7 +26,7 @@ import { ref } from 'vue'
         <v-container><slot name="content"></slot></v-container>
       </v-main>
 
-      <v-footer class="font-weight-bold" color="deep-orange" border app
+      <v-footer class="font-weight-bold" color="" border app
         >2024 - CCIS Syllabus Management System</v-footer
       >
     </v-app>
