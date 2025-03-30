@@ -6,12 +6,8 @@ import { ref } from 'vue'
   <v-responsive>
     <v-app :theme="theme">
       <v-main>
-        <v-container><slot name="content"></slot></v-container>
+        <v-container fluid class="ma-0 pa-0"><slot name="content"></slot></v-container>
       </v-main>
-
-      <v-footer class="font-weight-bold" color="" border app
-        >2024 - CCIS Syllabus Management System</v-footer
-      >
     </v-app>
   </v-responsive>
 </template>
