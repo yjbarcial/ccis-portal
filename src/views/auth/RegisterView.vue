@@ -17,7 +17,7 @@ const { mobile } = useDisplay()
       src="/images/ccisHiraya.jpg"
       cover
       class="position-absolute"
-      style="top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; filter: brightness(0.5)"
+      style="top: 0; left: 0; width: 100vw; height: auto; z-index: -1; filter: brightness(0.5)"
     ></v-img>
 
     <!-- Content -->
@@ -33,7 +33,12 @@ const { mobile } = useDisplay()
         <v-card
           elevation="6"
           class="mx-auto pa-5"
-          style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
+          style="
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+          "
         >
           <RegisterForm />
         </v-card>

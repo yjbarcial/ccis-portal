@@ -17,7 +17,7 @@ const { mobile } = useDisplay()
       src="/images/ccisHiraya.jpg"
       cover
       class="position-absolute"
-      style="top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; filter: brightness(0.5)"
+      style="top: 0; left: 0; width: 100vw; height: auto; z-index: -1; filter: brightness(0.5)"
     ></v-img>
 
     <!-- Content -->
@@ -42,7 +42,7 @@ const { mobile } = useDisplay()
 
     <!-- Footer -->
     <v-footer
-      class="py-4"
+      class="py-2"
       style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
     >
       <v-row class="d-flex justify-center">

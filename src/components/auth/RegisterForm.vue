@@ -8,7 +8,7 @@
 
     <!-- First & Last Name -->
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12" sm="6">
         <v-text-field
           label="First Name"
           variant="solo-filled"
@@ -16,7 +16,7 @@
           class="mb-3"
         ></v-text-field>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="12" sm="6">
         <v-text-field
           label="Last Name"
           variant="solo-filled"
@@ -34,26 +34,26 @@
       class="mb-3"
     ></v-text-field>
     <v-row>
-      <v-col
-        ><!-- Password -->
+      <v-col cols="12" sm="6">
+        <!-- Password -->
         <v-text-field
           label="Password"
           type="password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock"
           class="mb-3"
-        ></v-text-field
-      ></v-col>
-      <v-col
-        ><!-- Confirm Password -->
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <!-- Confirm Password -->
         <v-text-field
           label="Confirm Password"
           type="password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock-check"
           class="mb-3"
-        ></v-text-field
-      ></v-col>
+        ></v-text-field>
+      </v-col>
     </v-row>
 
     <!-- Register Button -->
@@ -72,7 +72,7 @@
 
 <style scoped>
 .register-form {
-  max-width: 500px;
+  max-width: 520px;  /* Increased max-width */
   width: 100%;
   padding: 30px;
   border-radius: 12px;
