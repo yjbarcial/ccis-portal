@@ -27,7 +27,7 @@ const { mobile } = useDisplay()
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
         <!-- Title -->
-        <h2 class="text-white font-weight-bold mb-4">CCIS Syllabus & Thesis Portal</h2>
+        <h2 class="text-white font-weight-bold mb-4">Syllabus Online Storage</h2>
 
         <!-- Form -->
         <v-card
