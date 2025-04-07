@@ -9,8 +9,8 @@ const { mobile } = useDisplay()
 <template>
   <v-container
     fluid
-    class="d-flex align-center justify-center pa-0"
-    style="height: 100vh; position: relative"
+    class="d-flex flex-column justify-between pa-0"
+    style="min-height: 100vh; position: relative"
   >
     <!-- Background Image -->
     <v-img
@@ -21,7 +21,7 @@ const { mobile } = useDisplay()
     ></v-img>
 
     <!-- Content -->
-    <v-row class="fill-height" align="center" justify="center">
+    <v-row class="flex-grow-1" align="center" justify="center">
       <v-col cols="12" md="5" class="text-center">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
@@ -43,7 +43,7 @@ const { mobile } = useDisplay()
     <!-- Footer -->
     <v-footer
       class="py-4"
-      style="position: absolute; bottom: 0; width: 100%; background-color: rgba(0, 0, 0, 0.7)"
+      style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
     >
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
