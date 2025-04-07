@@ -47,7 +47,7 @@
 
 <style scoped>
 .login-form {
-  max-width: 500px;
+  max-width: 520px; /* Same width as Register Form */
   width: 100%;
   padding: 30px;
   border-radius: 12px;
