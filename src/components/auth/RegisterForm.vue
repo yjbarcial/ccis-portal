@@ -5,6 +5,7 @@ import { ref } from 'vue'
 const formDataDefault = {
   firstname:'',
   lastnamename:'',
+  email:'',
   password:'',
   password_confirmation:''
 
