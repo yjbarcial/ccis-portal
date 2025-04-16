@@ -1,9 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-
-const isPasswordvisible = ref(false)
-</script>
-
 <template>
   <v-form @submit.prevent class="login-form">
     <!-- Form Header -->
@@ -24,12 +18,9 @@ const isPasswordvisible = ref(false)
     <v-text-field
       label="Password"
       type="password"
-      :append-inner-icon="isPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
-      :type="isPasswordvisible ? 'text' : 'password'"
+      variant="solo-filled"
       prepend-inner-icon="mdi-lock"
       class="mb-3"
-      variant="solo-filled"
-      @click:append-inner="isPasswordvisible = !isPasswordvisible"
     ></v-text-field>
 
     <!-- Actions -->
