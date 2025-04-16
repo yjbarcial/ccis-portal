@@ -4,19 +4,30 @@ import { ref } from 'vue'
 
 const formDataDefault = {
   firstname:'',
-  lastnamename:'',
+  lastname:'',
   email:'',
   password:'',
   password_confirmation:''
 
 }
 
-constformData = ref({
+const formData = ref({
   ...formDataDefault
 })
 
 const isPasswordvisible = ref(false)
 const isConfirmPasswordvisible = ref(false)
+const refVForm= ref()
+
+const onSubmit = () => {
+  // alert(formData.value.employeeID)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onLogin()
+  })
+}
 </script>
 
 <template>
@@ -34,7 +45,8 @@ const isConfirmPasswordvisible = ref(false)
           label="First Name"
           variant="solo-filled"
           prepend-inner-icon="mdi-account"
-          class="mb-3"
+          class="mb-3" 
+         :rules="[requiredValidator]"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6">
@@ -43,6 +55,7 @@ const isConfirmPasswordvisible = ref(false)
           variant="solo-filled"
           prepend-inner-icon="mdi-account"
           class="mb-3"
+          :rules="[requiredValidator]"
         ></v-text-field>
       </v-col>
     </v-row>

@@ -1,5 +1,32 @@
+<script setup>
+import { ref } from 'vue'
+import { requiredValidator, passwordValidator } from '@/utils/validators'
+
+const isPasswordvisible = ref(false)
+const refVForm = ref()
+
+const formDataDefault = {
+  email: '',
+  password: '',
+}
+
+const formData = ref({
+  ...formDataDefault,
+})
+
+const onLogin = () => {
+  // alert(formData.value.employeeID)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onLogin()
+  })
+}
+</script>
+
 <template>
-  <v-form @submit.prevent class="login-form">
+  <v-form ref="refVForm" @submit.prevent="onFormSubmit" class="login-form">
     <!-- Form Header -->
     <div class="text-center mb-5">
       <v-icon size="36" color="deep-orange">mdi-login</v-icon>
@@ -8,19 +35,26 @@
 
     <!-- Employee ID Input -->
     <v-text-field
+      v-model="formData.employeeID"
       label="Employee ID"
       variant="solo-filled"
       prepend-inner-icon="mdi-account-tie"
       class="mb-3"
+      :rules="[requiredValidator]"
     ></v-text-field>
 
     <!-- Password Input -->
     <v-text-field
+      v-model="formData.password"
       label="Password"
       type="password"
-      variant="solo-filled"
       prepend-inner-icon="mdi-lock"
       class="mb-3"
+      variant="solo-filled"
+      :append-inner-icon="isPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
+      :type="isPasswordvisible ? 'text' : 'password'"
+      @click:append-inner="isPasswordvisible = !isPasswordvisible"
+      :rules="[requiredValidator, passwordValidator]"
     ></v-text-field>
 
     <!-- Actions -->
