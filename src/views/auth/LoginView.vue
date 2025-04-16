@@ -47,7 +47,7 @@ const { mobile } = useDisplay()
     >
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
-          <span class="text-white">© 2025 CCIS. All Rights Reserved.</span>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
         </v-col>
       </v-row>
     </v-footer>
