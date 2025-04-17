@@ -39,6 +39,18 @@ const router = createRouter({
       name: 'upload-syllabus',
       component: UploadSyllabusView,
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/views/system/ProfileView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('@/views/system/SettingsView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

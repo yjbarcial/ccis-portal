@@ -8,7 +8,45 @@
           <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
           <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
           <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white">Upload Syllabus</v-btn>
+          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
+            >Upload Syllabus</v-btn
+          >
+
+          <!-- User Menu -->
+          <v-menu location="bottom end">
+            <template v-slot:activator="{ props }">
+              <v-btn icon v-bind="props">
+                <v-avatar color="orange-darken-2" size="36">
+                  <v-icon>mdi-account</v-icon>
+                </v-avatar>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item @click="goTo('profile')">
+                <template v-slot:prepend>
+                  <v-icon>mdi-account-circle</v-icon>
+                </template>
+                <v-list-item-title>Profile</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="goTo('settings')">
+                <template v-slot:prepend>
+                  <v-icon>mdi-cog</v-icon>
+                </template>
+                <v-list-item-title>Settings</v-list-item-title>
+              </v-list-item>
+
+              <v-divider></v-divider>
+
+              <v-list-item @click="handleLogout" color="error">
+                <template v-slot:prepend>
+                  <v-icon>mdi-logout</v-icon>
+                </template>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </v-container>
     </v-app-bar>
@@ -43,13 +81,23 @@
         <!-- Filters -->
         <v-row class="mb-4">
           <v-col cols="12" md="4">
-            <v-text-field v-model="search" label="Search..." prepend-inner-icon="mdi-magnify" clearable />
+            <v-text-field
+              v-model="search"
+              label="Search..."
+              prepend-inner-icon="mdi-magnify"
+              clearable
+            />
           </v-col>
           <v-col cols="6" md="4">
             <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
           </v-col>
           <v-col cols="6" md="4">
-            <v-select v-model="selectedSemester" :items="semesterOptions" label="Semester" clearable />
+            <v-select
+              v-model="selectedSemester"
+              :items="semesterOptions"
+              label="Semester"
+              clearable
+            />
           </v-col>
         </v-row>
 
@@ -109,6 +157,13 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
 
+const handleLogout = () => {
+  // Implement logout logic here
+  console.log('Logging out...')
+  // After logout, redirect to login page
+  // router.push({ name: 'login' })
+}
+
 const search = ref('')
 const selectedYear = ref(null)
 const selectedSemester = ref(null)
@@ -119,27 +174,51 @@ const totalSyllabi = ref(12)
 const totalTheses = ref(9)
 
 const recentSyllabi = ref([
-  { descriptive_title: 'Object-Oriented Programming', course_code: 'CS203', acad_year: '2024-2025', file_url: '/syllabus/oop.pdf' },
-  { descriptive_title: 'Data Structures', course_code: 'CS202', acad_year: '2024-2025', file_url: '/syllabus/ds.pdf' }
+  {
+    descriptive_title: 'Object-Oriented Programming',
+    course_code: 'CS203',
+    acad_year: '2024-2025',
+    file_url: '/syllabus/oop.pdf',
+  },
+  {
+    descriptive_title: 'Data Structures',
+    course_code: 'CS202',
+    acad_year: '2024-2025',
+    file_url: '/syllabus/ds.pdf',
+  },
 ])
 
 const recentTheses = ref([
-  { title: 'Smart Irrigation Using IoT', acad_year: '2024-2025', semester: '1st Semester', file_url_abstract: '/thesis/irrigation-abstract.jpg' },
-  { title: 'AI Facial Recognition Attendance System', acad_year: '2024-2025', semester: '2nd Semester', file_url_abstract: '/thesis/facial-abstract.jpg' }
+  {
+    title: 'Smart Irrigation Using IoT',
+    acad_year: '2024-2025',
+    semester: '1st Semester',
+    file_url_abstract: '/thesis/irrigation-abstract.jpg',
+  },
+  {
+    title: 'AI Facial Recognition Attendance System',
+    acad_year: '2024-2025',
+    semester: '2nd Semester',
+    file_url_abstract: '/thesis/facial-abstract.jpg',
+  },
 ])
 
 const filteredSyllabi = computed(() => {
-  return recentSyllabi.value.filter(s => {
-    return (!search.value || s.descriptive_title.toLowerCase().includes(search.value.toLowerCase())) &&
-           (!selectedYear.value || s.acad_year === selectedYear.value)
+  return recentSyllabi.value.filter((s) => {
+    return (
+      (!search.value || s.descriptive_title.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!selectedYear.value || s.acad_year === selectedYear.value)
+    )
   })
 })
 
 const filteredTheses = computed(() => {
-  return recentTheses.value.filter(t => {
-    return (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
-           (!selectedYear.value || t.acad_year === selectedYear.value) &&
-           (!selectedSemester.value || t.semester === selectedSemester.value)
+  return recentTheses.value.filter((t) => {
+    return (
+      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!selectedYear.value || t.acad_year === selectedYear.value) &&
+      (!selectedSemester.value || t.semester === selectedSemester.value)
+    )
   })
 })
 </script>
