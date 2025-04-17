@@ -40,11 +40,6 @@ const router = createRouter({
       name: 'upload-syllabus',
       component: UploadSyllabusView,
     },
-    {
-      path: '/profile',
-      name: 'profile',
-      component: ProfileView,
-    },
   ],
 })
 
