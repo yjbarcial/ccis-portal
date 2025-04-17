@@ -149,6 +149,8 @@ const onFormSubmit = () => {
       elevation="3"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
+      RouterLink
+      to="/dashboard"
     >
       Register
     </v-btn>
