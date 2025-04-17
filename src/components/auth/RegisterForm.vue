@@ -10,9 +10,9 @@ import { supabase, formActionDefault } from '@/utils/supabase.js'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 
 const formDataDefault = {
-  firstname: '',
-  lastname: '',
+  fullname: '',
   email: '',
+  employeeID: '',
   password: '',
   password_confirmation: '',
 }
@@ -35,11 +35,11 @@ const onSubmit = async () => {
   // alert(formData.value.employeeID)
   const { data, error } = await supabase.auth.signUp({
     email: formData.value.email,
+    employeeID: formData.value.employeeID,
     password: formData.value.password,
     options: {
       data: {
-        firstname: formData.value.firstname,
-        lastname: formData.value.lastname,
+        fullname: formData.value.fullname,
       },
     },
   })
@@ -78,39 +78,37 @@ const onFormSubmit = () => {
       <h2 class="font-weight-bold mt-2">Create an Account</h2>
     </div>
 
-    <!-- First & Last Name -->
+    <!-- Full Name -->
+    <v-text-field
+      v-model="formData.fullname"
+      label="Full Name"
+      variant="solo-filled"
+      prepend-inner-icon="mdi-account"
+      class="mb-3"
+      :rules="[requiredValidator]"
+    ></v-text-field>
+
+    <!-- Employee ID & Email -->
     <v-row>
       <v-col cols="12" sm="6">
         <v-text-field
-          v-model="formData.firstname"
-          label="First Name"
+          v-model="formData.email"
+          label="Email Address"
           variant="solo-filled"
-          prepend-inner-icon="mdi-account"
-          class="mb-3"
-          :rules="[requiredValidator]"
+          prepend-inner-icon="mdi-email"
+          :rules="[requiredValidator, emailValidator]"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6">
         <v-text-field
-          v-model="formData.lastname"
-          label="Last Name"
+          v-model="formData.employeeID"
+          label="Employee ID"
           variant="solo-filled"
-          prepend-inner-icon="mdi-account"
-          class="mb-3"
+          prepend-inner-icon="mdi-account-tie"
           :rules="[requiredValidator]"
         ></v-text-field>
       </v-col>
     </v-row>
-
-    <!-- Email -->
-    <v-text-field
-      v-model="formData.email"
-      label="Email Address"
-      variant="solo-filled"
-      prepend-inner-icon="mdi-email"
-      class="mb-3"
-      :rules="[requiredValidator, emailValidator]"
-    ></v-text-field>
     <v-row>
       <v-col cols="12" sm="6">
         <!-- Password -->
