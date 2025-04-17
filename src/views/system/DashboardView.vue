@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import AppHeader from '@/components/layout/AppHeader.vue'
 
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
@@ -73,56 +74,8 @@ const filteredTheses = computed(() => {
 
 <template>
   <v-app>
-    <!-- Top App Bar with Navigation Links -->
-    <v-app-bar color="orange-darken-4" dark flat app>
-      <v-container fluid class="d-flex align-center justify-space-between">
-        <v-toolbar-title class="text-h6">Instructor Dashboard</v-toolbar-title>
-        <div class="d-flex align-center gap-4">
-          <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
-          <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
-          <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
-            >Upload Syllabus</v-btn
-          >
-
-          <!-- User Menu -->
-          <v-menu location="bottom end">
-            <template v-slot:activator="{ props }">
-              <v-btn icon v-bind="props">
-                <v-avatar color="orange-darken-2" size="36">
-                  <v-icon>mdi-account</v-icon>
-                </v-avatar>
-              </v-btn>
-            </template>
-
-            <v-list>
-              <v-list-item @click="goTo('profile')">
-                <template v-slot:prepend>
-                  <v-icon>mdi-account-circle</v-icon>
-                </template>
-                <v-list-item-title>Profile</v-list-item-title>
-              </v-list-item>
-
-              <v-list-item @click="goTo('settings')">
-                <template v-slot:prepend>
-                  <v-icon>mdi-cog</v-icon>
-                </template>
-                <v-list-item-title>Settings</v-list-item-title>
-              </v-list-item>
-
-              <v-divider></v-divider>
-
-              <v-list-item @click="handleLogout" color="error">
-                <template v-slot:prepend>
-                  <v-icon>mdi-logout</v-icon>
-                </template>
-                <v-list-item-title>Logout</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
-      </v-container>
-    </v-app-bar>
+    <!-- Top App Bar -->
+    <app-header title="Dashboard" />
 
     <v-main>
       <v-container fluid>

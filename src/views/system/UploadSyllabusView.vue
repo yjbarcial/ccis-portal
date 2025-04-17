@@ -31,7 +31,7 @@ const submit = () => {
 <template>
   <v-app>
     <!-- Top App Bar -->
-    <app-header title="Profile" />
+    <app-header title="Upload Syllabus" />
 
     <!-- Main Content -->
     <v-main>

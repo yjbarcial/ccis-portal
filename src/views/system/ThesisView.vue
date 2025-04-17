@@ -39,7 +39,7 @@ const filteredTheses = computed(() => {
 
 <template>
   <v-app>
-    <app-header title="Profile" />
+    <app-header title="Theses" />
 
     <v-main>
       <v-container fluid class="py-10">
