@@ -1,3 +1,48 @@
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const goTo = (route) => router.push({ name: route })
+
+const search = ref('')
+const selectedYear = ref(null)
+const selectedSemester = ref(null)
+const yearOptions = ['2024-2025', '2023-2024']
+const semesterOptions = ['1st Semester', '2nd Semester']
+
+const theses = ref([
+  {
+    title: 'Smart Irrigation Using IoT',
+    acad_year: '2024-2025',
+    semester: '1st Semester',
+    file_url_abstract: '/thesis/irrigation-abstract.jpg',
+  },
+  {
+    title: 'AI Facial Recognition Attendance System',
+    acad_year: '2024-2025',
+    semester: '2nd Semester',
+    file_url_abstract: '/thesis/facial-abstract.jpg',
+  },
+])
+
+const filteredTheses = computed(() => {
+  return theses.value.filter((t) => {
+    return (
+      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!selectedYear.value || t.acad_year === selectedYear.value) &&
+      (!selectedSemester.value || t.semester === selectedSemester.value)
+    )
+  })
+})
+
+const logOut = () => {
+  console.log('Logging out...')
+  // Implement logout logic here (e.g., clearing session, redirecting to login page)
+  router.push({ name: 'login' }) // Redirect to login page after logout
+}
+</script>
+
 <template>
   <v-app>
     <!-- Top App Bar -->
@@ -8,8 +53,39 @@
           <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
           <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
           <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white">Upload Syllabus</v-btn>
+          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
+            >Upload Syllabus</v-btn
+          >
         </div>
+
+        <!-- Profile, Settings, and Logout Dropdown -->
+        <v-menu bottom right :close-on-content-click="false">
+          <template #activator="{ on, attrs }">
+            <v-btn text v-bind="attrs" v-on="on" class="text-white">
+              <v-icon>mdi-account-circle</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="goTo('profile')">
+              <v-list-item-icon>
+                <v-icon>mdi-account</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Profile</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="goTo('settings')">
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="logOut">
+              <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Log Out</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-container>
     </v-app-bar>
 
@@ -65,42 +141,3 @@
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const goTo = (route) => router.push({ name: route })
-
-const search = ref('')
-const selectedYear = ref(null)
-const selectedSemester = ref(null)
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
-
-const theses = ref([
-  {
-    title: 'Smart Irrigation Using IoT',
-    acad_year: '2024-2025',
-    semester: '1st Semester',
-    file_url_abstract: '/thesis/irrigation-abstract.jpg',
-  },
-  {
-    title: 'AI Facial Recognition Attendance System',
-    acad_year: '2024-2025',
-    semester: '2nd Semester',
-    file_url_abstract: '/thesis/facial-abstract.jpg',
-  },
-])
-
-const filteredTheses = computed(() => {
-  return theses.value.filter((t) => {
-    return (
-      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!selectedYear.value || t.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || t.semester === selectedSemester.value)
-    )
-  })
-})
-</script>
