@@ -1,25 +1,3 @@
-<template>
-  <v-app>
-    <!-- Top App Bar -->
-    <app-header title="Profile" />
-
-    <!-- Main Content -->
-    <v-main>
-      <v-container class="py-10">
-        <h1 class="text-h5 font-weight-bold mb-4">Upload New Syllabus</h1>
-        <v-form @submit.prevent="submit">
-          <v-text-field v-model="form.descriptive_title" label="Descriptive Title" required />
-          <v-text-field v-model="form.course_code" label="Course Code" required />
-          <v-select v-model="form.acad_year" :items="yearOptions" label="Academic Year" required />
-          <v-select v-model="form.semester" :items="semesterOptions" label="Semester" required />
-          <v-file-input v-model="form.file" label="Syllabus File" required accept=".pdf" />
-          <v-btn type="submit" color="orange-darken-3" class="mt-4" dark>Upload</v-btn>
-        </v-form>
-      </v-container>
-    </v-main>
-  </v-app>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -49,3 +27,25 @@ const submit = () => {
   // TODO: Add real upload logic here
 }
 </script>
+
+<template>
+  <v-app>
+    <!-- Top App Bar -->
+    <app-header title="Profile" />
+
+    <!-- Main Content -->
+    <v-main>
+      <v-container class="py-10">
+        <h1 class="text-h5 font-weight-bold mb-4">Upload New Syllabus</h1>
+        <v-form @submit.prevent="submit">
+          <v-text-field v-model="form.descriptive_title" label="Descriptive Title" required />
+          <v-text-field v-model="form.course_code" label="Course Code" required />
+          <v-select v-model="form.acad_year" :items="yearOptions" label="Academic Year" required />
+          <v-select v-model="form.semester" :items="semesterOptions" label="Semester" required />
+          <v-file-input v-model="form.file" label="Syllabus File" required accept=".pdf" />
+          <v-btn type="submit" color="orange-darken-3" class="mt-4" dark>Upload</v-btn>
+        </v-form>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>

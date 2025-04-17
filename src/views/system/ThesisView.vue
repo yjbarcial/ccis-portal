@@ -1,3 +1,42 @@
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import AppHeader from '@/components/layout/AppHeader.vue'
+const router = useRouter()
+const goTo = (route) => router.push({ name: route })
+
+const search = ref('')
+const selectedYear = ref(null)
+const selectedSemester = ref(null)
+const yearOptions = ['2024-2025', '2023-2024']
+const semesterOptions = ['1st Semester', '2nd Semester']
+
+const theses = ref([
+  {
+    title: 'Smart Irrigation Using IoT',
+    acad_year: '2024-2025',
+    semester: '1st Semester',
+    file_url_abstract: '/thesis/irrigation-abstract.jpg',
+  },
+  {
+    title: 'AI Facial Recognition Attendance System',
+    acad_year: '2024-2025',
+    semester: '2nd Semester',
+    file_url_abstract: '/thesis/facial-abstract.jpg',
+  },
+])
+
+const filteredTheses = computed(() => {
+  return theses.value.filter((t) => {
+    return (
+      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
+      (!selectedYear.value || t.acad_year === selectedYear.value) &&
+      (!selectedSemester.value || t.semester === selectedSemester.value)
+    )
+  })
+})
+</script>
+
 <template>
   <v-app>
     <app-header title="Profile" />
@@ -54,42 +93,3 @@
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import AppHeader from '@/components/layout/AppHeader.vue'
-const router = useRouter()
-const goTo = (route) => router.push({ name: route })
-
-const search = ref('')
-const selectedYear = ref(null)
-const selectedSemester = ref(null)
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
-
-const theses = ref([
-  {
-    title: 'Smart Irrigation Using IoT',
-    acad_year: '2024-2025',
-    semester: '1st Semester',
-    file_url_abstract: '/thesis/irrigation-abstract.jpg',
-  },
-  {
-    title: 'AI Facial Recognition Attendance System',
-    acad_year: '2024-2025',
-    semester: '2nd Semester',
-    file_url_abstract: '/thesis/facial-abstract.jpg',
-  },
-])
-
-const filteredTheses = computed(() => {
-  return theses.value.filter((t) => {
-    return (
-      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!selectedYear.value || t.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || t.semester === selectedSemester.value)
-    )
-  })
-})
-</script>

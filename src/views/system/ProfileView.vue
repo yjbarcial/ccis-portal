@@ -1,3 +1,61 @@
+<script setup>
+import { ref } from 'vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
+
+const saving = ref(false)
+const changingPassword = ref(false)
+
+const profile = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  department: '',
+  avatar: null,
+})
+
+const passwordForm = ref({
+  current: '',
+  new: '',
+  confirm: '',
+})
+
+const saveProfile = async () => {
+  saving.value = true
+  try {
+    // Implement API call to save profile
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
+    // Show success message
+  } catch (error) {
+    // Handle error
+  } finally {
+    saving.value = false
+  }
+}
+
+const changePassword = async () => {
+  if (passwordForm.value.new !== passwordForm.value.confirm) {
+    // Show error message
+    return
+  }
+
+  changingPassword.value = true
+  try {
+    // Implement API call to change password
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
+    // Show success message
+    passwordForm.value = { current: '', new: '', confirm: '' }
+  } catch (error) {
+    // Handle error
+  } finally {
+    changingPassword.value = false
+  }
+}
+
+const uploadAvatar = () => {
+  // Implement avatar upload functionality
+}
+</script>
+
 <template>
   <v-app>
     <app-header title="Profile" />
@@ -107,61 +165,3 @@
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import AppHeader from '@/components/layout/AppHeader.vue'
-
-const saving = ref(false)
-const changingPassword = ref(false)
-
-const profile = ref({
-  firstName: '',
-  lastName: '',
-  email: '',
-  department: '',
-  avatar: null,
-})
-
-const passwordForm = ref({
-  current: '',
-  new: '',
-  confirm: '',
-})
-
-const saveProfile = async () => {
-  saving.value = true
-  try {
-    // Implement API call to save profile
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message
-  } catch (error) {
-    // Handle error
-  } finally {
-    saving.value = false
-  }
-}
-
-const changePassword = async () => {
-  if (passwordForm.value.new !== passwordForm.value.confirm) {
-    // Show error message
-    return
-  }
-
-  changingPassword.value = true
-  try {
-    // Implement API call to change password
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message
-    passwordForm.value = { current: '', new: '', confirm: '' }
-  } catch (error) {
-    // Handle error
-  } finally {
-    changingPassword.value = false
-  }
-}
-
-const uploadAvatar = () => {
-  // Implement avatar upload functionality
-}
-</script>
