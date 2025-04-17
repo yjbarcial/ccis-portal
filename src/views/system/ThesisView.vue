@@ -35,12 +35,6 @@ const filteredTheses = computed(() => {
     )
   })
 })
-
-const logOut = () => {
-  console.log('Logging out...')
-  // Implement logout logic here (e.g., clearing session, redirecting to login page)
-  router.push({ name: 'login' }) // Redirect to login page after logout
-}
 </script>
 
 <template>
@@ -53,7 +47,9 @@ const logOut = () => {
           <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
           <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
           <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white">Upload Syllabus</v-btn>
+          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
+            >Upload Syllabus</v-btn
+          >
         </div>
       </v-container>
     </v-app-bar>
@@ -110,42 +106,3 @@ const logOut = () => {
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const goTo = (route) => router.push({ name: route })
-
-const search = ref('')
-const selectedYear = ref(null)
-const selectedSemester = ref(null)
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
-
-const theses = ref([
-  {
-    title: 'Smart Irrigation Using IoT',
-    acad_year: '2024-2025',
-    semester: '1st Semester',
-    file_url_abstract: '/thesis/irrigation-abstract.jpg',
-  },
-  {
-    title: 'AI Facial Recognition Attendance System',
-    acad_year: '2024-2025',
-    semester: '2nd Semester',
-    file_url_abstract: '/thesis/facial-abstract.jpg',
-  },
-])
-
-const filteredTheses = computed(() => {
-  return theses.value.filter((t) => {
-    return (
-      (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!selectedYear.value || t.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || t.semester === selectedSemester.value)
-    )
-  })
-})
-</script>
