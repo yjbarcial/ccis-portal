@@ -32,7 +32,9 @@ const submit = () => {
           <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
           <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
           <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white">Upload Syllabus</v-btn>
+          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
+            >Upload Syllabus</v-btn
+          >
         </div>
       </v-container>
     </v-app-bar>
@@ -52,27 +54,3 @@ const submit = () => {
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const goTo = (route) => router.push({ name: route })
-
-const form = ref({
-  descriptive_title: '',
-  course_code: '',
-  acad_year: '',
-  semester: '',
-  file: null,
-})
-
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
-
-const submit = () => {
-  console.log('Uploading:', form.value)
-  // Add actual upload logic here
-}
-</script>
