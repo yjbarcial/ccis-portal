@@ -27,7 +27,7 @@ const { mobile } = useDisplay()
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
         <!-- Title -->
-        <h2 class="text-white font-weight-bold mb-4">Syllabus Online Storage</h2>
+        <h2 class="text-white font-weight-bold mb-4">CCIS Portal</h2>
 
         <!-- Form -->
         <v-card
@@ -52,7 +52,7 @@ const { mobile } = useDisplay()
     >
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
-          <span class="text-white">© 2025 CCIS. All Rights Reserved.</span>
+          <span class="text-white">© 2025 CCIS Portal. All Rights Reserved.</span>
         </v-col>
       </v-row>
     </v-footer>
