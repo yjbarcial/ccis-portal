@@ -1,3 +1,25 @@
+<script setup>
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+})
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const goTo = (route) => router.push({ name: route })
+
+const handleLogout = async () => {
+  await authStore.logout()
+  router.push({ name: 'login' })
+}
+</script>
+
 <template>
   <v-app-bar color="orange-darken-4" dark flat app>
     <v-container fluid class="d-flex align-center justify-space-between">
@@ -49,25 +71,3 @@
     </v-container>
   </v-app-bar>
 </template>
-
-<script setup>
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-})
-
-const router = useRouter()
-const authStore = useAuthStore()
-
-const goTo = (route) => router.push({ name: route })
-
-const handleLogout = async () => {
-  await authStore.logout()
-  router.push({ name: 'login' })
-}
-</script>
