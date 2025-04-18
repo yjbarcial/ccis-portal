@@ -51,8 +51,12 @@ const changePassword = async () => {
   }
 }
 
-const uploadAvatar = () => {
-  // Implement avatar upload functionality
+const uploadAvatar = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    profile.value.avatar = URL.createObjectURL(file) // preview the image
+    // You can also handle the upload to a server here if needed
+  }
 }
 </script>
 
@@ -61,10 +65,10 @@ const uploadAvatar = () => {
     <app-header title="Profile" />
 
     <v-main>
-      <v-container>
-        <v-row>
+      <v-container fluid class="fill-height">
+        <v-row align="center" justify="center">
           <v-col cols="12" md="8" lg="6">
-            <h1 class="text-h4 mb-6">Profile</h1>
+            <h1 class="text-h4 mb-6 text-center font-weight-bold">Profile</h1>
 
             <!-- Profile Information -->
             <v-card class="mb-6">
@@ -75,8 +79,23 @@ const uploadAvatar = () => {
                       <v-img v-if="profile.avatar" :src="profile.avatar"></v-img>
                       <v-icon v-else size="48">mdi-account</v-icon>
                     </v-avatar>
+
                     <div class="mt-2">
-                      <v-btn variant="text" color="orange-darken-4" @click="uploadAvatar">
+                      <!-- Hidden file input -->
+                      <input
+                        ref="fileInput"
+                        type="file"
+                        accept="image/*"
+                        style="display: none"
+                        @change="uploadAvatar"
+                      />
+
+                      <!-- Button that triggers file input -->
+                      <v-btn
+                        variant="text"
+                        color="orange-darken-4"
+                        @click="$refs.fileInput.click()"
+                      >
                         Change Avatar
                       </v-btn>
                     </div>
