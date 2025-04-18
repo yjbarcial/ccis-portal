@@ -81,7 +81,7 @@ const filteredTheses = computed(() => {
       <v-container fluid>
         <v-row>
           <v-col>
-            <h1 class="text-h4 font-weight-bold mb-2">Welcome, Instructor!</h1>
+            <h1 class="text-h4 font-weight-bold mb-1">Welcome, Instructor!</h1>
           </v-col>
         </v-row>
         <hr class="dashed-hr" />
@@ -89,9 +89,9 @@ const filteredTheses = computed(() => {
         <v-row class="mb-6 mt-2" dense justify="center">
           <v-col cols="12" md="6" lg="3">
             <v-card class="styled-stat-card mb-4">
-              <v-img src="/public/images/syllabus.jpg" height="90" cover class="card-img"></v-img>
+              <v-img src="/public/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
-                <v-icon size="36" class="mb-2">mdi-file-document</v-icon>
+                <v-icon size="30" class="mb-2">mdi-file-document</v-icon>
                 <div class="text-h6">Total Syllabi</div>
                 <div class="text-h4 font-weight-bold">{{ totalSyllabi }}</div>
               </v-card-text>
@@ -101,9 +101,9 @@ const filteredTheses = computed(() => {
 
           <v-col cols="12" md="6" lg="3">
             <v-card class="styled-stat-card mb-4">
-              <v-img src="/images/thesis.jpg" height="90" cover class="card-img"></v-img>
+              <v-img src="/images/thesis.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
-                <v-icon size="36" class="mb-2">mdi-book-education</v-icon>
+                <v-icon size="30" class="mb-2">mdi-book-education</v-icon>
                 <div class="text-h6">Total Theses</div>
                 <div class="text-h4 font-weight-bold">{{ totalTheses }}</div>
               </v-card-text>
@@ -136,7 +136,7 @@ const filteredTheses = computed(() => {
         </v-row>
 
         <!-- Latest Uploads -->
-        <v-row dense justify-center>
+        <v-row dense justify="center">
           <v-col cols="12" md="5">
             <v-card class="mb-6">
               <v-card-title class="font-weight-bold">Latest Syllabi</v-card-title>
