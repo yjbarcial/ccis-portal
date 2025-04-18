@@ -65,10 +65,10 @@ const uploadAvatar = (event) => {
     <app-header title="Profile" />
 
     <v-main>
-      <v-container fluid class="fill-height">
-        <v-row align="center" justify="center">
+      <v-container>
+        <v-row>
           <v-col cols="12" md="8" lg="6">
-            <h1 class="text-h4 mb-6 text-center font-weight-bold">Profile</h1>
+            <h1 class="text-h4 mb-6">Profile</h1>
 
             <!-- Profile Information -->
             <v-card class="mb-6">
@@ -90,7 +90,7 @@ const uploadAvatar = (event) => {
                         @change="uploadAvatar"
                       />
 
-                      <!-- Button that triggers file input -->
+                      <!-- Trigger button -->
                       <v-btn
                         variant="text"
                         color="orange-darken-4"
