@@ -62,7 +62,7 @@ const uploadAvatar = (event) => {
 
 <template>
   <v-app>
-    <app-header title="Profile" />
+    <app-header title="CCIS Portal" />
 
     <v-main>
       <v-container>
@@ -182,21 +182,6 @@ const uploadAvatar = (event) => {
         </v-row>
 
         <hr style="border: 0; height: 1px; background-color: orange" />
-
-        <!-- Footer -->
-        <v-footer class="pt-5">
-          <v-row class="d-flex justify-center">
-            <v-col class="text-center d-flex align-center justify-center">
-              <!-- Icon avatar -->
-              <v-avatar size="30" class="mr-2">
-                <v-img src="/public/images/ccisLogo.png" alt="CCIS Logo" />
-              </v-avatar>
-
-              <!-- Footer text -->
-              <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
-            </v-col>
-          </v-row>
-        </v-footer>
       </v-container>
     </v-main>
   </v-app>
