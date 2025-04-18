@@ -187,7 +187,7 @@ const filteredTheses = computed(() => {
           <v-row class="d-flex justify-center">
             <v-col class="text-center d-flex align-center justify-center">
               <!-- Icon avatar -->
-              <v-avatar size="24" class="mr-2">
+              <v-avatar size="30" class="mr-2">
                 <v-img src="/public/images/ccisLogo.png" alt="CCIS Logo" />
               </v-avatar>
 

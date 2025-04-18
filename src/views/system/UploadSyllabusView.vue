@@ -43,8 +43,25 @@ const submit = () => {
           <v-select v-model="form.acad_year" :items="yearOptions" label="Academic Year" required />
           <v-select v-model="form.semester" :items="semesterOptions" label="Semester" required />
           <v-file-input v-model="form.file" label="Syllabus File" required accept=".pdf" />
-          <v-btn type="submit" color="orange-darken-3" class="mt-4" dark>Upload</v-btn>
+          <v-btn type="submit" color="orange-darken-3" class="mt-4 mb-3" dark>Upload</v-btn>
         </v-form>
+
+        <hr class="mb-5" style="border: 0; height: 1px; background-color: orange" />
+
+        <!-- Footer -->
+        <v-footer class="pt-5">
+          <v-row class="d-flex justify-center">
+            <v-col class="text-center d-flex align-center justify-center">
+              <!-- Icon avatar -->
+              <v-avatar size="30" class="mr-2">
+                <v-img src="/public/images/ccisLogo.png" alt="CCIS Logo" />
+              </v-avatar>
+
+              <!-- Footer text -->
+              <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
+            </v-col>
+          </v-row>
+        </v-footer>
       </v-container>
     </v-main>
   </v-app>
