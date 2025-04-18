@@ -42,7 +42,7 @@ const filteredSyllabi = computed(() => {
 
 <template>
   <v-app>
-    <app-header title="Syllabi" />
+    <app-header title="CCIS Portal" />
 
     <v-main>
       <v-container fluid class="py-10">
