@@ -73,39 +73,47 @@ const filteredTheses = computed(() => {
 </script>
 
 <template>
-  <v-app>
+  <v-app class="d-flex flex-column" style="min-height: 100vh">
     <!-- Top App Bar -->
-    <app-header title="Dashboard" />
+    <app-header title="CCIS Portal" />
 
-    <v-main>
+    <v-main class="flex-grow-1">
       <v-container fluid>
         <v-row>
           <v-col>
-            <h1 class="text-h4 font-weight-bold mb-4">Welcome, Instructor!</h1>
+            <h1 class="text-h4 font-weight-bold mb-1">Welcome, Instructor!</h1>
           </v-col>
         </v-row>
-
+        <hr class="dashed-hr" />
         <!-- Statistics -->
-        <v-row class="mb-6" dense>
+        <v-row class="mb-6 mt-2" dense justify="center">
           <v-col cols="12" md="6" lg="3">
-            <v-card color="orange-darken-3" class="pa-4" dark elevation="6">
-              <v-icon size="36" class="mb-2">mdi-file-document</v-icon>
-              <div class="text-h6">Total Syllabi</div>
-              <div class="text-h4 font-weight-bold">{{ totalSyllabi }}</div>
+            <v-card class="styled-stat-card mb-4">
+              <v-img src="/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
+              <v-card-text class="text-center">
+                <v-icon size="30" class="mb-2">mdi-file-document</v-icon>
+                <div class="text-h6">Total Syllabi</div>
+                <div class="text-h4 font-weight-bold">{{ totalSyllabi }}</div>
+              </v-card-text>
+              <div class="yellow-underline"></div>
             </v-card>
           </v-col>
 
           <v-col cols="12" md="6" lg="3">
-            <v-card color="deep-orange" class="pa-4" dark elevation="6">
-              <v-icon size="36" class="mb-2">mdi-book-education</v-icon>
-              <div class="text-h6">Total Theses</div>
-              <div class="text-h4 font-weight-bold">{{ totalTheses }}</div>
+            <v-card class="styled-stat-card mb-4">
+              <v-img src="/images/thesis.jpg" height="80" cover class="card-img"></v-img>
+              <v-card-text class="text-center">
+                <v-icon size="30" class="mb-2">mdi-book-education</v-icon>
+                <div class="text-h6">Total Theses</div>
+                <div class="text-h4 font-weight-bold">{{ totalTheses }}</div>
+              </v-card-text>
+              <div class="yellow-underline"></div>
             </v-card>
           </v-col>
         </v-row>
 
         <!-- Filters -->
-        <v-row class="mb-4">
+        <v-row class="mb-4 mt-4">
           <v-col cols="12" md="4">
             <v-text-field
               v-model="search"
@@ -128,8 +136,8 @@ const filteredTheses = computed(() => {
         </v-row>
 
         <!-- Latest Uploads -->
-        <v-row dense>
-          <v-col cols="12" md="6">
+        <v-row dense justify="center">
+          <v-col cols="12" md="5">
             <v-card class="mb-6">
               <v-card-title class="font-weight-bold">Latest Syllabi</v-card-title>
               <v-divider />
@@ -150,7 +158,7 @@ const filteredTheses = computed(() => {
             </v-card>
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-card class="mb-6">
               <v-card-title class="font-weight-bold">Latest Theses</v-card-title>
               <v-divider />
@@ -171,7 +179,36 @@ const filteredTheses = computed(() => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>
 </template>
+
+<style>
+.styled-stat-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  color: black;
+}
+
+.v-card-text {
+  position: relative;
+  z-index: 2;
+}
+
+.yellow-underline {
+  height: 4px;
+  background-color: #ffc107;
+  border-radius: 0 0 8px 8px;
+  margin: 0 16px 16px;
+}
+
+.dashed-hr {
+  border: none; /* remove default */
+  border-top: 1px dashed #888; /* dashed top border */
+  margin: 10px 0; /* vertical spacing */
+}
+</style>

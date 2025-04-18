@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <app-header title="Settings" />
+    <app-header title="CCIS Portal" />
 
     <v-main>
       <v-container>
@@ -39,7 +39,7 @@
             </v-card>
 
             <!-- Save Button -->
-            <v-btn color="orange-darken-4" @click="saveSettings" :loading="saving">
+            <v-btn class="mb-4" color="orange-darken-4" @click="saveSettings" :loading="saving">
               Save Changes
             </v-btn>
           </v-col>

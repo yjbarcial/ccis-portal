@@ -39,10 +39,10 @@ const filteredTheses = computed(() => {
 
 <template>
   <v-app>
-    <app-header title="Theses" />
+    <app-header title="CCIS Portal" />
 
     <v-main>
-      <v-container fluid class="py-10">
+      <v-container fluid class="py-6">
         <v-row>
           <v-col>
             <h1 class="text-h5 font-weight-bold mb-4">Thesis Repository</h1>
@@ -89,6 +89,8 @@ const filteredTheses = computed(() => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>
