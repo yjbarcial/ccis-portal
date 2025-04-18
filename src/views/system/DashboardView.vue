@@ -185,7 +185,13 @@ const filteredTheses = computed(() => {
         <!-- Footer -->
         <v-footer class="pt-5">
           <v-row class="d-flex justify-center">
-            <v-col class="text-center">
+            <v-col class="text-center d-flex align-center justify-center">
+              <!-- Icon avatar -->
+              <v-avatar size="24" class="mr-2">
+                <v-img src="/public/images/ccisLogo.png" alt="CCIS Logo" />
+              </v-avatar>
+
+              <!-- Footer text -->
               <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
             </v-col>
           </v-row>
