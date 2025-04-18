@@ -89,7 +89,7 @@ const filteredTheses = computed(() => {
         <v-row class="mb-6 mt-2" dense justify="center">
           <v-col cols="12" md="6" lg="3">
             <v-card class="styled-stat-card mb-4">
-              <v-img src="/public/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
+              <v-img src="/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
                 <v-icon size="30" class="mb-2">mdi-file-document</v-icon>
                 <div class="text-h6">Total Syllabi</div>
@@ -179,6 +179,17 @@ const filteredTheses = computed(() => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
+
+        <!-- Footer -->
+        <v-footer class="pt-5">
+          <v-row class="d-flex justify-center">
+            <v-col class="text-center">
+              <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
+            </v-col>
+          </v-row>
+        </v-footer>
       </v-container>
     </v-main>
   </v-app>
