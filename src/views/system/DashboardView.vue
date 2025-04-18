@@ -84,7 +84,9 @@ const filteredTheses = computed(() => {
             <h1 class="text-h4 font-weight-bold mb-1">Welcome, Instructor!</h1>
           </v-col>
         </v-row>
+
         <hr class="dashed-hr" />
+
         <!-- Statistics -->
         <v-row class="mb-6 mt-2" dense justify="center">
           <v-col cols="12" md="6" lg="3">
