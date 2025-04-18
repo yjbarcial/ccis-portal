@@ -31,7 +31,7 @@ const submit = () => {
 <template>
   <v-app>
     <!-- Top App Bar -->
-    <app-header title="Upload Syllabus" />
+    <app-header title="CCIS Portal" />
 
     <!-- Main Content -->
     <v-main>
@@ -43,8 +43,10 @@ const submit = () => {
           <v-select v-model="form.acad_year" :items="yearOptions" label="Academic Year" required />
           <v-select v-model="form.semester" :items="semesterOptions" label="Semester" required />
           <v-file-input v-model="form.file" label="Syllabus File" required accept=".pdf" />
-          <v-btn type="submit" color="orange-darken-3" class="mt-4" dark>Upload</v-btn>
+          <v-btn type="submit" color="orange-darken-3" class="mt-4 mb-3" dark>Upload</v-btn>
         </v-form>
+
+        <hr class="mb-5" style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>

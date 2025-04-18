@@ -62,7 +62,7 @@ const uploadAvatar = (event) => {
 
 <template>
   <v-app>
-    <app-header title="Profile" />
+    <app-header title="CCIS Portal" />
 
     <v-main>
       <v-container>
@@ -139,7 +139,7 @@ const uploadAvatar = (event) => {
             </v-card>
 
             <!-- Change Password -->
-            <v-card>
+            <v-card class="mb-4">
               <v-card-title>Change Password</v-card-title>
               <v-card-text>
                 <v-form @submit.prevent="changePassword">
@@ -180,6 +180,8 @@ const uploadAvatar = (event) => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>
