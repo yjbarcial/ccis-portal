@@ -36,10 +36,10 @@ const { mobile } = useDisplay()
           style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
         >
           <LoginForm />
-        </v-card>
+        </v-card> <br>
       </v-col>
     </v-row>
-
+    
     <!-- Footer -->
     <v-footer
       class="py-2"
