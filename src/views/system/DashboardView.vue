@@ -114,29 +114,6 @@ const filteredTheses = computed(() => {
           </v-col>
         </v-row>
 
-        <!-- Filters -->
-        <v-row class="mb-4 mt-4">
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="search"
-              label="Search..."
-              prepend-inner-icon="mdi-magnify"
-              clearable
-            />
-          </v-col>
-          <v-col cols="6" md="4">
-            <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
-          </v-col>
-          <v-col cols="6" md="4">
-            <v-select
-              v-model="selectedSemester"
-              :items="semesterOptions"
-              label="Semester"
-              clearable
-            />
-          </v-col>
-        </v-row>
-
         <!-- Latest Uploads -->
         <v-row dense justify="center">
           <v-col cols="12" md="5">
