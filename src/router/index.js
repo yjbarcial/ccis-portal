@@ -4,7 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
 import SyllabiView from '@/views/system/SyllabiView.vue'
 import UploadSyllabusView from '@/views/system/UploadSyllabusView.vue'
-import ThesisView from '@/views/system/ThesesView.vue'
+import ThesesView from '@/views/system/ThesesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

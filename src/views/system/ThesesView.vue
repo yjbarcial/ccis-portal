@@ -45,14 +45,14 @@ const filteredTheses = computed(() => {
       <v-container fluid class="py-6">
         <v-row>
           <v-col>
-            <h1 class="text-h5 font-weight-bold mb-4">Thesis Repository</h1>
+            <h1 class="text-h5 font-weight-bold mb-4">Theses Repository</h1>
 
             <!-- Filters -->
             <v-row class="mb-4" dense>
               <v-col cols="12" md="4">
                 <v-text-field
                   v-model="search"
-                  label="Search Thesis..."
+                  label="Search Theses..."
                   prepend-inner-icon="mdi-magnify"
                   clearable
                 />
@@ -75,7 +75,7 @@ const filteredTheses = computed(() => {
               </v-col>
             </v-row>
 
-            <!-- Thesis List -->
+            <!-- Theses List -->
             <v-card v-for="(item, index) in filteredTheses" :key="index" class="mb-4">
               <v-card-title class="font-weight-medium">
                 {{ item.title }}
