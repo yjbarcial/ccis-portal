@@ -41,7 +41,7 @@ const { mobile } = useDisplay()
           "
         >
           <RegisterForm />
-        </v-card>
+        </v-card> <br>
       </v-col>
     </v-row>
 
