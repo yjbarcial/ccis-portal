@@ -88,9 +88,9 @@ const filteredTheses = computed(() => {
         <hr class="dashed-hr" />
 
         <!-- Statistics -->
-        <v-row class="mb-6 mt-2" dense justify="center">
+        <v-row class="mb-6 mt-5" dense justify="center">
           <v-col cols="12" md="6" lg="3">
-            <v-card class="styled-stat-card mb-4">
+            <v-card class="styled-stat-card mb-4 me-8">
               <v-img src="/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
                 <v-icon size="30" class="mb-2">mdi-file-document</v-icon>
@@ -102,7 +102,7 @@ const filteredTheses = computed(() => {
           </v-col>
 
           <v-col cols="12" md="6" lg="3">
-            <v-card class="styled-stat-card mb-4">
+            <v-card class="styled-stat-card mb-4 ms-8">
               <v-img src="/images/thesis.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
                 <v-icon size="30" class="mb-2">mdi-book-education</v-icon>
