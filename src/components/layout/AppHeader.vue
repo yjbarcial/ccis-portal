@@ -27,7 +27,7 @@ const handleLogout = async () => {
       <div class="d-flex align-center gap-4">
         <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
         <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
-        <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
+        <v-btn variant="text" @click="goTo('theses')" class="text-white">Theses</v-btn>
         <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
           >Upload Syllabus</v-btn
         >

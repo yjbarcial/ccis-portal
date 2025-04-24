@@ -25,9 +25,9 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/thesis',
-      name: 'thesis',
-      component: ThesisView,
+      path: '/theses',
+      name: 'theses',
+      component: ThesesView,
     },
     {
       path: '/syllabi',
