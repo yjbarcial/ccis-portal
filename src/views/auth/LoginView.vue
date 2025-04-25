@@ -24,7 +24,7 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(2px);
+        filter: brightness(0.5) blur(1px);
       "
     ></v-img>
 

@@ -18,7 +18,14 @@ const { mobile } = useDisplay()
       src="/images/ccisHiraya.jpg"
       cover
       class="position-absolute"
-      style="top: 0; left: 0; width: 100vw; height: auto; z-index: -1; filter: brightness(0.5)"
+      style="
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.5) blur(1px);
+      "
     ></v-img>
 
     <!-- Content -->

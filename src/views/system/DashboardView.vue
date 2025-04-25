@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
@@ -160,6 +161,7 @@ const filteredTheses = computed(() => {
         </v-row>
 
         <hr style="border: 0; height: 1px; background-color: orange" />
+        <div class="my-2 text-black"><AppFooter></AppFooter></div>
       </v-container>
     </v-main>
   </v-app>
