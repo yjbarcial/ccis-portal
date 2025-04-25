@@ -35,6 +35,7 @@ const { mobile } = useDisplay()
 
         <!-- Title -->
         <h2 class="text-white font-weight-bold mb-4">CCIS Portal</h2>
+        <h2 class="text-white font-weight-bold mb-4">CCIS Portal</h2>
 
         <!-- Form -->
         <v-card
