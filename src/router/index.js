@@ -2,10 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
-import ThesisView from '@/views/system/ThesisView.vue'
 import SyllabiView from '@/views/system/SyllabiView.vue'
 import UploadSyllabusView from '@/views/system/UploadSyllabusView.vue'
-import ProfileView from '@/views/system/ProfileView.vue'
+import ThesesView from '@/views/system/ThesesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,9 +25,9 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/thesis',
-      name: 'thesis',
-      component: ThesisView,
+      path: '/theses',
+      name: 'theses',
+      component: ThesesView,
     },
     {
       path: '/syllabi',
@@ -43,7 +42,14 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      component: ProfileView,
+      component: () => import('@/views/system/ProfileView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('@/views/system/SettingsView.vue'),
+      meta: { requiresAuth: true },
     },
   ],
 })

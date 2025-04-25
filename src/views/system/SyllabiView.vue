@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import AppHeader from '@/components/layout/AppHeader.vue'
 
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
@@ -41,20 +42,7 @@ const filteredSyllabi = computed(() => {
 
 <template>
   <v-app>
-    <!-- Top App Bar -->
-    <v-app-bar color="orange-darken-4" dark flat app>
-      <v-container fluid class="d-flex align-center justify-space-between">
-        <v-toolbar-title class="text-h6">CCIS Portal</v-toolbar-title>
-        <div class="d-flex align-center gap-4">
-          <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
-          <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
-          <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
-            >Upload Syllabus</v-btn
-          >
-        </div>
-      </v-container>
-    </v-app-bar>
+    <app-header title="CCIS Portal" />
 
     <v-main>
       <v-container fluid class="py-10">
@@ -104,6 +92,8 @@ const filteredSyllabi = computed(() => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>

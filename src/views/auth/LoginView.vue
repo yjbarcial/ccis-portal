@@ -36,10 +36,10 @@ const { mobile } = useDisplay()
           style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
         >
           <LoginForm />
-        </v-card>
+        </v-card> <br>
       </v-col>
     </v-row>
-
+    
     <!-- Footer -->
     <v-footer
       class="py-2"
@@ -47,7 +47,14 @@ const { mobile } = useDisplay()
     >
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
+<<<<<<< HEAD
           <span class="text-white">&copy; 2025 CCIS Portal. All Rights Reserved.</span>
+=======
+          <v-avatar size="24" class="mr-2">
+            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+          </v-avatar>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+>>>>>>> 9af7bc9150851162d3e8447430ac3d6dfe36eaa4
         </v-col>
       </v-row>
     </v-footer>

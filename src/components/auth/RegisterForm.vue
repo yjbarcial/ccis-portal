@@ -8,6 +8,9 @@ import {
 import { ref } from 'vue'
 import { supabase, formActionDefault } from '@/utils/supabase.js'
 import AlertNotification from '@/components/common/AlertNotification.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const formDataDefault = {
   fullname: '',
@@ -52,6 +55,7 @@ const onSubmit = async () => {
     formAction.value.formSuccessMessage = 'You have registered an account!'
     // Add here more actions if you want
     refVForm.value?.reset()
+    router.replace('/dashboard')
   }
 
   formAction.value.formProcess = false
@@ -149,8 +153,6 @@ const onFormSubmit = () => {
       elevation="3"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
-      RouterLink
-      to="/dashboard"
     >
       Register
     </v-btn>

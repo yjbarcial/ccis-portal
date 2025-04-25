@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-
+import AppHeader from '@/components/layout/AppHeader.vue'
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
 
@@ -35,72 +35,24 @@ const filteredTheses = computed(() => {
     )
   })
 })
-
-const logOut = () => {
-  console.log('Logging out...')
-  // Implement logout logic here (e.g., clearing session, redirecting to login page)
-  router.push({ name: 'login' }) // Redirect to login page after logout
-}
 </script>
 
 <template>
   <v-app>
-    <!-- Top App Bar -->
-    <v-app-bar color="orange-darken-4" dark flat app>
-      <v-container fluid class="d-flex align-center justify-space-between">
-        <v-toolbar-title class="text-h6">CCIS Portal</v-toolbar-title>
-        <div class="d-flex align-center gap-4">
-          <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
-          <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
-          <v-btn variant="text" @click="goTo('thesis')" class="text-white">Thesis</v-btn>
-          <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
-            >Upload Syllabus</v-btn
-          >
-        </div>
-
-        <!-- Profile, Settings, and Logout Dropdown -->
-        <v-menu bottom right :close-on-content-click="false">
-          <template #activator="{ on, attrs }">
-            <v-btn text v-bind="attrs" v-on="on" class="text-white">
-              <v-icon>mdi-account-circle</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item @click="goTo('profile')">
-              <v-list-item-icon>
-                <v-icon>mdi-account</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Profile</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="goTo('settings')">
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="logOut">
-              <v-list-item-icon>
-                <v-icon>mdi-logout</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Log Out</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-container>
-    </v-app-bar>
+    <app-header title="CCIS Portal" />
 
     <v-main>
-      <v-container fluid class="py-10">
+      <v-container fluid class="py-6">
         <v-row>
           <v-col>
-            <h1 class="text-h5 font-weight-bold mb-4">Thesis Repository</h1>
+            <h1 class="text-h5 font-weight-bold mb-4">Theses Repository</h1>
 
             <!-- Filters -->
             <v-row class="mb-4" dense>
               <v-col cols="12" md="4">
                 <v-text-field
                   v-model="search"
-                  label="Search Thesis..."
+                  label="Search Theses..."
                   prepend-inner-icon="mdi-magnify"
                   clearable
                 />
@@ -123,7 +75,7 @@ const logOut = () => {
               </v-col>
             </v-row>
 
-            <!-- Thesis List -->
+            <!-- Theses List -->
             <v-card v-for="(item, index) in filteredTheses" :key="index" class="mb-4">
               <v-card-title class="font-weight-medium">
                 {{ item.title }}
@@ -137,6 +89,8 @@ const logOut = () => {
             </v-card>
           </v-col>
         </v-row>
+
+        <hr style="border: 0; height: 1px; background-color: orange" />
       </v-container>
     </v-main>
   </v-app>

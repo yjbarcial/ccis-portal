@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { requiredValidator, passwordValidator } from '@/utils/validators'
+import { isAuthenticated } from '@/utils/supabase'
 
 const isPasswordvisible = ref(false)
 const refVForm = ref()
@@ -22,6 +23,11 @@ const onFormSubmit = () => {
   refVForm.value?.validate().then(({ valid }) => {
     if (valid) onLogin()
   })
+}
+
+// Get Authentication status from Supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
 }
 </script>
 
@@ -65,17 +71,7 @@ const onFormSubmit = () => {
     </div>
 
     <!-- Login Button -->
-    <v-btn
-      type="submit"
-      block
-      color="deep-orange"
-      size="large"
-      elevation="3"
-      RouterLink
-      to="/dashboard"
-    >
-      Log In
-    </v-btn>
+    <v-btn type="submit" block color="deep-orange" size="large" elevation="3"> Log In </v-btn>
 
     <!-- Divider -->
     <v-divider class="my-5"></v-divider>
