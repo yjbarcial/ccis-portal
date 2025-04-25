@@ -52,14 +52,10 @@ const { mobile } = useDisplay()
     <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
-<<<<<<< HEAD
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
           <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
-=======
-          <span class="text-white">&copy; 2025 CCIS Portal. All Rights Reserved.</span>
->>>>>>> e7464438d297946c315553997073ed6c324c7e7e
         </v-col>
       </v-row>
     </v-footer>
