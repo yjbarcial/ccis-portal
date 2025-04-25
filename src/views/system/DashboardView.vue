@@ -160,8 +160,7 @@ const filteredTheses = computed(() => {
           </v-col>
         </v-row>
 
-        <hr style="border: 0; height: 1px; background-color: orange" />
-        <div class="my-2 text-black"><AppFooter></AppFooter></div>
+        <div class="my-1 text-black"><AppFooter></AppFooter></div>
       </v-container>
     </v-main>
   </v-app>
