@@ -52,31 +52,17 @@ const { mobile } = useDisplay()
         <br />
       </v-col>
     </v-row>
-    <<<<<<< HEAD =======
 
     <!-- Footer -->
-    <v-footer
-      class="py-2"
-      style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
-    >
+    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
-          <span class="text-white">© 2025 CCIS Portal. All Rights Reserved.</span>
+          <v-avatar size="24" class="mr-2">
+            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+          </v-avatar>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
         </v-col>
       </v-row>
     </v-footer>
-    >>>>>>> e7464438d297946c315553997073ed6c324c7e7e
   </v-container>
-
-  <!-- Footer -->
-  <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
-    <v-row class="d-flex justify-center">
-      <v-col class="text-center">
-        <v-avatar size="24" class="mr-2">
-          <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
-        </v-avatar>
-        <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
-      </v-col>
-    </v-row>
-  </v-footer>
 </template>
