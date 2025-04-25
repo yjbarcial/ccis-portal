@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-
+import { supabase } from '@/utils/supabase'
 const props = defineProps({
   title: {
     type: String,
@@ -15,7 +15,11 @@ const authStore = useAuthStore()
 const goTo = (route) => router.push({ name: route })
 
 const handleLogout = async () => {
-  await authStore.logout()
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Logout failed:', error.message)
+    return
+  }
   router.push({ name: 'login' })
 }
 </script>
