@@ -29,6 +29,7 @@ const { mobile } = useDisplay()
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
+      <v-container></v-container>
       <v-col cols="12" md="5" class="text-center">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
@@ -52,8 +53,6 @@ const { mobile } = useDisplay()
         <br />
       </v-col>
     </v-row>
-<<<<<<< HEAD
-=======
 
     <!-- Footer -->
     <v-footer
@@ -66,18 +65,19 @@ const { mobile } = useDisplay()
         </v-col>
       </v-row>
     </v-footer>
->>>>>>> e7464438d297946c315553997073ed6c324c7e7e
+    
   </v-container>
 
-  <!-- Footer -->
-  <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
-    <v-row class="d-flex justify-center">
-      <v-col class="text-center">
-        <v-avatar size="24" class="mr-2">
-          <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
-        </v-avatar>
-        <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
-      </v-col>
-    </v-row>
-  </v-footer>
+    <!-- Footer -->
+    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
+      <v-row class="d-flex justify-center">
+        <v-col class="text-center">
+          <v-avatar size="24" class="mr-2">
+            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+          </v-avatar>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+        </v-col>
+      </v-row>
+    </v-footer>
+  </v-container>
 </template>

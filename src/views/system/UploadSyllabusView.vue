@@ -37,7 +37,7 @@ const submit = () => {
 
     <!-- Main Content -->
     <v-main>
-      <v-container class="py-6">
+      <v-container fluid class="py-6">
         <h1 class="text-h5 font-weight-bold mb-4">Upload New Syllabus</h1>
         <v-form @submit.prevent="submit">
           <v-text-field v-model="form.descriptive_title" label="Descriptive Title" required />
