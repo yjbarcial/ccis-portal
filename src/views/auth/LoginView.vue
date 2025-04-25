@@ -17,7 +17,14 @@ const { mobile } = useDisplay()
       src="/images/ccisHiraya.jpg"
       cover
       class="position-absolute"
-      style="top: 0; left: 0; width: 100vw; height: auto; z-index: -1; filter: brightness(0.5)"
+      style="
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.5) blur(1px);
+      "
     ></v-img>
 
     <!-- Content -->
@@ -36,15 +43,13 @@ const { mobile } = useDisplay()
           style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
         >
           <LoginForm />
-        </v-card> <br>
+        </v-card>
+        <br />
       </v-col>
     </v-row>
-    
+
     <!-- Footer -->
-    <v-footer
-      class="py-2"
-      style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
-    >
+    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
           <v-avatar size="24" class="mr-2">

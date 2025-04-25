@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
+
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
 
@@ -35,7 +37,7 @@ const submit = () => {
 
     <!-- Main Content -->
     <v-main>
-      <v-container class="py-10">
+      <v-container class="py-6">
         <h1 class="text-h5 font-weight-bold mb-4">Upload New Syllabus</h1>
         <v-form @submit.prevent="submit">
           <v-text-field v-model="form.descriptive_title" label="Descriptive Title" required />
@@ -46,7 +48,7 @@ const submit = () => {
           <v-btn type="submit" color="orange-darken-3" class="mt-4 mb-3" dark>Upload</v-btn>
         </v-form>
 
-        <hr class="mb-5" style="border: 0; height: 1px; background-color: orange" />
+        <div class="my-1 text-black"><AppFooter></AppFooter></div>
       </v-container>
     </v-main>
   </v-app>

@@ -1,3 +1,29 @@
+<script setup>
+import { ref } from 'vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
+
+const saving = ref(false)
+const settings = ref({
+  emailNotifications: true,
+  pushNotifications: false,
+  theme: 'light',
+})
+
+const saveSettings = async () => {
+  saving.value = true
+  try {
+    // Implement API call to save settings
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
+    // Show success message
+  } catch (error) {
+    // Handle error
+  } finally {
+    saving.value = false
+  }
+}
+</script>
+
 <template>
   <v-app>
     <app-header title="CCIS Portal" />
@@ -44,32 +70,9 @@
             </v-btn>
           </v-col>
         </v-row>
+
+        <div class="my-1 text-black"><AppFooter></AppFooter></div>
       </v-container>
     </v-main>
   </v-app>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import AppHeader from '@/components/layout/AppHeader.vue'
-
-const saving = ref(false)
-const settings = ref({
-  emailNotifications: true,
-  pushNotifications: false,
-  theme: 'light',
-})
-
-const saveSettings = async () => {
-  saving.value = true
-  try {
-    // Implement API call to save settings
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message
-  } catch (error) {
-    // Handle error
-  } finally {
-    saving.value = false
-  }
-}
-</script>
