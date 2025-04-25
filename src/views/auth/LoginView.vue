@@ -48,6 +48,6 @@ const { mobile } = useDisplay()
         <br />
       </v-col>
     </v-row>
+    <div class=""><AppFooter></AppFooter></div>
   </v-container>
-  <AppFooter></AppFooter>
 </template>

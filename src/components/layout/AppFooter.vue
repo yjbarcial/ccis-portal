@@ -4,10 +4,7 @@ import { ref } from 'vue'
 
 <template>
   <!-- Footer -->
-  <v-footer
-    class="py-3"
-    style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
-  >
+  <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
     <v-row class="d-flex justify-center">
       <v-col class="text-center">
         <v-avatar size="24" class="mr-2">
