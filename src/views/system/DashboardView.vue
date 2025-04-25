@@ -84,11 +84,13 @@ const filteredTheses = computed(() => {
             <h1 class="text-h4 font-weight-bold mb-1">Welcome, Instructor!</h1>
           </v-col>
         </v-row>
+
         <hr class="dashed-hr" />
+
         <!-- Statistics -->
-        <v-row class="mb-6 mt-2" dense justify="center">
+        <v-row class="mb-6 mt-5" dense justify="center">
           <v-col cols="12" md="6" lg="3">
-            <v-card class="styled-stat-card mb-4">
+            <v-card class="styled-stat-card mb-4 me-8">
               <v-img src="/images/syllabus.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
                 <v-icon size="30" class="mb-2">mdi-file-document</v-icon>
@@ -100,7 +102,7 @@ const filteredTheses = computed(() => {
           </v-col>
 
           <v-col cols="12" md="6" lg="3">
-            <v-card class="styled-stat-card mb-4">
+            <v-card class="styled-stat-card mb-4 ms-8">
               <v-img src="/images/thesis.jpg" height="80" cover class="card-img"></v-img>
               <v-card-text class="text-center">
                 <v-icon size="30" class="mb-2">mdi-book-education</v-icon>
@@ -109,29 +111,6 @@ const filteredTheses = computed(() => {
               </v-card-text>
               <div class="yellow-underline"></div>
             </v-card>
-          </v-col>
-        </v-row>
-
-        <!-- Filters -->
-        <v-row class="mb-4 mt-4">
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="search"
-              label="Search..."
-              prepend-inner-icon="mdi-magnify"
-              clearable
-            />
-          </v-col>
-          <v-col cols="6" md="4">
-            <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
-          </v-col>
-          <v-col cols="6" md="4">
-            <v-select
-              v-model="selectedSemester"
-              :items="semesterOptions"
-              label="Semester"
-              clearable
-            />
           </v-col>
         </v-row>
 

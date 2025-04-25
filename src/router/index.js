@@ -4,7 +4,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import DashboardView from '@/views/system/DashboardView.vue'
 import SyllabiView from '@/views/system/SyllabiView.vue'
 import UploadSyllabusView from '@/views/system/UploadSyllabusView.vue'
-import ThesisView from '@/views/system/ThesisView.vue'
+import ThesesView from '@/views/system/ThesesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,9 +25,9 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/thesis',
-      name: 'thesis',
-      component: ThesisView,
+      path: '/theses',
+      name: 'theses',
+      component: ThesesView,
     },
     {
       path: '/syllabi',

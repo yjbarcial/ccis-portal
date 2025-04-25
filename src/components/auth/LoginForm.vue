@@ -1,21 +1,60 @@
 <script setup>
+import AlertNotification from '@/components/common/AlertNotification.vue'
+import { supabase } from '@/utils/supabase';
 import { ref } from 'vue'
 import { requiredValidator, passwordValidator } from '@/utils/validators'
+import { isAuthenticated } from '@/utils/supabase'
+import { useRouter } from 'vue-router';
 
-const isPasswordvisible = ref(false)
-const refVForm = ref()
+const router = useRouter()
 
-const formDataDefault = {
-  email: '',
-  password: '',
+const formActionDefault = {
+  formSuccessMessage: '',
+  formErrorMessage: '',
+  formStatus: null,
+  formProcess: false,
 }
 
+
+const formDataDefault = {
+  employeeID: '',
+  password: '',
+}
+//Load Variables
 const formData = ref({
   ...formDataDefault,
 })
 
-const onLogin = () => {
-  // alert(formData.value.employeeID)
+const formAction = ref({
+  ...formActionDefault,
+})
+
+
+const isPasswordvisible = ref(false)
+const refVForm = ref()
+
+const isLoggedIn = ref(false)
+
+const onLogin = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+  email: formData.value.employeeID,
+  password: formData.value.password
+})
+if (error) {
+    console.log(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'You have logged an account!'
+    // Add here more actions if you want
+    router.replace('/dashboard')
+  }
+refVForm.value?.reset()
+formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -23,9 +62,20 @@ const onFormSubmit = () => {
     if (valid) onLogin()
   })
 }
+
+// Get Authentication status from Supabase
+const getLoggedStatus = async () => {
+  isLoggedIn.value = await isAuthenticated()
+}
 </script>
 
 <template>
+
+<AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+
   <v-form ref="refVForm" @submit.prevent="onFormSubmit" class="login-form">
     <!-- Form Header -->
     <div class="text-center mb-5">
@@ -65,17 +115,7 @@ const onFormSubmit = () => {
     </div>
 
     <!-- Login Button -->
-    <v-btn
-      type="submit"
-      block
-      color="deep-orange"
-      size="large"
-      elevation="3"
-      RouterLink
-      to="/dashboard"
-    >
-      Log In
-    </v-btn>
+    <v-btn type="submit" block color="deep-orange" size="large" elevation="3"> Log In </v-btn>
 
     <!-- Divider -->
     <v-divider class="my-5"></v-divider>

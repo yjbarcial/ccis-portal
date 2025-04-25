@@ -27,7 +27,7 @@ const { mobile } = useDisplay()
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
         <!-- Title -->
-        <h2 class="text-white font-weight-bold mb-4">Syllabus Online Storage</h2>
+        <h2 class="text-white font-weight-bold mb-4">CCIS Portal</h2>
 
         <!-- Form -->
         <v-card
@@ -36,10 +36,10 @@ const { mobile } = useDisplay()
           style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
         >
           <LoginForm />
-        </v-card>
+        </v-card> <br>
       </v-col>
     </v-row>
-
+    
     <!-- Footer -->
     <v-footer
       class="py-2"
@@ -48,7 +48,7 @@ const { mobile } = useDisplay()
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
           <v-avatar size="24" class="mr-2">
-            <v-img src="/public/images/ccisLogo.png" alt="CCIS Logo" />
+            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
           <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
         </v-col>
