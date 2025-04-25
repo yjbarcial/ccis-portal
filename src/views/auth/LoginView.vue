@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 import { useDisplay } from 'vuetify'
 const { mobile } = useDisplay()
@@ -23,7 +24,7 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5);
+        filter: brightness(0.5) blur(2px);
       "
     ></v-img>
 
@@ -47,20 +48,6 @@ const { mobile } = useDisplay()
         <br />
       </v-col>
     </v-row>
-
-    <!-- Footer -->
-    <v-footer
-      class="py-2"
-      style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
-    >
-      <v-row class="d-flex justify-center">
-        <v-col class="text-center">
-          <v-avatar size="24" class="mr-2">
-            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
-          </v-avatar>
-          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
-        </v-col>
-      </v-row>
-    </v-footer>
   </v-container>
+  <AppFooter></AppFooter>
 </template>
