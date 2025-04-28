@@ -9,7 +9,7 @@ const { mobile } = useDisplay()
 <template>
   <v-container
     fluid
-    class="d-flex flex-column justify-between pa-0"
+    class="d-flex flex-column justify-between pa-4"
     style="min-height: 100vh; position: relative"
   >
     <!-- Background Image -->
@@ -29,7 +29,6 @@ const { mobile } = useDisplay()
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
-      <v-container></v-container>
       <v-col cols="12" md="5" class="text-center">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
