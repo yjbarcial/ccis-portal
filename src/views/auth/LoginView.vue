@@ -5,12 +5,11 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 import { useDisplay } from 'vuetify'
 const { mobile } = useDisplay()
 </script>
-
 <template>
   <v-container
     fluid
-    class="d-flex flex-column justify-between pa-0"
-    style="min-height: 100vh; position: relative"
+    class="d-flex flex-column justify-between pa-2"
+    style="min-height: 100vh; position: relative; padding: 0; overflow: hidden"
   >
     <!-- Background Image -->
     <v-img
@@ -23,19 +22,19 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(1px);
+        filter: brightness(0.5) blur(0.5px);
       "
     ></v-img>
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
-      <v-container></v-container>
-      <v-col cols="12" md="5" class="text-center">
+      <v-col cols="12" md="5" class="text-center mb-4">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
         <!-- Title -->
-        <h2 class="text-white font-weight-bold mb-4">CCIS Portal</h2>
+        <h2 class="text-white font-weight-bold mb-2">CCIS Portal</h2>
+        <hr class="mb-4" style="border: 0; height: 0.1px; background-color: grey" />
 
         <!-- Form -->
         <v-card
@@ -46,19 +45,26 @@ const { mobile } = useDisplay()
           <LoginForm />
         </v-card>
         <br />
+        <v-card
+          elevation="6"
+          class="mx-auto pa-5"
+          style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
+        >
+          <v-footer
+            class="py-3"
+            style="background-color: transparent; position: relative; width: 100%"
+          >
+            <v-row class="d-flex justify-center">
+              <v-col class="text-center">
+                <v-avatar size="24" class="mr-2">
+                  <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+                </v-avatar>
+                <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
+              </v-col>
+            </v-row>
+          </v-footer>
+        </v-card>
       </v-col>
     </v-row>
-
-    <!-- Footer -->
-    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
-      <v-row class="d-flex justify-center">
-        <v-col class="text-center">
-          <v-avatar size="24" class="mr-2">
-            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
-          </v-avatar>
-          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
-        </v-col>
-      </v-row>
-    </v-footer>
   </v-container>
 </template>
