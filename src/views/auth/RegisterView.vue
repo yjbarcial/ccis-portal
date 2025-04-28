@@ -23,13 +23,13 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(1px);
+        filter: brightness(0.5) blur(0.5px);
       "
     ></v-img>
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
-      <v-col cols="12" md="5" class="text-center">
+      <v-col cols="12" md="5" class="text-center mb-4">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
