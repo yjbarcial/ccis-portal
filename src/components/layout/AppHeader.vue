@@ -32,9 +32,7 @@ const handleLogout = async () => {
         <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
         <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
         <v-btn variant="text" @click="goTo('theses')" class="text-white">Theses</v-btn>
-        <v-btn variant="text" @click="goTo('upload-syllabus')" class="text-white"
-          >Upload Syllabus</v-btn
-        >
+        
 
         <!-- User Menu -->
         <v-menu location="bottom end">

@@ -47,44 +47,57 @@ const filteredSyllabi = computed(() => {
 
     <v-main>
       <v-container fluid class="py-6">
+        <!-- Title and Upload Button -->
+        <v-row class="mb-4" align="center">
+          <v-col cols="auto">
+            <h1 class="text-h5 font-weight-bold">Syllabi Repository</h1>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="auto">
+            <v-btn
+              variant="outlined"
+              color="orange-darken-3"
+              size="small"
+              @click="goTo('upload-syllabus')"
+              class="text-capitalize"
+            >
+              <v-icon start>mdi-plus</v-icon>
+              Upload Syllabus
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <!-- Filters (search, year, semester) -->
+        <v-row class="mb-4" dense>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="search"
+              label="Search Syllabi..."
+              prepend-inner-icon="mdi-magnify"
+              clearable
+            />
+          </v-col>
+          <v-col cols="6" md="4">
+            <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
+          </v-col>
+          <v-col cols="6" md="4">
+            <v-select
+              v-model="selectedSemester"
+              :items="semesterOptions"
+              label="Semester"
+              clearable
+            />
+          </v-col>
+        </v-row>
+
+        <!-- Syllabi List -->
         <v-row>
           <v-col>
-            <h1 class="text-h5 font-weight-bold mb-4">Syllabi Repository</h1>
-
-            <!-- Filters -->
-            <v-row class="mb-4" dense>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="search"
-                  label="Search Syllabi..."
-                  prepend-inner-icon="mdi-magnify"
-                  clearable
-                />
-              </v-col>
-              <v-col cols="6" md="4">
-                <v-select
-                  v-model="selectedYear"
-                  :items="yearOptions"
-                  label="Academic Year"
-                  clearable
-                />
-              </v-col>
-              <v-col cols="6" md="4">
-                <v-select
-                  v-model="selectedSemester"
-                  :items="semesterOptions"
-                  label="Semester"
-                  clearable
-                />
-              </v-col>
-            </v-row>
-
-            <!-- Syllabi List -->
             <v-card v-for="(item, index) in filteredSyllabi" :key="index" class="mb-4">
               <v-card-title class="font-weight-medium">
                 {{ item.descriptive_title }} ({{ item.course_code }})
               </v-card-title>
-              <v-card-subtitle>{{ item.acad_year }} • {{ item.semester }}</v-card-subtitle>
+              <v-card-subtitle> {{ item.acad_year }} • {{ item.semester }} </v-card-subtitle>
               <v-card-actions>
                 <v-btn icon :href="item.file_url" target="_blank" variant="text">
                   <v-icon>mdi-open-in-new</v-icon>
@@ -94,7 +107,10 @@ const filteredSyllabi = computed(() => {
           </v-col>
         </v-row>
 
-        <div class="my-1 text-black"><AppFooter></AppFooter></div>
+        <!-- Footer -->
+        <div class="my-1 text-black">
+          <AppFooter />
+        </div>
       </v-container>
     </v-main>
   </v-app>
