@@ -9,8 +9,8 @@ const { mobile } = useDisplay()
 <template>
   <v-container
     fluid
-    class="d-flex flex-column justify-between pa-2"
-    style="min-height: 100vh; position: relative; padding: 0; overflow: hidden"
+    class="d-flex flex-column justify-between pa-4"
+    style="min-height: 100vh; position: relative"
   >
     <!-- Background Image -->
     <v-img
@@ -50,26 +50,18 @@ const { mobile } = useDisplay()
           <RegisterForm />
         </v-card>
         <br />
-        <v-card
-          elevation="6"
-          class="mx-auto pa-5"
-          style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
-        >
-          <v-footer
-            class="py-3"
-            style="background-color: transparent; position: relative; width: 100%"
-          >
-            <v-row class="d-flex justify-center">
-              <v-col class="text-center">
-                <v-avatar size="24" class="mr-2">
-                  <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
-                </v-avatar>
-                <span class="text-black">&copy; 2025 CCIS. All Rights Reserved.</span>
-              </v-col>
-            </v-row>
-          </v-footer>
-        </v-card>
       </v-col>
     </v-row>
+
+    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
+      <v-row class="d-flex justify-center">
+        <v-col class="text-center">
+          <v-avatar size="24" class="mr-2">
+            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+          </v-avatar>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+        </v-col>
+      </v-row>
+    </v-footer>
   </v-container>
 </template>
