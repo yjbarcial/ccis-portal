@@ -61,7 +61,7 @@ const { mobile } = useDisplay()
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
-          <span class="text-white">© 2025 CCIS. All Rights Reserved.</span>
+          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
         </v-col>
       </v-row>
     </v-footer>
