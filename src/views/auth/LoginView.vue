@@ -16,6 +16,7 @@ const { mobile } = useDisplay()
     <v-img
       src="/images/ccisHiraya.jpg"
       cover
+      
       class="position-absolute"
       style="
         inset: 0;
