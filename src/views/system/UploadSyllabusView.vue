@@ -48,7 +48,10 @@ const submit = () => {
           <v-btn type="submit" color="orange-darken-3" class="mt-4 mb-3" dark>Upload</v-btn>
         </v-form>
 
-        <div class="my-1 text-black"><AppFooter></AppFooter></div>
+        <!-- Footer -->
+        <div class="my-1 text-black">
+          <AppFooter />
+        </div>
       </v-container>
     </v-main>
   </v-app>
