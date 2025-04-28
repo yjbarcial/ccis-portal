@@ -35,6 +35,7 @@ const handleLogout = async () => {
             max-width="30"
             height="30"
             class="mr-1"
+            transition="none"
             cover
           />
           <span>{{ title }}</span>

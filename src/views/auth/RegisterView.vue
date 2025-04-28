@@ -23,7 +23,7 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(1px);
+        filter: brightness(0.5) blur(0.5px);
       "
     ></v-img>
 
@@ -60,7 +60,9 @@ const { mobile } = useDisplay()
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
-          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+          <span class="text-white"
+            >&copy; 2025 <span class="text-orange">CCIS.</span> All Rights Reserved.</span
+          >
         </v-col>
       </v-row>
     </v-footer>
