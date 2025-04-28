@@ -32,8 +32,8 @@ const handleLogout = async () => {
           <v-img
             src="/images/ccisLogo.png"
             alt="CCIS Logo"
-            max-width="30"
-            height="30"
+            max-width="25"
+            height="25"
             class="mr-1"
             transition="none"
             cover
