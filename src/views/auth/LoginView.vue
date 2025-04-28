@@ -17,11 +17,19 @@ const { mobile } = useDisplay()
       src="/images/ccisHiraya.jpg"
       cover
       class="position-absolute"
-      style="top: 0; left: 0; width: 100vw; height: auto; z-index: -1; filter: brightness(0.5)"
+      style="
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.5) blur(1px);
+      "
     ></v-img>
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
+      <v-container></v-container>
       <v-col cols="12" md="5" class="text-center">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
@@ -36,25 +44,29 @@ const { mobile } = useDisplay()
           style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
         >
           <LoginForm />
-        </v-card> <br>
+        </v-card>
+        <br />
       </v-col>
     </v-row>
-    
+
     <!-- Footer -->
-    <v-footer
-      class="py-2"
-      style="background-color: rgba(0, 0, 0, 0.7); position: relative; width: 100%"
-    >
+    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
 <<<<<<< HEAD
+<<<<<<< HEAD
           <span class="text-white">&copy; 2025 CCIS Portal. All Rights Reserved.</span>
 =======
+=======
+>>>>>>> 95233e819857cf364d7272d348355aea0a9ac1bd
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
           <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+<<<<<<< HEAD
 >>>>>>> 9af7bc9150851162d3e8447430ac3d6dfe36eaa4
+=======
+>>>>>>> 95233e819857cf364d7272d348355aea0a9ac1bd
         </v-col>
       </v-row>
     </v-footer>

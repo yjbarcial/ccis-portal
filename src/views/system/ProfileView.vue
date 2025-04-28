@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
 
 const saving = ref(false)
 const changingPassword = ref(false)
@@ -181,7 +182,7 @@ const uploadAvatar = (event) => {
           </v-col>
         </v-row>
 
-        <hr style="border: 0; height: 1px; background-color: orange" />
+        <div class="my-1 text-black"><AppFooter></AppFooter></div>
       </v-container>
     </v-main>
   </v-app>
