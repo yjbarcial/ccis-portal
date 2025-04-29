@@ -6,6 +6,7 @@ import AppFooter from '@/components/layout/AppFooter.vue'
 const saving = ref(false)
 const changingPassword = ref(false)
 const isEditing = ref(false)
+const showPasswordForm = ref(false)
 
 const profile = ref({
   fullname: '',
@@ -23,7 +24,6 @@ const passwordForm = ref({
 const loadProfile = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   if (user) {
-    // Populate profile with data from localStorage
     profile.value.fullName = user.fullname || ''
     profile.value.email = user.email || ''
     profile.value.department = user.employeeID || ''
@@ -47,18 +47,14 @@ const saveProfile = () => {
 
 const changePassword = async () => {
   if (passwordForm.value.new !== passwordForm.value.confirm) {
-    // Show error message
     return
   }
 
   changingPassword.value = true
   try {
-    // Implement API call to change password
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    // Show success message
     passwordForm.value = { current: '', new: '', confirm: '' }
   } catch (error) {
-    // Handle error
   } finally {
     changingPassword.value = false
   }
@@ -109,10 +105,10 @@ onMounted(() => {
 
     <v-main>
       <v-container>
-        <v-row>
-          <v-col cols="12" md="8" lg="6">
-            <h1 class="text-h4 mb-6">Profile</h1>
+        <h1 class="text-h4 mb-6">Profile</h1>
 
+        <v-row>
+          <v-col cols="12" md="8" lg="4">
             <!-- Profile Information -->
             <v-card class="mb-6">
               <v-card-text>
@@ -192,23 +188,34 @@ onMounted(() => {
                       </v-col>
                     </v-row>
 
-                    <!-- Edit & Save Buttons -->
-                    <div class="text-center mt-4">
-                      <v-btn v-if="!isEditing" color="orange-darken-2" @click="isEditing = true">
-                        Edit Profile
-                      </v-btn>
+                    <!-- Buttons side by side -->
+                    <v-row class="mt-4" justify="center">
+                      <v-col cols="6" class="text-end">
+                        <v-btn v-if="!isEditing" color="orange-darken-2" @click="isEditing = true">
+                          Edit Profile
+                        </v-btn>
+                        <v-btn v-else color="orange-darken-2" @click="saveProfile">
+                          Save Changes
+                        </v-btn>
+                      </v-col>
 
-                      <v-btn v-else color="orange-darken-2" @click="saveProfile">
-                        Save Changes
-                      </v-btn>
-                    </div>
+                      <v-col cols="6" class="text-start">
+                        <v-btn
+                          color="orange-darken-4"
+                          variant="outlined"
+                          @click="showPasswordForm = !showPasswordForm"
+                        >
+                          {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
               </v-card-text>
             </v-card>
 
-            <!-- Change Password -->
-            <v-card class="mb-4">
+            <!-- Change Password Card -->
+            <v-card class="mb-4" v-if="showPasswordForm">
               <v-card-title>Change Password</v-card-title>
               <v-card-text>
                 <v-form @submit.prevent="changePassword">
@@ -242,9 +249,17 @@ onMounted(() => {
                     :loading="changingPassword"
                     class="mt-4"
                   >
-                    Change Password
+                    Save Changes
                   </v-btn>
                 </v-form>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col cols="12" md="6" lg="8">
+            <v-card class="mb-6">
+              <v-card-text>
+                <h2 class="text-center mb-4">About Me</h2>
               </v-card-text>
             </v-card>
           </v-col>
