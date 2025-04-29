@@ -92,7 +92,10 @@ const filteredTheses = computed(() => {
           </v-col>
         </v-row>
 
-        <div class="my-1 text-black"><AppFooter></AppFooter></div>
+        <!-- Footer -->
+        <div class="my-1 text-black">
+          <AppFooter />
+        </div>
       </v-container>
     </v-main>
   </v-app>
