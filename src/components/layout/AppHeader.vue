@@ -43,9 +43,23 @@ const handleLogout = async () => {
       </v-toolbar-title>
 
       <div class="d-flex align-center gap-4">
-        <v-btn variant="text" @click="goTo('dashboard')" class="text-white">Dashboard</v-btn>
-        <v-btn variant="text" @click="goTo('syllabi')" class="text-white">Syllabi</v-btn>
-        <v-btn variant="text" @click="goTo('theses')" class="text-white">Theses</v-btn>
+        <v-btn variant="text" @click="goTo('dashboard')" class="text-white" prepend-icon="mdi-home"
+          >Dashboard</v-btn
+        >
+        <v-btn
+          variant="text"
+          @click="goTo('syllabi')"
+          class="text-white"
+          prepend-icon="mdi-book-open-page-variant"
+          >Syllabi</v-btn
+        >
+        <v-btn
+          variant="text"
+          @click="goTo('theses')"
+          class="text-white"
+          prepend-icon="mdi-clipboard-text"
+          >Theses</v-btn
+        >
 
         <!-- User Menu -->
         <v-menu location="bottom end">
