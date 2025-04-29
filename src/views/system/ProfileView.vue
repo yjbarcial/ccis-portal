@@ -11,6 +11,7 @@ const profile = ref({
   fullname: '',
   email: '',
   department: '',
+  avatar: '',
 })
 
 const passwordForm = ref({
@@ -20,12 +21,16 @@ const passwordForm = ref({
 })
 
 const loadProfile = () => {
-  const user = localStorage.getItem('user')
+  const user = JSON.parse(localStorage.getItem('user'))
   if (user) {
-    const userData = JSON.parse(user)
-    profile.value.fullName = userData.fullname || ''
-    profile.value.email = userData.email || ''
-    profile.value.department = userData.employeeID || ''
+    // Populate profile with data from localStorage
+    profile.value.fullName = user.fullname || ''
+    profile.value.email = user.email || ''
+    profile.value.department = user.employeeID || ''
+
+    profile.value.avatar = user.avatar || ''
+  } else {
+    profile.value.avatar = ''
   }
 }
 
@@ -34,6 +39,7 @@ const saveProfile = () => {
     fullname: profile.value.fullName,
     email: profile.value.email,
     employeeID: profile.value.department,
+    avatar: profile.value.avatar, // Save avatar data
   }
   localStorage.setItem('user', JSON.stringify(userData))
   isEditing.value = false
@@ -48,7 +54,7 @@ const changePassword = async () => {
   changingPassword.value = true
   try {
     // Implement API call to change password
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     // Show success message
     passwordForm.value = { current: '', new: '', confirm: '' }
   } catch (error) {
@@ -61,17 +67,34 @@ const changePassword = async () => {
 const uploadAvatar = (event) => {
   const file = event.target.files[0]
   if (file) {
-    profile.value.avatar = URL.createObjectURL(file) // preview the image
-    // You can also handle the upload to a server here if needed
+    const avatarURL = URL.createObjectURL(file)
+    profile.value.avatar = avatarURL
+
+    const user = JSON.parse(localStorage.getItem('user'))
+    if (user) {
+      user.avatar = avatarURL
+      localStorage.setItem('user', JSON.stringify(user))
+    }
   }
 }
 
+const logout = () => {
+  localStorage.removeItem('user')
+  profile.value.avatar = ''
+}
+
+const login = async () => {
+  const user = { fullname: 'Jane Doe', email: 'jane@example.com', employeeID: '54321', avatar: '' }
+  localStorage.setItem('user', JSON.stringify(user))
+
+  loadProfile()
+}
+
 onMounted(() => {
-  // Fetch user data from localStorage when the profile page is loaded
   const user = localStorage.getItem('user')
   if (user) {
     const userData = JSON.parse(user)
-    profile.value.fullName = userData.fullname || '' // Full name
+    profile.value.fullName = userData.fullname || ''
   }
 })
 
@@ -95,30 +118,38 @@ onMounted(() => {
               <v-card-text>
                 <v-row>
                   <v-col cols="12" class="text-center mb-4">
-                    <v-avatar size="120" color="orange-darken-2">
-                      <v-img v-if="profile.avatar" :src="profile.avatar"></v-img>
-                      <v-icon v-else size="48">mdi-account</v-icon>
-                    </v-avatar>
-
-                    <div class="mt-2">
-                      <!-- Hidden file input -->
-                      <input
-                        ref="fileInput"
-                        type="file"
-                        accept="image/*"
-                        style="display: none"
-                        @change="uploadAvatar"
+                    <!-- Clickable Avatar -->
+                    <div
+                      style="
+                        cursor: pointer;
+                        display: inline-block;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        width: 120px;
+                        height: 120px;
+                      "
+                      @click="$refs.fileInput.click()"
+                    >
+                      <v-img
+                        v-if="profile.avatar"
+                        :src="profile.avatar"
+                        cover
+                        width="120"
+                        height="120"
                       />
-
-                      <!-- Trigger button -->
-                      <v-btn
-                        variant="text"
-                        color="orange-darken-4"
-                        @click="$refs.fileInput.click()"
-                      >
-                        Change Avatar
-                      </v-btn>
+                      <v-avatar v-else size="120" color="orange-darken-2">
+                        <v-icon size="48">mdi-account</v-icon>
+                      </v-avatar>
                     </div>
+
+                    <!-- Hidden File Input -->
+                    <input
+                      ref="fileInput"
+                      type="file"
+                      accept="image/*"
+                      style="display: none"
+                      @change="uploadAvatar"
+                    />
 
                     <!-- Full Name -->
                     <v-row>
