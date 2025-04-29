@@ -112,7 +112,17 @@ const getLoggedStatus = async () => {
     </div>
 
     <!-- Login Button -->
-    <v-btn type="submit" block color="deep-orange" size="large" elevation="3"> Log In </v-btn>
+    <v-btn
+      type="submit"
+      block
+      color="deep-orange"
+      size="large"
+      elevation="3"
+      :loading="loading"
+      @click="login"
+    >
+      Log In
+    </v-btn>
 
     <!-- Divider -->
     <v-divider class="my-5"></v-divider>

@@ -1,17 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
 const saving = ref(false)
 const changingPassword = ref(false)
+const isEditing = ref(false)
 
 const profile = ref({
-  firstName: '',
-  lastName: '',
+  fullname: '',
   email: '',
   department: '',
-  avatar: null,
 })
 
 const passwordForm = ref({
@@ -20,17 +19,24 @@ const passwordForm = ref({
   confirm: '',
 })
 
-const saveProfile = async () => {
-  saving.value = true
-  try {
-    // Implement API call to save profile
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message
-  } catch (error) {
-    // Handle error
-  } finally {
-    saving.value = false
+const loadProfile = () => {
+  const user = localStorage.getItem('user')
+  if (user) {
+    const userData = JSON.parse(user)
+    profile.value.fullName = userData.fullname || ''
+    profile.value.email = userData.email || ''
+    profile.value.department = userData.employeeID || ''
   }
+}
+
+const saveProfile = () => {
+  const userData = {
+    fullname: profile.value.fullName,
+    email: profile.value.email,
+    employeeID: profile.value.department,
+  }
+  localStorage.setItem('user', JSON.stringify(userData))
+  isEditing.value = false
 }
 
 const changePassword = async () => {
@@ -59,6 +65,19 @@ const uploadAvatar = (event) => {
     // You can also handle the upload to a server here if needed
   }
 }
+
+onMounted(() => {
+  // Fetch user data from localStorage when the profile page is loaded
+  const user = localStorage.getItem('user')
+  if (user) {
+    const userData = JSON.parse(user)
+    profile.value.fullName = userData.fullname || '' // Full name
+  }
+})
+
+onMounted(() => {
+  loadProfile()
+})
 </script>
 
 <template>
@@ -100,42 +119,60 @@ const uploadAvatar = (event) => {
                         Change Avatar
                       </v-btn>
                     </div>
+
+                    <!-- Full Name -->
+                    <v-row>
+                      <v-col cols="12">
+                        <div v-if="!isEditing" class="font-weight-bold">
+                          {{ profile.fullName }}
+                        </div>
+                        <v-text-field
+                          v-else
+                          v-model="profile.fullName"
+                          label="Full Name"
+                          hide-details
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Email -->
+                    <v-row>
+                      <v-col cols="12">
+                        <div v-if="!isEditing">{{ profile.email }}</div>
+                        <v-text-field
+                          v-else
+                          v-model="profile.email"
+                          label="Email"
+                          hide-details
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Department -->
+                    <v-row>
+                      <v-col cols="12">
+                        <div v-if="!isEditing">{{ profile.department }}</div>
+                        <v-text-field
+                          v-else
+                          v-model="profile.department"
+                          label="Department"
+                          hide-details
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Edit & Save Buttons -->
+                    <div class="text-center mt-4">
+                      <v-btn v-if="!isEditing" color="orange-darken-2" @click="isEditing = true">
+                        Edit Profile
+                      </v-btn>
+
+                      <v-btn v-else color="orange-darken-2" @click="saveProfile">
+                        Save Changes
+                      </v-btn>
+                    </div>
                   </v-col>
                 </v-row>
-
-                <v-form @submit.prevent="saveProfile">
-                  <v-text-field
-                    v-model="profile.firstName"
-                    label="First Name"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="profile.lastName"
-                    label="Last Name"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="profile.email"
-                    label="Email"
-                    type="email"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="profile.department"
-                    label="Department"
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-btn type="submit" color="orange-darken-4" :loading="saving" class="mt-4">
-                    Save Changes
-                  </v-btn>
-                </v-form>
               </v-card-text>
             </v-card>
 
@@ -179,79 +216,6 @@ const uploadAvatar = (event) => {
                 </v-form>
               </v-card-text>
             </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card class="mb-6">
-                <v-card-text>
-                  <v-row>
-                    <v-col cols="12" class="text-center mb-4">
-                      <v-avatar size="120" color="orange-darken-2">
-                        <v-img v-if="profile.avatar" :src="profile.avatar"></v-img>
-                        <v-icon v-else size="48">mdi-account</v-icon>
-                      </v-avatar>
-
-                      <div class="mt-2">
-                        <!-- Hidden file input -->
-                        <input
-                          ref="fileInput"
-                          type="file"
-                          accept="image/*"
-                          style="display: none"
-                          @change="uploadAvatar"
-                        />
-
-                        <!-- Trigger button -->
-                        <v-btn
-                          variant="text"
-                          color="orange-darken-4"
-                          @click="$refs.fileInput.click()"
-                        >
-                          Change Avatar
-                        </v-btn>
-                      </div>
-                    </v-col>
-                  </v-row>
-
-                  <v-form @submit.prevent="saveProfile">
-                    <v-text-field
-                      v-model="profile.firstName"
-                      label="First Name"
-                      required
-                      color="orange-darken-4"
-                    ></v-text-field>
-
-                    <v-text-field
-                      v-model="profile.lastName"
-                      label="Last Name"
-                      required
-                      color="orange-darken-4"
-                    ></v-text-field>
-
-                    <v-text-field
-                      v-model="profile.email"
-                      label="Email"
-                      type="email"
-                      required
-                      color="orange-darken-4"
-                    ></v-text-field>
-
-                    <v-text-field
-                      v-model="profile.department"
-                      label="Department"
-                      color="orange-darken-4"
-                    ></v-text-field>
-
-                    <v-btn type="submit" color="orange-darken-4" :loading="saving" class="mt-4">
-                      Save Changes
-                    </v-btn>
-                  </v-form>
-                </v-card-text>
-              </v-card></v-card
-            >
           </v-col>
         </v-row>
 
