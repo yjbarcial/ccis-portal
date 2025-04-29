@@ -182,6 +182,79 @@ const uploadAvatar = (event) => {
           </v-col>
         </v-row>
 
+        <v-row>
+          <v-col>
+            <v-card>
+              <v-card class="mb-6">
+                <v-card-text>
+                  <v-row>
+                    <v-col cols="12" class="text-center mb-4">
+                      <v-avatar size="120" color="orange-darken-2">
+                        <v-img v-if="profile.avatar" :src="profile.avatar"></v-img>
+                        <v-icon v-else size="48">mdi-account</v-icon>
+                      </v-avatar>
+
+                      <div class="mt-2">
+                        <!-- Hidden file input -->
+                        <input
+                          ref="fileInput"
+                          type="file"
+                          accept="image/*"
+                          style="display: none"
+                          @change="uploadAvatar"
+                        />
+
+                        <!-- Trigger button -->
+                        <v-btn
+                          variant="text"
+                          color="orange-darken-4"
+                          @click="$refs.fileInput.click()"
+                        >
+                          Change Avatar
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+
+                  <v-form @submit.prevent="saveProfile">
+                    <v-text-field
+                      v-model="profile.firstName"
+                      label="First Name"
+                      required
+                      color="orange-darken-4"
+                    ></v-text-field>
+
+                    <v-text-field
+                      v-model="profile.lastName"
+                      label="Last Name"
+                      required
+                      color="orange-darken-4"
+                    ></v-text-field>
+
+                    <v-text-field
+                      v-model="profile.email"
+                      label="Email"
+                      type="email"
+                      required
+                      color="orange-darken-4"
+                    ></v-text-field>
+
+                    <v-text-field
+                      v-model="profile.department"
+                      label="Department"
+                      color="orange-darken-4"
+                    ></v-text-field>
+
+                    <v-btn type="submit" color="orange-darken-4" :loading="saving" class="mt-4">
+                      Save Changes
+                    </v-btn>
+                  </v-form>
+                </v-card-text>
+              </v-card></v-card
+            >
+          </v-col>
+        </v-row>
+
         <!-- Footer -->
         <div class="my-1 text-black">
           <AppFooter />
