@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import SyllabiList from '@/components/system/SyllabiList.vue'
 
 const router = useRouter()
 const goTo = (route) => router.push({ name: route })
@@ -10,9 +11,11 @@ const goTo = (route) => router.push({ name: route })
 const search = ref('')
 const selectedYear = ref(null)
 const selectedSemester = ref(null)
+
 const yearOptions = ['2024-2025', '2023-2024']
 const semesterOptions = ['1st Semester', '2nd Semester']
 
+// Sample data
 const syllabi = ref([
   {
     descriptive_title: 'OOP',
@@ -30,15 +33,15 @@ const syllabi = ref([
   },
 ])
 
-const filteredSyllabi = computed(() => {
-  return syllabi.value.filter((s) => {
+const filteredSyllabi = computed(() =>
+  syllabi.value.filter((s) => {
     return (
       (!search.value || s.descriptive_title.toLowerCase().includes(search.value.toLowerCase())) &&
       (!selectedYear.value || s.acad_year === selectedYear.value) &&
       (!selectedSemester.value || s.semester === selectedSemester.value)
     )
-  })
-})
+  }),
+)
 </script>
 
 <template>
@@ -67,7 +70,7 @@ const filteredSyllabi = computed(() => {
           </v-col>
         </v-row>
 
-        <!-- Filters (search, year, semester) -->
+        <!-- Filters -->
         <v-row class="mb-4" dense>
           <v-col cols="12" md="4">
             <v-text-field
@@ -90,22 +93,8 @@ const filteredSyllabi = computed(() => {
           </v-col>
         </v-row>
 
-        <!-- Syllabi List -->
-        <v-row>
-          <v-col>
-            <v-card v-for="(item, index) in filteredSyllabi" :key="index" class="mb-4">
-              <v-card-title class="font-weight-medium">
-                {{ item.descriptive_title }} ({{ item.course_code }})
-              </v-card-title>
-              <v-card-subtitle> {{ item.acad_year }} • {{ item.semester }} </v-card-subtitle>
-              <v-card-actions>
-                <v-btn icon :href="item.file_url" target="_blank" variant="text">
-                  <v-icon>mdi-open-in-new</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
+        <!-- Syllabi List Presentation -->
+        <SyllabiList :items="filteredSyllabi" />
 
         <!-- Footer -->
         <div class="my-1 text-black">
