@@ -2,6 +2,8 @@
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/utils/supabase'
+import { ref, watch, onMounted } from 'vue'
+
 const props = defineProps({
   title: {
     type: String,
@@ -11,6 +13,8 @@ const props = defineProps({
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+const isDarkMode = ref(false) // Track dark mode state
 
 const goTo = (route) => router.push({ name: route })
 
@@ -22,6 +26,24 @@ const handleLogout = async () => {
   }
   router.push({ name: 'login' })
 }
+
+// Watch the dark mode setting and update localStorage
+watch(isDarkMode, (newVal) => {
+  document.body.classList.toggle('dark', newVal)
+  localStorage.setItem('theme', newVal ? 'dark' : 'light')
+})
+
+// Load saved theme preference from localStorage
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'dark') {
+    isDarkMode.value = true
+    document.body.classList.add('dark')
+  } else {
+    isDarkMode.value = false
+    document.body.classList.remove('dark')
+  }
+})
 </script>
 
 <template>
