@@ -14,8 +14,6 @@ const props = defineProps({
 const router = useRouter()
 const authStore = useAuthStore()
 
-const isDarkMode = ref(false) // Track dark mode state
-
 const goTo = (route) => router.push({ name: route })
 
 const handleLogout = async () => {
@@ -26,24 +24,6 @@ const handleLogout = async () => {
   }
   router.push({ name: 'login' })
 }
-
-// Watch the dark mode setting and update localStorage
-watch(isDarkMode, (newVal) => {
-  document.body.classList.toggle('dark', newVal)
-  localStorage.setItem('theme', newVal ? 'dark' : 'light')
-})
-
-// Load saved theme preference from localStorage
-onMounted(() => {
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'dark') {
-    isDarkMode.value = true
-    document.body.classList.add('dark')
-  } else {
-    isDarkMode.value = false
-    document.body.classList.remove('dark')
-  }
-})
 </script>
 
 <template>
@@ -84,41 +64,46 @@ onMounted(() => {
         >
 
         <!-- User Menu -->
-        <v-menu location="bottom end">
-          <template v-slot:activator="{ props }">
-            <v-btn icon v-bind="props">
-              <v-avatar color="orange-darken-2" size="36">
-                <v-icon>mdi-account</v-icon>
-              </v-avatar>
-            </v-btn>
-          </template>
+        <div class="d-flex justify-center align-center">
+          <v-menu location="bottom center">
+            <template v-slot:activator="{ props }">
+              <v-btn icon v-bind="props">
+                <v-avatar color="orange-darken-2" size="36">
+                  <v-icon>mdi-menu</v-icon>
+                </v-avatar>
+              </v-btn>
+            </template>
 
-          <v-list>
-            <v-list-item @click="goTo('profile')">
-              <template v-slot:prepend>
+            <v-list class="d-flex flex-column align-center" id="listbox">
+              <v-list-item @click="goTo('profile')" class="justify-center">
                 <v-icon>mdi-account-circle</v-icon>
-              </template>
-              <v-list-item-title>Profile</v-list-item-title>
-            </v-list-item>
+              </v-list-item>
 
-            <v-list-item @click="goTo('settings')">
-              <template v-slot:prepend>
+              <v-list-item @click="goTo('settings')" class="justify-center">
                 <v-icon>mdi-cog</v-icon>
-              </template>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item>
+              </v-list-item>
 
-            <v-divider></v-divider>
+              <v-divider />
 
-            <v-list-item @click="handleLogout" color="error">
-              <template v-slot:prepend>
+              <v-list-item @click="handleLogout" class="justify-center">
                 <v-icon>mdi-logout</v-icon>
-              </template>
-              <v-list-item-title>Logout</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
       </div>
     </v-container>
   </v-app-bar>
 </template>
+
+<style scoped>
+#listbox {
+  background-color: #e65100;
+  border-radius: 30px;
+  margin-top: 12px;
+}
+.v-list-item {
+  border-radius: 20px;
+  color: white;
+}
+</style>
