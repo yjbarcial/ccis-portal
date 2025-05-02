@@ -32,11 +32,11 @@ const handleLogout = async () => {
       <v-toolbar-title>
         <div class="d-flex align-center" style="cursor: pointer" @click="goTo('dashboard')">
           <v-img
-            src="/images/ccisLogo.png"
+            src="/images/portalLogo.png"
             alt="CCIS Logo"
             max-width="25"
             height="25"
-            class="mr-1"
+            class="mr-2 rounded-circle"
             transition="none"
             cover
           />
