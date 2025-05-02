@@ -1,32 +1,115 @@
 <script setup>
-defineProps({
-  items: {
+import { onMounted, watch, ref } from 'vue'
+
+const props = defineProps({
+  theses: {
     type: Array,
     required: true,
+    default: () => [],
   },
 })
+
+const dialog = ref(false)
+const selectedThesis = ref(null)
+
+onMounted(() => {
+  console.log('ThesesList mounted with theses:', props.theses)
+})
+
+watch(
+  () => props.theses,
+  (newTheses) => {
+    console.log('ThesesList received new theses:', newTheses)
+  },
+  { deep: true },
+)
+
+const showThesisDetails = (thesis) => {
+  selectedThesis.value = thesis
+  dialog.value = true
+}
 </script>
 
+<style scoped>
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+.clickable-title {
+  cursor: pointer;
+}
+
+.clickable-title:hover {
+  color: rgb(var(--v-theme-orange-darken-3));
+}
+</style>
+
 <template>
-  <v-row>
-    <v-col cols="12" md="6" lg="4" v-for="(item, index) in items" :key="index">
-      <v-card class="mb-4" elevation="2">
-        <v-card-title class="font-weight-medium">
-          {{ item.title }}
+  <div v-if="theses.length === 0" class="text-center pa-4">
+    <v-alert type="info"> No theses found. Upload a thesis to get started. </v-alert>
+  </div>
+
+  <v-row v-else>
+    <v-col v-for="(thesis, index) in theses" :key="index" cols="12" md="6" lg="4">
+      <v-card class="h-100">
+        <v-card-title
+          class="text-h6 text-wrap py-2 clickable-title"
+          @click="showThesisDetails(thesis)"
+        >
+          {{ thesis.title }}
         </v-card-title>
-        <v-card-subtitle>{{ item.acad_year }} • {{ item.semester }}</v-card-subtitle>
-        <v-card-actions>
-          <v-btn icon :href="item.file_url_abstract" target="_blank" variant="text">
-            <v-icon>mdi-eye</v-icon>
+
+        <v-card-text>
+          <div class="text-body-2">
+            <p><strong>Academic Year:</strong> {{ thesis.acad_year }}</p>
+            <p><strong>Semester:</strong> {{ thesis.semester }}</p>
+          </div>
+        </v-card-text>
+
+        <v-card-actions class="mt-auto">
+          <v-btn
+            :href="thesis.file_url_abstract"
+            target="_blank"
+            color="orange-darken-3"
+            class="me-2"
+            prepend-icon="mdi-image"
+          >
+            Abstract Image
+          </v-btn>
+          <v-btn
+            :href="thesis.file_url_objectives"
+            target="_blank"
+            color="orange-darken-3"
+            prepend-icon="mdi-image"
+          >
+            Objectives Image
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
-
-    <v-col v-if="items.length === 0">
-      <v-alert type="info" border="start" colored-border>
-        No theses match your filters.
-      </v-alert>
-    </v-col>
   </v-row>
+
+  <!-- Thesis Details Dialog -->
+  <v-dialog v-model="dialog" max-width="800">
+    <v-card v-if="selectedThesis">
+      <v-card-title class="text-h5 pa-4 text-wrap">
+        <div class="w-100">{{ selectedThesis.title }}</div>
+      </v-card-title>
+
+      <v-card-text class="pa-4">
+        <div class="text-subtitle-1 font-weight-bold mb-2">Abstract</div>
+        <div class="text-body-1">{{ selectedThesis.abstract }}</div>
+      </v-card-text>
+
+      <v-card-actions class="pa-4">
+        <v-spacer></v-spacer>
+        <v-btn color="orange-darken-3" variant="text" @click="dialog = false"> Close </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>

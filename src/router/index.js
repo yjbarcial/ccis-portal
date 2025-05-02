@@ -31,7 +31,13 @@ const router = createRouter({
     {
       path: '/theses',
       name: 'theses',
-      component: ThesesView,
+      component: () => import('@/views/system/ThesesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/theses/upload',
+      name: 'upload-thesis',
+      component: () => import('@/views/system/UploadThesisView.vue'),
       meta: { requiresAuth: true },
     },
     {
