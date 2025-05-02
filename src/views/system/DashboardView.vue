@@ -1,10 +1,15 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import { useSyllabiStore } from '@/stores/syllabi'
+import { useThesesStore } from '@/stores/theses'
 
 const router = useRouter()
+const syllabiStore = useSyllabiStore()
+const thesesStore = useThesesStore()
+
 const goTo = (route) => router.push({ name: route })
 
 const handleLogout = () => {
@@ -20,38 +25,15 @@ const selectedSemester = ref(null)
 const yearOptions = ['2024-2025', '2023-2024']
 const semesterOptions = ['1st Semester', '2nd Semester']
 
-const totalSyllabi = ref(12)
-const totalTheses = ref(9)
+const totalSyllabi = computed(() => syllabiStore.syllabi.length)
+const totalTheses = computed(() => thesesStore.theses.length)
 
-const recentSyllabi = ref([
-  {
-    descriptive_title: 'Object-Oriented Programming',
-    course_code: 'CS203',
-    acad_year: '2024-2025',
-    file_url: '/syllabus/oop.pdf',
-  },
-  {
-    descriptive_title: 'Data Structures',
-    course_code: 'CS202',
-    acad_year: '2024-2025',
-    file_url: '/syllabus/ds.pdf',
-  },
-])
+const recentSyllabi = computed(() => syllabiStore.syllabi.slice(0, 2))
+const recentTheses = computed(() => thesesStore.theses.slice(0, 2))
 
-const recentTheses = ref([
-  {
-    title: 'Smart Irrigation Using IoT',
-    acad_year: '2024-2025',
-    semester: '1st Semester',
-    file_url_abstract: '/thesis/irrigation-abstract.jpg',
-  },
-  {
-    title: 'AI Facial Recognition Attendance System',
-    acad_year: '2024-2025',
-    semester: '2nd Semester',
-    file_url_abstract: '/thesis/facial-abstract.jpg',
-  },
-])
+onMounted(async () => {
+  await Promise.all([syllabiStore.getSyllabi(), thesesStore.getTheses()])
+})
 
 const filteredSyllabi = computed(() => {
   return recentSyllabi.value.filter((s) => {
