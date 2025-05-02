@@ -1,81 +1,160 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useTheme } from 'vuetify'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
-const saving = ref(false)
-const settings = ref({
-  emailNotifications: true,
-  pushNotifications: false,
-  theme: 'light',
-})
+const theme = useTheme()
+const isDark = ref(false)
+const notifications = ref(true)
+const emailNotifications = ref(true)
+const loading = ref(false)
 
-const saveSettings = async () => {
-  saving.value = true
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  theme.global.name.value = isDark.value ? 'dark' : 'light'
+  saveSettings()
+}
+
+const saveSettings = () => {
+  loading.value = true
   try {
-    // Implement API call to save settings
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-    // Show success message
-  } catch (error) {
-    // Handle error
+    // Save settings to localStorage
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+    localStorage.setItem('notifications', notifications.value)
+    localStorage.setItem('emailNotifications', emailNotifications.value)
   } finally {
-    saving.value = false
+    loading.value = false
   }
 }
+
+onMounted(() => {
+  // Load settings from localStorage
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme) {
+    isDark.value = savedTheme === 'dark'
+    theme.global.name.value = savedTheme
+  }
+
+  const savedNotifications = localStorage.getItem('notifications')
+  if (savedNotifications) {
+    notifications.value = savedNotifications === 'true'
+  }
+
+  const savedEmailNotifications = localStorage.getItem('emailNotifications')
+  if (savedEmailNotifications) {
+    emailNotifications.value = savedEmailNotifications === 'true'
+  }
+})
 </script>
 
 <template>
   <v-app>
     <app-header title="CCIS Portal" />
-
     <v-main>
-      <v-container>
+      <v-container fluid class="py-6">
         <v-row>
-          <v-col cols="12" md="8" lg="6">
-            <h1 class="text-h4 mb-6">Settings</h1>
-
-            <!-- Notification Settings -->
-            <v-card class="mb-6">
-              <v-card-title>Notification Settings</v-card-title>
-              <v-card-text>
-                <v-switch
-                  v-model="settings.emailNotifications"
-                  label="Email Notifications"
-                  color="orange-darken-4"
-                ></v-switch>
-                <v-switch
-                  v-model="settings.pushNotifications"
-                  label="Push Notifications"
-                  color="orange-darken-4"
-                ></v-switch>
-              </v-card-text>
-            </v-card>
-
-            <!-- Theme Settings -->
-            <v-card class="mb-6">
-              <v-card-title>Theme Settings</v-card-title>
-              <v-card-text>
-                <v-select
-                  v-model="settings.theme"
-                  label="Theme"
-                  :items="['light', 'dark', 'system']"
-                  color="orange-darken-4"
-                ></v-select>
-              </v-card-text>
-            </v-card>
-
-            <!-- Save Button -->
-            <v-btn class="mb-4" color="orange-darken-4" @click="saveSettings" :loading="saving">
-              Save Changes
-            </v-btn>
+          <v-col>
+            <h1 class="text-h4 font-weight-bold mb-1">Settings</h1>
           </v-col>
         </v-row>
 
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
+        <v-row>
+          <v-col cols="12" md="8" lg="6">
+            <v-card class="mb-4">
+              <v-card-title class="text-h6">Appearance</v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-list>
+                  <v-list-item>
+                    <template v-slot:prepend>
+                      <v-icon>mdi-theme-light-dark</v-icon>
+                    </template>
+                    <v-list-item-title>Dark Mode</v-list-item-title>
+                    <template v-slot:append>
+                      <v-switch
+                        v-model="isDark"
+                        color="orange-darken-3"
+                        @change="toggleTheme"
+                        :loading="loading"
+                      />
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mb-4">
+              <v-card-title class="text-h6">Notifications</v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-list>
+                  <v-list-item>
+                    <template v-slot:prepend>
+                      <v-icon>mdi-bell</v-icon>
+                    </template>
+                    <v-list-item-title>Push Notifications</v-list-item-title>
+                    <template v-slot:append>
+                      <v-switch
+                        v-model="notifications"
+                        color="orange-darken-3"
+                        @change="saveSettings"
+                      />
+                    </template>
+                  </v-list-item>
+                  <v-list-item>
+                    <template v-slot:prepend>
+                      <v-icon>mdi-email</v-icon>
+                    </template>
+                    <v-list-item-title>Email Notifications</v-list-item-title>
+                    <template v-slot:append>
+                      <v-switch
+                        v-model="emailNotifications"
+                        color="orange-darken-3"
+                        @change="saveSettings"
+                      />
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+
+            <v-card>
+              <v-card-title class="text-h6">About</v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-list>
+                  <v-list-item>
+                    <template v-slot:prepend>
+                      <v-icon>mdi-information</v-icon>
+                    </template>
+                    <v-list-item-title>Version</v-list-item-title>
+                    <v-list-item-subtitle>1.0.0</v-list-item-subtitle>
+                  </v-list-item>
+                  <v-list-item>
+                    <template v-slot:prepend>
+                      <v-icon>mdi-copyright</v-icon>
+                    </template>
+                    <v-list-item-title>Copyright</v-list-item-title>
+                    <v-list-item-subtitle>© 2024 CCIS Portal</v-list-item-subtitle>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.v-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.v-list-item {
+  min-height: 48px;
+}
+</style>

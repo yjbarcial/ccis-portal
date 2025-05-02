@@ -1,75 +1,117 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { supabase } from '@/utils/supabase'
+import { requiredValidator } from '@/utils/validators'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
+const authStore = useAuthStore()
 const saving = ref(false)
 const changingPassword = ref(false)
 const isEditing = ref(false)
-const showPasswordForm = ref(false)
+const showChangePassword = ref(false)
+const loading = ref(false)
 
 const profile = ref({
-  fullname: '',
+  fullName: '',
   email: '',
   department: '',
   avatar: '',
 })
 
-const passwordForm = ref({
-  current: '',
-  new: '',
-  confirm: '',
-})
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 
-const loadProfile = () => {
-  const user = JSON.parse(localStorage.getItem('user'))
-  if (user) {
-    profile.value.fullName = user.fullname || ''
-    profile.value.email = user.email || ''
-    profile.value.department = user.employeeID || ''
+const passwordValidator = (value) => {
+  if (!value) return 'Password is required'
+  if (value.length < 8) return 'Password must be at least 8 characters'
+  if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter'
+  if (!/[a-z]/.test(value)) return 'Password must contain at least one lowercase letter'
+  if (!/[0-9]/.test(value)) return 'Password must contain at least one number'
+  return true
+}
 
-    profile.value.avatar = user.avatar || ''
-  } else {
-    profile.value.avatar = ''
+const passwordMatchValidator = (value) => {
+  if (value !== newPassword.value) return 'Passwords do not match'
+  return true
+}
+
+const loadProfile = async () => {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (user) {
+      profile.value.fullName = user.user_metadata?.full_name || ''
+      profile.value.email = user.email || ''
+      profile.value.department = user.user_metadata?.department || ''
+      profile.value.avatar = user.user_metadata?.avatar || ''
+    }
+  } catch (error) {
+    console.error('Error loading profile:', error)
   }
 }
 
-const saveProfile = () => {
-  const userData = {
-    fullname: profile.value.fullName,
-    email: profile.value.email,
-    employeeID: profile.value.department,
-    avatar: profile.value.avatar, // Save avatar data
+const saveProfile = async () => {
+  saving.value = true
+  try {
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        full_name: profile.value.fullName,
+        department: profile.value.department,
+        avatar: profile.value.avatar,
+      },
+    })
+    if (error) throw error
+    isEditing.value = false
+  } catch (error) {
+    console.error('Error saving profile:', error)
+  } finally {
+    saving.value = false
   }
-  localStorage.setItem('user', JSON.stringify(userData))
-  isEditing.value = false
 }
 
 const changePassword = async () => {
-  if (passwordForm.value.new !== passwordForm.value.confirm) {
-    return
-  }
-
   changingPassword.value = true
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    passwordForm.value = { current: '', new: '', confirm: '' }
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword.value,
+    })
+    if (error) throw error
+
+    // Clear the form
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+    showChangePassword.value = false
   } catch (error) {
+    console.error('Error changing password:', error)
   } finally {
     changingPassword.value = false
   }
 }
 
-const uploadAvatar = (event) => {
+const uploadAvatar = async (event) => {
   const file = event.target.files[0]
   if (file) {
-    const avatarURL = URL.createObjectURL(file)
-    profile.value.avatar = avatarURL
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${authStore.user.id}/${Date.now()}.${fileExt}`
 
-    const user = JSON.parse(localStorage.getItem('user'))
-    if (user) {
-      user.avatar = avatarURL
-      localStorage.setItem('user', JSON.stringify(user))
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, file)
+
+      if (uploadError) throw uploadError
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('avatars').getPublicUrl(fileName)
+
+      profile.value.avatar = publicUrl
+      await saveProfile()
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
     }
   }
 }
@@ -102,174 +144,187 @@ onMounted(() => {
 <template>
   <v-app>
     <app-header title="CCIS Portal" />
-
     <v-main>
-      <v-container>
-        <h1 class="text-h4 mb-6">Profile</h1>
+      <v-container fluid class="py-6">
+        <v-row>
+          <v-col>
+            <h1 class="text-h4 font-weight-bold mb-1">Profile</h1>
+          </v-col>
+        </v-row>
 
         <v-row>
-          <v-col cols="12" md="8" lg="4">
-            <!-- Profile Information -->
-            <v-card class="mb-6">
-              <v-card-text>
-                <v-row>
-                  <v-col cols="12" class="text-center mb-4">
-                    <!-- Clickable Avatar -->
-                    <div
-                      style="
-                        cursor: pointer;
-                        display: inline-block;
-                        border-radius: 50%;
-                        overflow: hidden;
-                        width: 120px;
-                        height: 120px;
-                      "
-                      @click="$refs.fileInput.click()"
-                    >
-                      <v-img
-                        v-if="profile.avatar"
-                        :src="profile.avatar"
-                        cover
-                        width="120"
-                        height="120"
-                      />
-                      <v-avatar v-else size="120" color="orange-darken-2">
-                        <v-icon size="48">mdi-account</v-icon>
-                      </v-avatar>
-                    </div>
-
-                    <!-- Hidden File Input -->
-                    <input
-                      ref="fileInput"
-                      type="file"
-                      accept="image/*"
-                      style="display: none"
-                      @change="uploadAvatar"
-                    />
-
-                    <!-- Full Name -->
-                    <v-row>
-                      <v-col cols="12">
-                        <div v-if="!isEditing" class="font-weight-bold">
-                          {{ profile.fullName }}
-                        </div>
-                        <v-text-field
-                          v-else
-                          v-model="profile.fullName"
-                          label="Full Name"
-                          hide-details
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <!-- Email -->
-                    <v-row>
-                      <v-col cols="12">
-                        <div v-if="!isEditing">{{ profile.email }}</div>
-                        <v-text-field
-                          v-else
-                          v-model="profile.email"
-                          label="Email"
-                          hide-details
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <!-- Department -->
-                    <v-row>
-                      <v-col cols="12">
-                        <div v-if="!isEditing">{{ profile.department }}</div>
-                        <v-text-field
-                          v-else
-                          v-model="profile.department"
-                          label="Department"
-                          hide-details
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <!-- Buttons side by side -->
-                    <v-row class="mt-4" justify="center">
-                      <v-col cols="6" class="text-end">
-                        <v-btn v-if="!isEditing" color="orange-darken-2" @click="isEditing = true">
-                          Edit Profile
-                        </v-btn>
-                        <v-btn v-else color="orange-darken-2" @click="saveProfile">
-                          Save Changes
-                        </v-btn>
-                      </v-col>
-
-                      <v-col cols="6" class="text-start">
-                        <v-btn
-                          color="orange-darken-4"
-                          variant="outlined"
-                          @click="showPasswordForm = !showPasswordForm"
-                        >
-                          {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
+          <v-col cols="12" md="4">
+            <v-card class="profile-card mb-4">
+              <v-card-text class="text-center">
+                <v-avatar
+                  :image="profile.avatar"
+                  size="120"
+                  class="mb-4"
+                  @click="triggerFileInput"
+                  style="cursor: pointer"
+                >
+                  <v-icon v-if="!profile.avatar" size="64">mdi-account</v-icon>
+                </v-avatar>
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/*"
+                  style="display: none"
+                  @change="uploadAvatar"
+                />
+                <div class="text-h6 font-weight-bold">{{ profile.fullName }}</div>
+                <div class="text-subtitle-1 text-medium-emphasis">{{ profile.department }}</div>
               </v-card-text>
             </v-card>
 
-            <!-- Change Password Card -->
-            <v-card class="mb-4" v-if="showPasswordForm">
-              <v-card-title>Change Password</v-card-title>
-              <v-card-text>
-                <v-form @submit.prevent="changePassword">
-                  <v-text-field
-                    v-model="passwordForm.current"
-                    label="Current Password"
-                    type="password"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="passwordForm.new"
-                    label="New Password"
-                    type="password"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="passwordForm.confirm"
-                    label="Confirm New Password"
-                    type="password"
-                    required
-                    color="orange-darken-4"
-                  ></v-text-field>
-
-                  <v-btn
-                    type="submit"
-                    color="orange-darken-4"
-                    :loading="changingPassword"
-                    class="mt-4"
-                  >
-                    Save Changes
-                  </v-btn>
-                </v-form>
-              </v-card-text>
+            <v-card class="mb-4">
+              <v-card-title class="text-h6">Account Settings</v-card-title>
+              <v-divider />
+              <v-list density="compact">
+                <v-list-item
+                  prepend-icon="mdi-account-edit"
+                  title="Edit Profile"
+                  @click="isEditing = true"
+                />
+                <v-list-item
+                  prepend-icon="mdi-lock"
+                  title="Change Password"
+                  @click="showChangePassword = true"
+                />
+              </v-list>
             </v-card>
           </v-col>
 
-          <v-col cols="12" md="6" lg="8">
-            <v-card class="mb-6">
+          <v-col cols="12" md="8">
+            <v-card>
+              <v-card-title class="text-h6">Profile Information</v-card-title>
+              <v-divider />
               <v-card-text>
-                <h2 class="text-center mb-4">About Me</h2>
+                <v-form ref="form" @submit.prevent="saveProfile">
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="profile.fullName"
+                        label="Full Name"
+                        :readonly="!isEditing"
+                        variant="outlined"
+                        density="comfortable"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="profile.email"
+                        label="Email"
+                        readonly
+                        variant="outlined"
+                        density="comfortable"
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="profile.department"
+                        label="Department"
+                        :readonly="!isEditing"
+                        variant="outlined"
+                        density="comfortable"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="profile.position"
+                        label="Position"
+                        :readonly="!isEditing"
+                        variant="outlined"
+                        density="comfortable"
+                      />
+                    </v-col>
+                  </v-row>
+
+                  <v-row v-if="isEditing">
+                    <v-col cols="12" class="text-right">
+                      <v-btn
+                        color="orange-darken-3"
+                        variant="text"
+                        @click="isEditing = false"
+                        class="me-2"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn color="orange-darken-3" type="submit" :loading="loading">
+                        Save Changes
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-form>
               </v-card-text>
             </v-card>
           </v-col>
         </v-row>
 
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
+        <!-- Change Password Dialog -->
+        <v-dialog v-model="showChangePassword" max-width="500">
+          <v-card>
+            <v-card-title class="text-h6">Change Password</v-card-title>
+            <v-divider />
+            <v-card-text>
+              <v-form ref="passwordForm" @submit.prevent="changePassword">
+                <v-text-field
+                  v-model="currentPassword"
+                  label="Current Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                  :rules="[requiredValidator]"
+                />
+                <v-text-field
+                  v-model="newPassword"
+                  label="New Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                  :rules="[requiredValidator, passwordValidator]"
+                />
+                <v-text-field
+                  v-model="confirmPassword"
+                  label="Confirm New Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                  :rules="[requiredValidator, passwordMatchValidator]"
+                />
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn color="orange-darken-3" variant="text" @click="showChangePassword = false">
+                Cancel
+              </v-btn>
+              <v-btn color="orange-darken-3" @click="changePassword" :loading="loading">
+                Change Password
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.profile-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.v-avatar {
+  border: 3px solid rgb(var(--v-theme-orange-darken-3));
+  transition: transform 0.3s ease;
+}
+
+.v-avatar:hover {
+  transform: scale(1.05);
+}
+</style>
