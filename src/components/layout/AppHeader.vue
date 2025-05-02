@@ -46,7 +46,12 @@ const props = defineProps({
 
       <!-- Navigation Buttons -->
       <div class="d-flex align-center gap-4">
-        <v-btn variant="text" @click="goTo('dashboard')" class="text-white" prepend-icon="mdi-home">
+        <v-btn
+          variant="text"
+          @click="goTo('dashboard')"
+          class="text-white"
+          prepend-icon="mdi-widgets"
+        >
           Dashboard
         </v-btn>
         <v-btn
@@ -125,7 +130,7 @@ const props = defineProps({
 /* Tonal-style tooltip */
 ::v-deep(.custom-tooltip.v-overlay__content) {
   background-color: #fff3e0 !important; /* light orange */
-  color: #e65100 !important;            /* dark orange text */
+  color: #e65100 !important; /* dark orange text */
   font-weight: 500;
   font-size: 13px;
   padding: 6px 12px;
