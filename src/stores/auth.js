@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+import { supabase } from '@/utils/supabase'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
@@ -7,12 +9,15 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   actions: {
+    async fetchUser() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      this.user = user
+    },
     async logout() {
-      // Clear user data
       this.user = null
       this.token = null
-
-      // Remove token from localStorage
       localStorage.removeItem('token')
     },
   },

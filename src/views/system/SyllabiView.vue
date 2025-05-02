@@ -1,53 +1,78 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import SyllabiList from '@/components/system/SyllabiList.vue'
+import { useSyllabiStore } from '@/stores/syllabi'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
+const syllabiStore = useSyllabiStore()
 const router = useRouter()
-const goTo = (route) => router.push({ name: route })
 
 const search = ref('')
 const selectedYear = ref(null)
 const selectedSemester = ref(null)
+const loading = ref(false)
+const error = ref(null)
 
 const yearOptions = ['2024-2025', '2023-2024']
 const semesterOptions = ['1st Semester', '2nd Semester']
 
-// Sample data
-const syllabi = ref([
-  {
-    descriptive_title: 'OOP',
-    course_code: 'CS203',
-    acad_year: '2024-2025',
-    semester: '1st Semester',
-    file_url: '/syllabus/oop.pdf',
-  },
-  {
-    descriptive_title: 'Data Structures',
-    course_code: 'CS202',
-    acad_year: '2023-2024',
-    semester: '2nd Semester',
-    file_url: '/syllabus/ds.pdf',
-  },
-])
+onMounted(async () => {
+  if (!authStore.user?.id) {
+    console.error('User not authenticated')
+    error.value = 'Please log in to view syllabi'
+    return
+  }
 
-const filteredSyllabi = computed(() =>
-  syllabi.value.filter((s) => {
+  loading.value = true
+  error.value = null
+
+  try {
+    console.log('Fetching syllabi for user:', authStore.user.id)
+    await syllabiStore.getSyllabi()
+    console.log('Syllabi fetched successfully')
+  } catch (err) {
+    console.error('Error fetching syllabi:', err)
+    error.value = 'Failed to load syllabi. Please try again.'
+  } finally {
+    loading.value = false
+  }
+})
+
+const goTo = (route) => router.push({ name: route })
+
+const filteredSyllabi = computed(() => {
+  console.log('Filtering syllabi:', syllabiStore.syllabi)
+  return syllabiStore.syllabi.filter((s) => {
     return (
       (!search.value || s.descriptive_title.toLowerCase().includes(search.value.toLowerCase())) &&
       (!selectedYear.value || s.acad_year === selectedYear.value) &&
       (!selectedSemester.value || s.semester === selectedSemester.value)
     )
-  }),
-)
+  })
+})
+
+const onRetrieveFromApi = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    await syllabiStore.getSyllabi()
+  } catch (err) {
+    console.error('Error refreshing syllabi:', err)
+    error.value = 'Failed to refresh syllabi. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
   <v-app>
     <app-header title="CCIS Portal" />
-
     <v-main>
       <v-container fluid class="py-6">
         <!-- Title and Upload Button -->
@@ -62,16 +87,39 @@ const filteredSyllabi = computed(() =>
               color="orange-darken-3"
               size="small"
               @click="goTo('upload-syllabus')"
-              class="text-capitalize"
+              class="text-capitalize me-3"
             >
               <v-icon start>mdi-plus</v-icon>
               Upload Syllabus
             </v-btn>
+            <v-btn
+              variant="flat"
+              density="comfortable"
+              color="orange-darken-3"
+              size="small"
+              @click="onRetrieveFromApi"
+              icon="mdi-refresh"
+              :loading="loading"
+            >
+            </v-btn>
           </v-col>
         </v-row>
 
+        <!-- Error Alert -->
+        <v-alert v-if="error" type="error" class="mb-4">
+          {{ error }}
+        </v-alert>
+
+        <!-- Loading State -->
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          color="orange-darken-3"
+          class="d-flex mx-auto my-4"
+        ></v-progress-circular>
+
         <!-- Filters -->
-        <v-row class="mb-4" dense>
+        <v-row v-if="!loading" class="mb-4" dense>
           <v-col cols="12" md="4">
             <v-text-field
               v-model="search"
@@ -93,8 +141,8 @@ const filteredSyllabi = computed(() =>
           </v-col>
         </v-row>
 
-        <!-- Syllabi List Presentation -->
-        <SyllabiList :items="filteredSyllabi" />
+        <!-- Syllabi List -->
+        <SyllabiList v-if="!loading" :syllabi="filteredSyllabi" />
 
         <!-- Footer -->
         <div class="my-1 text-black">

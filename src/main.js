@@ -1,9 +1,5 @@
-// import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
-// Vuetify
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -13,17 +9,31 @@ import * as directives from 'vuetify/directives'
 import App from './App.vue'
 import router from './router'
 
+// Stores
+import { useAuthStore } from '@/stores/auth'
+
 const app = createApp(App)
+
+const pinia = createPinia()
+app.use(pinia)
 
 const vuetify = createVuetify({
   components,
   icons: {
-    defaultSet: 'mdi', // This is already the default value - only for display purposes
+    defaultSet: 'mdi',
   },
   directives,
 })
 
-app.use(createPinia())
 app.use(router)
 app.use(vuetify)
-app.mount('#app')
+
+const authStore = useAuthStore()
+
+// Wait for user data to be fetched before mounting
+;(async () => {
+  await authStore.fetchUser()
+  console.log('User on app load:', authStore.user)
+
+  app.mount('#app')
+})()
