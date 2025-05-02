@@ -6,6 +6,7 @@ import SyllabiView from '@/views/system/SyllabiView.vue'
 import UploadSyllabusView from '@/views/system/UploadSyllabusView.vue'
 import ThesesView from '@/views/system/ThesesView.vue'
 import { isAuthenticated } from '@/utils/supabase'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -30,7 +31,13 @@ const router = createRouter({
     {
       path: '/theses',
       name: 'theses',
-      component: ThesesView,
+      component: () => import('@/views/system/ThesesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/theses/upload',
+      name: 'upload-thesis',
+      component: () => import('@/views/system/UploadThesisView.vue'),
       meta: { requiresAuth: true },
     },
     {
@@ -57,32 +64,32 @@ const router = createRouter({
       component: () => import('@/views/system/SettingsView.vue'),
       meta: { requiresAuth: true },
     },
+    // Catch-all 404 route
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/errors/NotFoundView.vue'),
+      meta: { requiresAuth: true }, // Set to false if you want guests to see 404 too
+    },
   ],
 })
 
 router.beforeEach(async (to) => {
   const isLoggedIn = await isAuthenticated()
 
-  //Redirect to appropriate page if accessing home route
   if (to.name === 'home') {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
   }
 
-  //if logged in, prevent access to login or register pages
-  if (isLoggedIn && to.meta.requiresAuth == false) {
-    // redirect the user to the dashboard page
+  if (isLoggedIn && to.meta.requiresAuth === false) {
     return { name: 'dashboard' }
   }
 
-  //Check  if the user is logged in
   if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
-    // redirect the user to the dashboard page
     return { name: 'dashboard' }
   }
 
-  //if not logged in and going to the system pages
   if (!isLoggedIn && to.meta.requiresAuth) {
-    //redirect the user to the login page
     return { name: 'login' }
   }
 })

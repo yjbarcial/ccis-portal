@@ -1,21 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSyllabiStore } from '@/stores/syllabi'
-import { useAuthStore } from '@/stores/auth'
-import { requiredValidator } from '@/utils/validators'
 import { supabase } from '@/utils/supabase'
+import { useThesesStore } from '@/stores/theses'
+import { requiredValidator } from '@/utils/validators'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import { useAuthStore } from '@/stores/auth'
 
-const syllabiStore = useSyllabiStore()
-const authStore = useAuthStore()
+const thesesStore = useThesesStore()
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Form fields
-const descriptiveTitle = ref('')
-const courseCode = ref('')
-const file = ref(null)
+const title = ref('')
+const abstract = ref('')
+const abstractImage = ref(null)
+const objectivesImage = ref(null)
 const acadYear = ref(null)
 const semester = ref(null)
 
@@ -32,14 +33,27 @@ const form = ref(null)
 const loading = ref(false)
 const error = ref('')
 const uploadProgress = ref(0)
+const abstractExpanded = ref(false)
 
-const handleFileChange = (event) => {
+const canUpload = computed(() => {
+  return authStore.user?.role === 'admin' || authStore.user?.role === 'faculty'
+})
+
+const handleImageChange = (event, type) => {
   const selectedFile = event.target.files[0]
-  if (selectedFile && selectedFile.type === 'application/pdf') {
-    file.value = selectedFile
+  if (selectedFile && (selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/png')) {
+    if (type === 'abstract') {
+      abstractImage.value = selectedFile
+    } else {
+      objectivesImage.value = selectedFile
+    }
   } else {
-    error.value = 'Please select a PDF file'
-    file.value = null
+    error.value = 'Please select a valid image file (JPEG or PNG)'
+    if (type === 'abstract') {
+      abstractImage.value = null
+    } else {
+      objectivesImage.value = null
+    }
   }
 }
 
@@ -52,8 +66,8 @@ const handleSubmit = async () => {
     return
   }
 
-  if (!file.value) {
-    error.value = 'Please select a PDF file to upload'
+  if (!abstractImage.value || !objectivesImage.value) {
+    error.value = 'Please upload both abstract and objectives images'
     return
   }
 
@@ -61,38 +75,54 @@ const handleSubmit = async () => {
   uploadProgress.value = 0
 
   try {
-    // Generate a unique filename
-    const fileExt = file.value.name.split('.').pop()
-    const fileName = `${authStore.user.id}/${Date.now()}.${fileExt}`
+    // Generate unique filenames
+    const abstractFileName = `abstract_${Date.now()}.${abstractImage.value.name.split('.').pop()}`
+    const objectivesFileName = `objectives_${Date.now()}.${objectivesImage.value.name.split('.').pop()}`
 
-    // Upload file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('syllabi')
-      .upload(fileName, file.value, {
+    // Upload abstract image
+    const { data: abstractUploadData, error: abstractUploadError } = await supabase.storage
+      .from('theses')
+      .upload(abstractFileName, abstractImage.value, {
         cacheControl: '3600',
         upsert: false,
-        onUploadProgress: (progress) => {
-          uploadProgress.value = (progress.loaded / progress.total) * 100
-        },
       })
 
-    if (uploadError) throw uploadError
+    if (abstractUploadError) throw abstractUploadError
 
-    // Get the public URL
+    // Upload objectives image
+    const { data: objectivesUploadData, error: objectivesUploadError } = await supabase.storage
+      .from('theses')
+      .upload(objectivesFileName, objectivesImage.value, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+
+    if (objectivesUploadError) throw objectivesUploadError
+
+    // Get public URLs
     const {
-      data: { publicUrl },
-    } = supabase.storage.from('syllabi').getPublicUrl(fileName)
+      data: { publicUrl: abstractUrl },
+    } = supabase.storage.from('theses').getPublicUrl(abstractFileName)
 
-    // Insert syllabus record
-    await syllabiStore.insertSyllabus({
-      descriptive_title: descriptiveTitle.value,
-      course_code: courseCode.value,
-      file_url: publicUrl,
+    const {
+      data: { publicUrl: objectivesUrl },
+    } = supabase.storage.from('theses').getPublicUrl(objectivesFileName)
+
+    // Insert thesis record
+    const { error: insertError } = await supabase.from('theses').insert({
+      title: title.value,
+      abstract: abstract.value,
+      file_url_abstract: abstractUrl,
+      file_url_objectives: objectivesUrl,
       acad_year: acadYear.value,
       semester: semester.value,
     })
 
-    router.push({ name: 'syllabi' })
+    if (insertError) throw insertError
+
+    // Refresh theses list
+    await thesesStore.getTheses()
+    router.push({ name: 'theses' })
   } catch (err) {
     console.error('Upload error:', err)
     error.value = 'Upload failed. Please try again.'
@@ -111,7 +141,7 @@ const handleSubmit = async () => {
         <!-- Title Section -->
         <v-row class="mb-4" align="center">
           <v-col cols="auto">
-            <h1 class="text-h5 font-weight-bold">Upload Syllabus</h1>
+            <h1 class="text-h5 font-weight-bold">Upload Thesis</h1>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="auto">
@@ -120,44 +150,57 @@ const handleSubmit = async () => {
               density="comfortable"
               color="orange-darken-3"
               size="small"
-              @click="router.push({ name: 'syllabi' })"
+              @click="router.push({ name: 'theses' })"
               icon="mdi-arrow-left"
             >
             </v-btn>
           </v-col>
         </v-row>
 
-        <v-card class="mx-auto" max-width="800" elevation="2">
+        <v-alert v-if="!canUpload" type="warning" class="mb-4">
+          You don't have permission to upload theses. Please contact an administrator.
+        </v-alert>
+
+        <v-card v-else class="mx-auto" max-width="800" elevation="2">
           <v-card-text>
             <v-form ref="form" @submit.prevent="handleSubmit">
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="descriptiveTitle"
-                    label="Descriptive Title"
-                    :rules="rules.required"
-                    class="mb-4"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="courseCode"
-                    label="Course Code"
-                    :rules="rules.required"
-                    class="mb-4"
-                  />
-                </v-col>
-              </v-row>
+              <v-text-field
+                v-model="title"
+                label="Thesis Title"
+                :rules="rules.required"
+                class="mb-4"
+              />
+
+              <v-textarea
+                v-model="abstract"
+                label="Abstract"
+                :rules="rules.required"
+                rows="3"
+                auto-grow
+                class="mb-4"
+              />
 
               <v-row>
                 <v-col cols="12" md="6">
                   <v-file-input
-                    v-model="file"
-                    label="Syllabus PDF"
-                    accept=".pdf"
+                    v-model="abstractImage"
+                    label="Abstract Image"
+                    accept="image/jpeg,image/png"
                     :rules="rules.required"
-                    @change="handleFileChange"
-                    prepend-icon="mdi-file-pdf-box"
+                    @change="(e) => handleImageChange(e, 'abstract')"
+                    prepend-icon="mdi-image"
+                    :loading="loading"
+                    class="mb-4"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-file-input
+                    v-model="objectivesImage"
+                    label="Objectives Image"
+                    accept="image/jpeg,image/png"
+                    :rules="rules.required"
+                    @change="(e) => handleImageChange(e, 'objectives')"
+                    prepend-icon="mdi-image"
                     :loading="loading"
                     class="mb-4"
                   />
@@ -209,7 +252,7 @@ const handleSubmit = async () => {
                   :loading="loading"
                   class="px-6"
                 >
-                  Upload Syllabus
+                  Upload Thesis
                 </v-btn>
               </div>
             </v-form>

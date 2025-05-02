@@ -23,13 +23,13 @@ const { mobile } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(1px);
+        filter: brightness(0.5) blur(0.5px);
       "
     ></v-img>
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
-      <v-col cols="12" md="5" class="text-center">
+      <v-col cols="12" md="5" class="text-center mb-4">
         <!-- Logo -->
         <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
 
@@ -53,14 +53,24 @@ const { mobile } = useDisplay()
       </v-col>
     </v-row>
 
-    <!-- Footer -->
     <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
-          <span class="text-white">&copy; 2025 CCIS. All Rights Reserved.</span>
+          <span class="text-white">
+            &copy; 2025
+            <a
+              href="https://www.facebook.com/cciscarsu"
+              class="text-orange text-decoration-none"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CCIS.</a
+            >
+            All rights reserved.
+          </span>
         </v-col>
       </v-row>
     </v-footer>

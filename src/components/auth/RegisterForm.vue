@@ -35,7 +35,7 @@ const refVForm = ref()
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault }
   formAction.value.formProcess = true
-  // alert(formData.value.employeeID)
+
   const { data, error } = await supabase.auth.signUp({
     email: formData.value.email,
     employeeID: formData.value.employeeID,
@@ -46,6 +46,7 @@ const onSubmit = async () => {
       },
     },
   })
+
   if (error) {
     console.log(error)
     formAction.value.formErrorMessage = error.message
@@ -53,9 +54,20 @@ const onSubmit = async () => {
   } else if (data) {
     console.log(data)
     formAction.value.formSuccessMessage = 'You have registered an account!'
-    // Add here more actions if you want
+
+    // Save user data to localStorage (optional)
+    localStorage.setItem(
+      'user',
+      JSON.stringify({
+        fullname: formData.value.fullname,
+        email: formData.value.email,
+        employeeID: formData.value.employeeID,
+      }),
+    )
+
+    // Reset form and navigate to dashboard
     refVForm.value?.reset()
-    router.replace('/dashboard')
+    router.replace('/dashboard') // Redirect to the dashboard page
   }
 
   formAction.value.formProcess = false

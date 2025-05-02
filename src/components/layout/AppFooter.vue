@@ -20,10 +20,20 @@ import { ref } from 'vue'
       <v-col class="text-center">
         <hr style="border: 0; height: 1px; background-color: orange" />
         <br />
-        <v-avatar size="24" class="mr-2">
+        <v-avatar size="28" class="mr-2 mb-1">
           <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
         </v-avatar>
-        <span>&copy; 2025 CCIS. All Rights Reserved.</span>
+        <span>
+          &copy; 2025
+          <a
+            href="https://www.facebook.com/cciscarsu"
+            class="text-orange text-decoration-none"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            CCIS </a
+          >. All rights reserved.
+        </span>
       </v-col>
     </v-row>
   </v-footer>

@@ -1,10 +1,10 @@
 <script setup>
 import AlertNotification from '@/components/common/AlertNotification.vue'
-import { supabase } from '@/utils/supabase';
+import { supabase } from '@/utils/supabase'
 import { ref } from 'vue'
 import { requiredValidator, passwordValidator } from '@/utils/validators'
 import { isAuthenticated } from '@/utils/supabase'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -14,7 +14,6 @@ const formActionDefault = {
   formStatus: null,
   formProcess: false,
 }
-
 
 const formDataDefault = {
   employeeID: '',
@@ -29,7 +28,6 @@ const formAction = ref({
   ...formActionDefault,
 })
 
-
 const isPasswordvisible = ref(false)
 const refVForm = ref()
 
@@ -40,10 +38,10 @@ const onLogin = async () => {
   formAction.value.formProcess = true
 
   const { data, error } = await supabase.auth.signInWithPassword({
-  email: formData.value.employeeID,
-  password: formData.value.password
-})
-if (error) {
+    email: formData.value.employeeID,
+    password: formData.value.password,
+  })
+  if (error) {
     console.log(error)
     formAction.value.formErrorMessage = error.message
     formAction.value.formStatus = error.status
@@ -53,8 +51,8 @@ if (error) {
     // Add here more actions if you want
     router.replace('/dashboard')
   }
-refVForm.value?.reset()
-formAction.value.formProcess = false
+  refVForm.value?.reset()
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -70,8 +68,7 @@ const getLoggedStatus = async () => {
 </script>
 
 <template>
-
-<AlertNotification
+  <AlertNotification
     :form-success-message="formAction.formSuccessMessage"
     :form-error-message="formAction.formErrorMessage"
   ></AlertNotification>
@@ -115,7 +112,17 @@ const getLoggedStatus = async () => {
     </div>
 
     <!-- Login Button -->
-    <v-btn type="submit" block color="deep-orange" size="large" elevation="3"> Log In </v-btn>
+    <v-btn
+      type="submit"
+      block
+      color="deep-orange"
+      size="large"
+      elevation="3"
+      :loading="loading"
+      @click="login"
+    >
+      Log In
+    </v-btn>
 
     <!-- Divider -->
     <v-divider class="my-5"></v-divider>
