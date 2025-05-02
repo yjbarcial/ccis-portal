@@ -16,20 +16,9 @@ export const useSyllabiStore = defineStore('syllabi', () => {
 
   // Retrieve from Supabase
   async function getSyllabi() {
-    if (!authStore.user || !authStore.user.id) {
-      console.error('User is not authenticated')
-      return
-    }
-
-    console.log('Starting getSyllabi for user:', authStore.user.id)
+    console.log('Fetching all syllabi...')
 
     try {
-      console.log('Making Supabase query with params:', {
-        table: 'syllabi',
-        user_id: authStore.user.id,
-      })
-
-      // Temporarily remove the user_id filter to test
       const { data, error } = await supabase
         .from('syllabi')
         .select('*')
@@ -44,7 +33,6 @@ export const useSyllabiStore = defineStore('syllabi', () => {
         data,
         count: data?.length,
         firstItem: data?.[0],
-        query: `SELECT * FROM syllabi ORDER BY created_at DESC`,
       })
 
       syllabi.value = data || []
@@ -67,7 +55,7 @@ export const useSyllabiStore = defineStore('syllabi', () => {
 
     const fullData = {
       ...syllabusData,
-      user_id: authStore.user.id, // Ensure each syllabus is associated with the authenticated user
+      user_id: authStore.user.id, // Still associate with the uploading user
     }
 
     const { error } = await supabase.from('syllabi').insert(fullData)
