@@ -1,14 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import { useThesesStore } from '@/stores/theses'
 import { requiredValidator } from '@/utils/validators'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const thesesStore = useThesesStore()
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Form fields
 const title = ref('')
@@ -32,6 +34,10 @@ const loading = ref(false)
 const error = ref('')
 const uploadProgress = ref(0)
 const abstractExpanded = ref(false)
+
+const canUpload = computed(() => {
+  return authStore.user?.role === 'admin' || authStore.user?.role === 'faculty'
+})
 
 const handleImageChange = (event, type) => {
   const selectedFile = event.target.files[0]
@@ -151,7 +157,11 @@ const handleSubmit = async () => {
           </v-col>
         </v-row>
 
-        <v-card class="mx-auto" max-width="800" elevation="2">
+        <v-alert v-if="!canUpload" type="warning" class="mb-4">
+          You don't have permission to upload theses. Please contact an administrator.
+        </v-alert>
+
+        <v-card v-else class="mx-auto" max-width="800" elevation="2">
           <v-card-text>
             <v-form ref="form" @submit.prevent="handleSubmit">
               <v-text-field
