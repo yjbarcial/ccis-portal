@@ -17,6 +17,16 @@ const statistics = ref({
   recentUploads: [],
 })
 
+// Add new state for thesis upload
+const thesisForm = ref({
+  title: '',
+  abstract: '',
+  abstractImage: null,
+  objectivesImage: null,
+  acadYear: null,
+  semester: null,
+})
+
 const users = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -24,6 +34,10 @@ const search = ref('')
 const statusFilter = ref('all')
 const departmentFilter = ref('all')
 const sortBy = ref('created_at')
+
+const uploadProgress = ref(0)
+const isUploading = ref(false)
+const uploadError = ref(null)
 
 // Departments for filtering
 const departments = [
@@ -178,6 +192,131 @@ const viewUserDetails = (userId) => {
 const goTo = (route, params = {}) => {
   router.push({ name: route, params })
 }
+
+// Add thesis upload handler
+const handleThesisUpload = async () => {
+  if (!thesisForm.value.title || !thesisForm.value.abstract) {
+    uploadError.value = 'Please fill in all required fields'
+    return
+  }
+
+  isUploading.value = true
+  uploadError.value = null
+
+  try {
+    // Get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error('User not authenticated')
+
+    // Upload abstract image if provided
+    let abstractImageUrl = null
+    if (thesisForm.value.abstractImage) {
+      const fileExt = thesisForm.value.abstractImage.name.split('.').pop()
+      const fileName = `abstracts/${user.id}/${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('theses')
+        .upload(fileName, thesisForm.value.abstractImage)
+      if (uploadError) throw uploadError
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('theses').getPublicUrl(fileName)
+      abstractImageUrl = publicUrl
+    }
+
+    // Upload objectives image if provided
+    let objectivesImageUrl = null
+    if (thesisForm.value.objectivesImage) {
+      const fileExt = thesisForm.value.objectivesImage.name.split('.').pop()
+      const fileName = `objectives/${user.id}/${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from('theses')
+        .upload(fileName, thesisForm.value.objectivesImage)
+      if (uploadError) throw uploadError
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('theses').getPublicUrl(fileName)
+      objectivesImageUrl = publicUrl
+    }
+
+    // Insert thesis record
+    const { error: insertError } = await supabase.from('theses').insert({
+      title: thesisForm.value.title,
+      abstract: thesisForm.value.abstract,
+      abstract_image: abstractImageUrl,
+      objectives_image: objectivesImageUrl,
+      acad_year: thesisForm.value.acadYear,
+      semester: thesisForm.value.semester,
+      user_id: user.id,
+      status: 'approved', // Auto-approve admin uploads
+    })
+
+    if (insertError) throw insertError
+
+    // Reset form
+    thesisForm.value = {
+      title: '',
+      abstract: '',
+      abstractImage: null,
+      objectivesImage: null,
+      acadYear: null,
+      semester: null,
+    }
+
+    // Refresh statistics
+    await fetchStatistics()
+  } catch (err) {
+    console.error('Error uploading thesis:', err)
+    uploadError.value = 'Failed to upload thesis. Please try again.'
+  } finally {
+    isUploading.value = false
+    uploadProgress.value = 0
+  }
+}
+
+// Add image change handler
+const handleImageChange = (event, type) => {
+  const file = event.target.files[0]
+  if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+    if (type === 'abstract') {
+      thesisForm.value.abstractImage = file
+    } else {
+      thesisForm.value.objectivesImage = file
+    }
+  } else {
+    uploadError.value = 'Please select a valid image file (JPEG or PNG)'
+  }
+}
+
+// Add fetch statistics function
+const fetchStatistics = async () => {
+  try {
+    // Fetch total theses
+    const { count: thesisCount } = await supabase
+      .from('theses')
+      .select('*', { count: 'exact', head: true })
+    statistics.value.totalTheses = thesisCount || 0
+
+    // Fetch recent uploads
+    const { data: recentUploads } = await supabase
+      .from('theses')
+      .select(
+        `
+        *,
+        user:user_id (
+          email,
+          user_metadata
+        )
+      `,
+      )
+      .order('created_at', { ascending: false })
+      .limit(5)
+    statistics.value.recentUploads = recentUploads || []
+  } catch (err) {
+    console.error('Error fetching statistics:', err)
+  }
+}
 </script>
 
 <template>
@@ -243,6 +382,95 @@ const goTo = (route, params = {}) => {
                   <div class="text-subtitle-1">Recent Uploads</div>
                 </div>
               </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Admin Thesis Upload -->
+        <v-row class="mt-6">
+          <v-col cols="12">
+            <v-card>
+              <v-card-title class="d-flex align-center">
+                <span>Upload Thesis</span>
+              </v-card-title>
+              <v-card-text>
+                <v-form @submit.prevent="handleThesisUpload">
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="thesisForm.title"
+                        label="Thesis Title"
+                        variant="outlined"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-textarea
+                        v-model="thesisForm.abstract"
+                        label="Abstract"
+                        variant="outlined"
+                        required
+                        rows="3"
+                      ></v-textarea>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-file-input
+                        label="Abstract Image"
+                        variant="outlined"
+                        accept="image/jpeg,image/png"
+                        @change="(e) => handleImageChange(e, 'abstract')"
+                        prepend-icon="mdi-image"
+                      ></v-file-input>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-file-input
+                        label="Objectives Image"
+                        variant="outlined"
+                        accept="image/jpeg,image/png"
+                        @change="(e) => handleImageChange(e, 'objectives')"
+                        prepend-icon="mdi-image"
+                      ></v-file-input>
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-select
+                        v-model="thesisForm.acadYear"
+                        label="Academic Year"
+                        :items="['2024-2025', '2023-2024']"
+                        variant="outlined"
+                        required
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-select
+                        v-model="thesisForm.semester"
+                        label="Semester"
+                        :items="['1st Semester', '2nd Semester']"
+                        variant="outlined"
+                        required
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+
+                  <v-alert v-if="uploadError" type="error" class="mb-4">
+                    {{ uploadError }}
+                  </v-alert>
+
+                  <v-btn
+                    color="primary"
+                    type="submit"
+                    :loading="isUploading"
+                    :disabled="isUploading"
+                  >
+                    Upload Thesis
+                  </v-btn>
+                </v-form>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
