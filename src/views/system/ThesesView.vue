@@ -81,17 +81,6 @@ const onRetrieveFromApi = async () => {
             >
             </v-btn>
           </v-col>
-          <v-col cols="auto">
-            <v-btn
-              variant="flat"
-              density="comfortable"
-              color="orange-darken-3"
-              size="small"
-              @click="$router.push({ name: 'upload-thesis' })"
-              icon="mdi-plus"
-            >
-            </v-btn>
-          </v-col>
         </v-row>
 
         <!-- Error Alert -->
