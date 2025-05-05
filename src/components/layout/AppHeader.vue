@@ -1,10 +1,37 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/utils/supabase'
+import { ref, onMounted } from 'vue'
 
 const router = useRouter()
-const authStore = useAuthStore()
+
+// State to store the current user and loading status
+const user = ref(null)
+const isLoading = ref(true)
+
+// Hardcoded list of admin emails
+const adminEmails = [
+  'yssahjulianah.barcial@carsu.edu.ph',
+  'lovellhudson.clavel@carsu.edu.ph',
+  'altheaguila.gorres@carsu.edu.ph',
+  'magnoliajamkee.masong@carsu.edu.ph',
+]
+
+// Fetch the current user from Supabase
+const fetchCurrentUser = async () => {
+  const { data, error } = await supabase.auth.getUser()
+  if (error) {
+    console.error('Error fetching user:', error.message)
+    return
+  }
+  user.value = data.user
+}
+
+// Fetch user on component mount
+onMounted(async () => {
+  await fetchCurrentUser()
+  isLoading.value = false // Set loading to false after user is fetched
+})
 
 const goTo = (route) => router.push({ name: route })
 
@@ -71,6 +98,17 @@ const props = defineProps({
           Theses
         </v-btn>
 
+        <!-- Admin Button (Visible Only to Admin Emails) -->
+        <v-btn
+          v-if="!isLoading && adminEmails.includes(user?.email)"
+          variant="text"
+          @click="goTo('admin')"
+          class="text-white"
+          prepend-icon="mdi-shield-account"
+        >
+          Admin
+        </v-btn>
+
         <!-- User Menu with Tonal Tooltips -->
         <div class="d-flex justify-center align-center">
           <v-menu location="bottom center">
@@ -85,7 +123,7 @@ const props = defineProps({
             <v-list class="d-flex flex-column align-center" id="listbox">
               <v-tooltip text="Profile" location="left" content-class="custom-tooltip">
                 <template v-slot:activator="{ props }">
-                  <v-list-item @click="goTo('profile')" v-bind="props" class="justify-center">
+                  <v-list-item @click="goTo('profile')" class="justify-center">
                     <v-icon>mdi-account-circle</v-icon>
                   </v-list-item>
                 </template>
@@ -93,7 +131,7 @@ const props = defineProps({
 
               <v-tooltip text="Settings" location="left" content-class="custom-tooltip">
                 <template v-slot:activator="{ props }">
-                  <v-list-item @click="goTo('settings')" v-bind="props" class="justify-center">
+                  <v-list-item @click="goTo('settings')" class="justify-center">
                     <v-icon>mdi-cog</v-icon>
                   </v-list-item>
                 </template>
@@ -103,7 +141,7 @@ const props = defineProps({
 
               <v-tooltip text="Logout" location="left" content-class="custom-tooltip">
                 <template v-slot:activator="{ props }">
-                  <v-list-item @click="handleLogout" v-bind="props" class="justify-center">
+                  <v-list-item @click="handleLogout" class="justify-center">
                     <v-icon>mdi-logout</v-icon>
                   </v-list-item>
                 </template>

@@ -6,6 +6,16 @@ import SyllabiView from '@/views/system/SyllabiView.vue'
 import UploadSyllabusView from '@/views/system/UploadSyllabusView.vue'
 import ThesesView from '@/views/system/ThesesView.vue'
 import { isAuthenticated } from '@/utils/supabase'
+import AdminView from '@/views/admin/AdminView.vue'
+import { supabase } from '@/utils/supabase'
+
+// Hardcoded list of admin emails
+const adminEmails = [
+  'yssahjulianah.barcial@carsu.edu.ph',
+  'lovellhudson.clavel@carsu.edu.ph',
+  'altheaguila.gorres@carsu.edu.ph',
+  'magnoliajamkee.masong@carsu.edu.ph',
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +37,15 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true,
+      },
     },
     {
       path: '/theses',
@@ -69,13 +88,17 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/errors/NotFoundView.vue'),
-      meta: { requiresAuth: true }, // Set to false if you want guests to see 404 too
+      meta: { requiresAuth: true },
     },
   ],
 })
 
 router.beforeEach(async (to) => {
   const isLoggedIn = await isAuthenticated()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const isAdmin = user?.email && adminEmails.includes(user.email)
 
   if (to.name === 'home') {
     return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
@@ -91,6 +114,10 @@ router.beforeEach(async (to) => {
 
   if (!isLoggedIn && to.meta.requiresAuth) {
     return { name: 'login' }
+  }
+
+  if (to.meta.requiresAdmin && !isAdmin) {
+    return { name: 'dashboard' }
   }
 })
 
