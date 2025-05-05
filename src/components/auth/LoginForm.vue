@@ -2,7 +2,7 @@
 import AlertNotification from '@/components/common/AlertNotification.vue'
 import { supabase } from '@/utils/supabase'
 import { ref } from 'vue'
-import { requiredValidator, passwordValidator } from '@/utils/validators'
+import { requiredValidator, passwordValidator, emailValidator } from '@/utils/validators'
 import { isAuthenticated } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
 
@@ -16,7 +16,7 @@ const formActionDefault = {
 }
 
 const formDataDefault = {
-  employeeID: '',
+  email: '',
   password: '',
 }
 //Load Variables
@@ -38,7 +38,7 @@ const onLogin = async () => {
   formAction.value.formProcess = true
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: formData.value.employeeID,
+    email: formData.value.email,
     password: formData.value.password,
   })
   if (error) {
@@ -80,14 +80,14 @@ const getLoggedStatus = async () => {
       <h2 class="font-weight-bold mt-2">Log in to Your Account</h2>
     </div>
 
-    <!-- Employee ID Input -->
+    <!-- Email Input -->
     <v-text-field
-      v-model="formData.employeeID"
-      label="Employee ID"
+      v-model="formData.email"
+      label="Email Address"
       variant="solo-filled"
-      prepend-inner-icon="mdi-account-tie"
+      prepend-inner-icon="mdi-email"
       class="mb-3"
-      :rules="[requiredValidator]"
+      :rules="[requiredValidator, emailValidator]"
     ></v-text-field>
 
     <!-- Password Input -->
