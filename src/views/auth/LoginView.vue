@@ -14,7 +14,7 @@ const { mobile, xs, sm } = useDisplay()
   >
     <!-- Background Image -->
     <v-img
-      src="/images/ccisHiraya.jpg"
+      src="/images/background5.png"
       cover
       class="position-absolute"
       style="
@@ -23,7 +23,7 @@ const { mobile, xs, sm } = useDisplay()
         height: 100%;
         object-fit: cover;
         z-index: -1;
-        filter: brightness(0.5) blur(0.5px);
+        /* filter: brightness(1) blur(.8px); */
       "
     ></v-img>
 
@@ -32,13 +32,11 @@ const { mobile, xs, sm } = useDisplay()
       <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
         <!-- Logo -->
         <v-img
-          src="/images/ccisLogo.png"
+          src="/images/ccisPortal.svg"
+          width="86%"
           :width="mobile ? '65%' : sm ? '150px' : '200px'"
           class="mx-auto mb-4"
         />
-
-        <!-- Title -->
-        <h2 class="text-white font-weight-bold mb-2">CCIS Portal</h2>
       </v-col>
       <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center">
         <!-- Form -->
@@ -47,7 +45,7 @@ const { mobile, xs, sm } = useDisplay()
           :class="mobile ? 'mx-2' : sm ? 'mx-6' : 'mx-12'"
           class="pa-4"
           style="
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.5);
             border-radius: 16px;
             max-width: 450px;
             width: 100%;
