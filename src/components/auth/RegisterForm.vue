@@ -90,19 +90,19 @@ const onFormSubmit = () => {
   <v-form @submit.prevent="onFormSubmit" ref="refVForm" class="register-form">
     <!-- Form Header -->
     <div class="text-center mb-5">
-      <v-icon size="36" color="deep-orange">mdi-account-plus</v-icon>
+      <v-icon size="28" color="deep-orange">mdi-account-plus</v-icon>
       <h2 class="font-weight-bold mt-2">Create an Account</h2>
     </div>
 
     <!-- Full Name -->
-    <v-text-field
+    <!--<v-text-field
       v-model="formData.fullname"
       label="Full Name"
       variant="solo-filled"
       prepend-inner-icon="mdi-account"
       class="mb-3"
       :rules="[requiredValidator]"
-    ></v-text-field>
+    ></v-text-field> -->
 
     <!-- Employee ID & Email -->
     <v-row>
@@ -163,6 +163,7 @@ const onFormSubmit = () => {
       color="deep-orange"
       size="large"
       elevation="3"
+      class="mt-3"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
@@ -182,11 +183,67 @@ const onFormSubmit = () => {
 
 <style scoped>
 .register-form {
-  max-width: 520px; /* Increased max-width */
+  max-width: 450px;
   width: 100%;
-  padding: 30px;
-  border-radius: 12px;
+  padding: clamp(20px, 4vw, 30px) clamp(15px, 3vw, 20px);
+  border-radius: 16px;
   background: white;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+:deep(.v-field__input) {
+  font-size: 0.75rem;
+}
+:deep(.v-label) {
+  font-size: 0.75rem;
+}
+:deep(.v-btn) {
+  font-size: 0.75rem;
+}
+:deep(.v-field__prepend-inner) {
+  padding-top: 0;
+  align-items: center;
+  justify-content: center;
+}
+:deep(.v-field__append-inner) {
+  padding-top: 0;
+  align-items: center;
+  justify-content: center;
+}
+:deep(.v-icon) {
+  font-size: 18px;
+}
+.register-form h2 {
+  font-size: 1.1rem;
+}
+.register-form p,
+.register-form .v-divider,
+.register-form .text-center {
+  font-size: 0.85rem;
+}
+@media (max-width: 600px) {
+  .register-form {
+    padding: 20px 15px;
+  }
+  :deep(.v-field__input),
+  :deep(.v-label),
+  :deep(.v-btn),
+  :deep(.text-caption) {
+    font-size: 0.75rem;
+  }
+  :deep(.v-icon) {
+    font-size: 16px;
+  }
+  .register-form h2 {
+    font-size: 1rem;
+  }
+  .register-form p,
+  .register-form .v-divider,
+  .register-form .text-center {
+    font-size: 0.8rem;
+  }
 }
 </style>
