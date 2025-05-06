@@ -3,8 +3,9 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 
 import { useDisplay } from 'vuetify'
-const { mobile } = useDisplay()
+const { mobile, xs, sm } = useDisplay()
 </script>
+
 <template>
   <v-container
     fluid
@@ -28,22 +29,32 @@ const { mobile } = useDisplay()
 
     <!-- Content -->
     <v-row class="flex-grow-1" align="center" justify="center">
-      <v-col cols="12" md="5" class="text-center">
+      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
         <!-- Logo -->
-        <v-img src="/images/ccisLogo.png" :width="mobile ? '65%' : '120px'" class="mx-auto mb-4" />
+        <v-img
+          src="/images/ccisLogo.png"
+          :width="mobile ? '65%' : sm ? '150px' : '200px'"
+          class="mx-auto mb-4"
+        />
 
         <!-- Title -->
         <h2 class="text-white font-weight-bold mb-2">CCIS Portal</h2>
-
+      </v-col>
+      <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center">
         <!-- Form -->
         <v-card
           elevation="6"
-          class="mx-auto pa-5"
-          style="background-color: rgba(255, 255, 255, 0.9); border-radius: 16px; max-width: 520px"
+          :class="mobile ? 'mx-2' : sm ? 'mx-6' : 'mx-12'"
+          class="pa-4"
+          style="
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+          "
         >
           <LoginForm />
         </v-card>
-        <br />
       </v-col>
     </v-row>
 
@@ -53,7 +64,7 @@ const { mobile } = useDisplay()
           <v-avatar size="24" class="mr-2">
             <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
           </v-avatar>
-          <span class="text-white">
+          <span class="text-white" :class="{ 'text-body-2': mobile }">
             &copy; 2025
             <a
               href="https://www.facebook.com/cciscarsu"
