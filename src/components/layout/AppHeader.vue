@@ -1,13 +1,14 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const router = useRouter()
 
 // State to store the current user and loading status
 const user = ref(null)
 const isLoading = ref(true)
+const isAdmin = ref(false)
 
 // Hardcoded list of admin emails
 const adminEmails = [
@@ -25,12 +26,24 @@ const fetchCurrentUser = async () => {
     return
   }
   user.value = data.user
+  isAdmin.value = adminEmails.includes(data.user?.email)
 }
 
 // Fetch user on component mount
 onMounted(async () => {
   await fetchCurrentUser()
-  isLoading.value = false // Set loading to false after user is fetched
+  isLoading.value = false
+})
+
+// Watch for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN') {
+    user.value = session.user
+    isAdmin.value = adminEmails.includes(session.user?.email)
+  } else if (event === 'SIGNED_OUT') {
+    user.value = null
+    isAdmin.value = false
+  }
 })
 
 const goTo = (route) => router.push({ name: route })
@@ -95,7 +108,7 @@ const props = defineProps({
 
         <!-- Admin Button (Visible Only to Admin Emails) -->
         <v-btn
-          v-if="!isLoading && adminEmails.includes(user?.email)"
+          v-if="!isLoading && isAdmin"
           variant="text"
           @click="goTo('admin')"
           class="text-white"
