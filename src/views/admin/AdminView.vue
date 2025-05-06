@@ -13,8 +13,8 @@ const statistics = ref({
   activeUsers: 0,
   totalTheses: 0,
   totalSyllabi: 0,
-  pendingUploads: 0,
   recentUploads: [],
+  recentSyllabi: [],
 })
 
 // Add new state for thesis upload
@@ -47,12 +47,14 @@ const departments = [
   'Computer Engineering',
 ]
 
+const activeTab = ref('thesis')
+
 // Fetch statistics and user data
 onMounted(async () => {
   try {
     // Fetch total users
     const { count: userCount } = await supabase
-      .from('auth.users')
+      .from('profiles')
       .select('*', { count: 'exact', head: true })
     statistics.value.totalUsers = userCount || 0
 
@@ -60,7 +62,7 @@ onMounted(async () => {
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     const { count: activeUserCount } = await supabase
-      .from('auth.users')
+      .from('profiles')
       .select('*', { count: 'exact', head: true })
       .gte('last_sign_in_at', thirtyDaysAgo.toISOString())
     statistics.value.activeUsers = activeUserCount || 0
@@ -92,9 +94,10 @@ onMounted(async () => {
       .select(
         `
         *,
-        user:user_id (
+        profiles:user_id (
           email,
-          user_metadata
+          full_name,
+          department
         )
       `,
       )
@@ -102,9 +105,26 @@ onMounted(async () => {
       .limit(5)
     statistics.value.recentUploads = recentUploads || []
 
+    // Fetch recent syllabi uploads
+    const { data: recentSyllabi } = await supabase
+      .from('syllabi')
+      .select(
+        `
+        *,
+        profiles:user_id (
+          email,
+          full_name,
+          department
+        )
+      `,
+      )
+      .order('created_at', { ascending: false })
+      .limit(5)
+    statistics.value.recentSyllabi = recentSyllabi || []
+
     // Fetch users
     const { data: usersData } = await supabase
-      .from('auth.users')
+      .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
     users.value = usersData || []
@@ -123,7 +143,7 @@ const filteredUsers = computed(() => {
       const matchesSearch =
         !search.value ||
         user.email.toLowerCase().includes(search.value.toLowerCase()) ||
-        user.user_metadata?.full_name?.toLowerCase().includes(search.value.toLowerCase())
+        user.full_name?.toLowerCase().includes(search.value.toLowerCase())
 
       const matchesStatus =
         statusFilter.value === 'all' ||
@@ -131,8 +151,7 @@ const filteredUsers = computed(() => {
         (statusFilter.value === 'inactive' && user.status !== 'active')
 
       const matchesDepartment =
-        departmentFilter.value === 'all' ||
-        user.user_metadata?.department === departmentFilter.value
+        departmentFilter.value === 'all' || user.department === departmentFilter.value
 
       return matchesSearch && matchesStatus && matchesDepartment
     })
@@ -144,7 +163,7 @@ const filteredUsers = computed(() => {
         return a.email.localeCompare(b.email)
       }
       if (sortBy.value === 'user_metadata') {
-        return (a.user_metadata?.full_name || '').localeCompare(b.user_metadata?.full_name || '')
+        return (a.full_name || '').localeCompare(b.full_name || '')
       }
       return 0
     })
@@ -165,7 +184,7 @@ const formatDate = (date) => {
 const updateUserStatus = async (userId, newStatus) => {
   try {
     const { error: updateError } = await supabase
-      .from('auth.users')
+      .from('profiles')
       .update({ status: newStatus })
       .eq('id', userId)
 
@@ -298,21 +317,45 @@ const fetchStatistics = async () => {
       .select('*', { count: 'exact', head: true })
     statistics.value.totalTheses = thesisCount || 0
 
+    // Fetch total syllabi
+    const { count: syllabiCount } = await supabase
+      .from('syllabi')
+      .select('*', { count: 'exact', head: true })
+    statistics.value.totalSyllabi = syllabiCount || 0
+
     // Fetch recent uploads
     const { data: recentUploads } = await supabase
       .from('theses')
       .select(
         `
         *,
-        user:user_id (
+        profiles:user_id (
           email,
-          user_metadata
+          full_name,
+          department
         )
       `,
       )
       .order('created_at', { ascending: false })
       .limit(5)
     statistics.value.recentUploads = recentUploads || []
+
+    // Fetch recent syllabi
+    const { data: recentSyllabi } = await supabase
+      .from('syllabi')
+      .select(
+        `
+        *,
+        profiles:user_id (
+          email,
+          full_name,
+          department
+        )
+      `,
+      )
+      .order('created_at', { ascending: false })
+      .limit(5)
+    statistics.value.recentSyllabi = recentSyllabi || []
   } catch (err) {
     console.error('Error fetching statistics:', err)
   }
@@ -335,270 +378,347 @@ const fetchStatistics = async () => {
           {{ error }}
         </v-alert>
 
-        <!-- Stats Cards -->
+        <!-- Dashboard Overview -->
         <v-row>
-          <v-col cols="12" sm="6" md="3">
-            <v-card class="pa-4" color="primary" dark>
-              <div class="d-flex align-center">
-                <v-icon size="36" class="mr-3">mdi-account-group</v-icon>
-                <div>
-                  <div class="text-h4 mb-2">{{ statistics.totalUsers }}</div>
-                  <div class="text-subtitle-1">Total Users</div>
-                </div>
-              </div>
-            </v-card>
-          </v-col>
-
-          <v-col cols="12" sm="6" md="3">
-            <v-card class="pa-4" color="success" dark>
-              <div class="d-flex align-center">
-                <v-icon size="36" class="mr-3">mdi-account-check</v-icon>
-                <div>
-                  <div class="text-h4 mb-2">{{ statistics.activeUsers }}</div>
-                  <div class="text-subtitle-1">Active Users</div>
-                </div>
-              </div>
-            </v-card>
-          </v-col>
-
-          <v-col cols="12" sm="6" md="3">
-            <v-card class="pa-4" color="info" dark>
-              <div class="d-flex align-center">
-                <v-icon size="36" class="mr-3">mdi-file-document</v-icon>
-                <div>
-                  <div class="text-h4 mb-2">{{ statistics.totalTheses }}</div>
-                  <div class="text-subtitle-1">Total Theses</div>
-                </div>
-              </div>
-            </v-card>
-          </v-col>
-
-          <v-col cols="12" sm="6" md="3">
-            <v-card class="pa-4" color="warning" dark>
-              <div class="d-flex align-center">
-                <v-icon size="36" class="mr-3">mdi-clock-outline</v-icon>
-                <div>
-                  <div class="text-h4 mb-2">{{ statistics.pendingUploads }}</div>
-                  <div class="text-subtitle-1">Recent Uploads</div>
-                </div>
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <!-- Admin Thesis Upload -->
-        <v-row class="mt-6">
           <v-col cols="12">
-            <v-card>
-              <v-card-title class="d-flex align-center">
-                <span>Upload Thesis</span>
+            <v-card class="mb-6">
+              <v-card-title class="text-h5 font-weight-bold">
+                <v-icon class="mr-2" color="primary">mdi-view-dashboard</v-icon>
+                Dashboard Overview
               </v-card-title>
               <v-card-text>
-                <v-form @submit.prevent="handleThesisUpload">
-                  <v-row>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        v-model="thesisForm.title"
-                        label="Thesis Title"
-                        variant="outlined"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-textarea
-                        v-model="thesisForm.abstract"
-                        label="Abstract"
-                        variant="outlined"
-                        required
-                        rows="3"
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
-                    <v-col cols="12" md="6">
-                      <v-file-input
-                        label="Abstract Image"
-                        variant="outlined"
-                        accept="image/jpeg,image/png"
-                        @change="(e) => handleImageChange(e, 'abstract')"
-                        prepend-icon="mdi-image"
-                      ></v-file-input>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-file-input
-                        label="Objectives Image"
-                        variant="outlined"
-                        accept="image/jpeg,image/png"
-                        @change="(e) => handleImageChange(e, 'objectives')"
-                        prepend-icon="mdi-image"
-                      ></v-file-input>
-                    </v-col>
-                  </v-row>
-
-                  <v-row>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="thesisForm.acadYear"
-                        label="Academic Year"
-                        :items="['2024-2025', '2023-2024']"
-                        variant="outlined"
-                        required
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="thesisForm.semester"
-                        label="Semester"
-                        :items="['1st Semester', '2nd Semester']"
-                        variant="outlined"
-                        required
-                      ></v-select>
-                    </v-col>
-                  </v-row>
-
-                  <v-alert v-if="uploadError" type="error" class="mb-4">
-                    {{ uploadError }}
-                  </v-alert>
-
-                  <v-btn
-                    color="primary"
-                    type="submit"
-                    :loading="isUploading"
-                    :disabled="isUploading"
-                  >
-                    Upload Thesis
-                  </v-btn>
-                </v-form>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <!-- User Management -->
-        <v-row class="mt-6">
-          <v-col cols="12">
-            <v-card>
-              <v-card-title class="d-flex align-center">
-                <span>User Management</span>
-              </v-card-title>
-              <v-card-text>
-                <!-- Filters -->
-                <v-row class="mb-4">
-                  <v-col cols="12" md="4">
-                    <v-text-field
-                      v-model="search"
-                      label="Search users"
-                      prepend-inner-icon="mdi-magnify"
-                      variant="outlined"
-                      density="comfortable"
-                      hide-details
-                    ></v-text-field>
+                <v-row>
+                  <!-- Stats Cards -->
+                  <v-col cols="12" sm="6" md="3">
+                    <v-card class="pa-4" color="primary" dark elevation="4">
+                      <div class="d-flex align-center">
+                        <v-icon size="36" class="mr-3">mdi-account-group</v-icon>
+                        <div>
+                          <div class="text-h4 mb-2">{{ statistics.totalUsers }}</div>
+                          <div class="text-subtitle-1">Total Users</div>
+                        </div>
+                      </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="12" md="3">
-                    <v-select
-                      v-model="statusFilter"
-                      label="Status"
-                      :items="[
-                        { title: 'All', value: 'all' },
-                        { title: 'Active', value: 'active' },
-                        { title: 'Inactive', value: 'inactive' },
-                      ]"
-                      variant="outlined"
-                      density="comfortable"
-                      hide-details
-                    ></v-select>
+
+                  <v-col cols="12" sm="6" md="3">
+                    <v-card class="pa-4" color="success" dark elevation="4">
+                      <div class="d-flex align-center">
+                        <v-icon size="36" class="mr-3">mdi-account-check</v-icon>
+                        <div>
+                          <div class="text-h4 mb-2">{{ statistics.activeUsers }}</div>
+                          <div class="text-subtitle-1">Active Users</div>
+                        </div>
+                      </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="12" md="3">
-                    <v-select
-                      v-model="departmentFilter"
-                      label="Department"
-                      :items="[
-                        { title: 'All Departments', value: 'all' },
-                        ...departments.map((dept) => ({ title: dept, value: dept })),
-                      ]"
-                      variant="outlined"
-                      density="comfortable"
-                      hide-details
-                    ></v-select>
+
+                  <v-col cols="12" sm="6" md="3">
+                    <v-card class="pa-4" color="info" dark elevation="4">
+                      <div class="d-flex align-center">
+                        <v-icon size="36" class="mr-3">mdi-file-document</v-icon>
+                        <div>
+                          <div class="text-h4 mb-2">{{ statistics.totalTheses }}</div>
+                          <div class="text-subtitle-1">Total Theses</div>
+                        </div>
+                      </div>
+                    </v-card>
                   </v-col>
-                  <v-col cols="12" md="2">
-                    <v-select
-                      v-model="sortBy"
-                      label="Sort by"
-                      :items="[
-                        { title: 'Name', value: 'user_metadata' },
-                        { title: 'Email', value: 'email' },
-                        { title: 'Created', value: 'created_at' },
-                      ]"
-                      variant="outlined"
-                      density="comfortable"
-                      hide-details
-                    ></v-select>
+
+                  <v-col cols="12" sm="6" md="3">
+                    <v-card class="pa-4" color="warning" dark elevation="4">
+                      <div class="d-flex align-center">
+                        <v-icon size="36" class="mr-3">mdi-book-open-page-variant</v-icon>
+                        <div>
+                          <div class="text-h4 mb-2">{{ statistics.totalSyllabi }}</div>
+                          <div class="text-subtitle-1">Total Syllabi</div>
+                        </div>
+                      </div>
+                    </v-card>
                   </v-col>
                 </v-row>
 
-                <!-- Users Table -->
-                <v-table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Department</th>
-                      <th>Status</th>
-                      <th>Created</th>
-                      <th>Last Login</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="user in filteredUsers" :key="user.id">
-                      <td>{{ user.user_metadata?.full_name || 'N/A' }}</td>
-                      <td>{{ user.email }}</td>
-                      <td>{{ user.user_metadata?.department || 'N/A' }}</td>
-                      <td>
-                        <v-chip
-                          :color="user.status === 'active' ? 'success' : 'error'"
-                          size="small"
-                        >
-                          {{ user.status || 'inactive' }}
-                        </v-chip>
-                      </td>
-                      <td>{{ formatDate(user.created_at) }}</td>
-                      <td>
-                        {{ user.last_sign_in_at ? formatDate(user.last_sign_in_at) : 'Never' }}
-                      </td>
-                      <td>
-                        <v-btn
-                          size="small"
-                          color="primary"
-                          variant="text"
-                          @click="viewUserDetails(user.id)"
-                          prepend-icon="mdi-eye"
-                        >
-                          View
-                        </v-btn>
-                        <v-btn
-                          size="small"
-                          :color="user.status === 'active' ? 'error' : 'success'"
-                          variant="text"
-                          @click="
-                            updateUserStatus(
-                              user.id,
-                              user.status === 'active' ? 'inactive' : 'active',
-                            )
-                          "
-                          :prepend-icon="
-                            user.status === 'active' ? 'mdi-account-off' : 'mdi-account-check'
-                          "
-                        >
-                          {{ user.status === 'active' ? 'Deactivate' : 'Activate' }}
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
+                <!-- Recent Activity -->
+                <v-row class="mt-4">
+                  <v-col cols="12" md="6">
+                    <v-card>
+                      <v-card-title class="text-h6">
+                        <v-icon class="mr-2" color="primary">mdi-clipboard-text</v-icon>
+                        Recent Thesis Uploads
+                      </v-card-title>
+                      <v-card-text>
+                        <v-table>
+                          <thead>
+                            <tr>
+                              <th>Title</th>
+                              <th>Uploaded By</th>
+                              <th>Date</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="upload in statistics.recentUploads" :key="upload.id">
+                              <td>{{ upload.title }}</td>
+                              <td>{{ upload.profiles?.email }}</td>
+                              <td>{{ formatDate(upload.created_at) }}</td>
+                              <td>
+                                <v-chip
+                                  :color="upload.status === 'approved' ? 'success' : 'warning'"
+                                >
+                                  {{ upload.status }}
+                                </v-chip>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </v-table>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+
+                  <v-col cols="12" md="6">
+                    <v-card>
+                      <v-card-title class="text-h6">
+                        <v-icon class="mr-2" color="primary">mdi-book-open-page-variant</v-icon>
+                        Recent Syllabi Uploads
+                      </v-card-title>
+                      <v-card-text>
+                        <v-table>
+                          <thead>
+                            <tr>
+                              <th>Title</th>
+                              <th>Uploaded By</th>
+                              <th>Date</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="syllabus in statistics.recentSyllabi" :key="syllabus.id">
+                              <td>{{ syllabus.title }}</td>
+                              <td>{{ syllabus.profiles?.email }}</td>
+                              <td>{{ formatDate(syllabus.created_at) }}</td>
+                              <td>
+                                <v-chip
+                                  :color="syllabus.status === 'approved' ? 'success' : 'warning'"
+                                >
+                                  {{ syllabus.status }}
+                                </v-chip>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </v-table>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
               </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Content Tabs -->
+        <v-row>
+          <v-col cols="12">
+            <v-card>
+              <v-tabs v-model="activeTab" color="primary">
+                <v-tab value="thesis">Thesis Management</v-tab>
+                <v-tab value="users">User Management</v-tab>
+              </v-tabs>
+
+              <v-window v-model="activeTab">
+                <!-- Thesis Management Tab -->
+                <v-window-item value="thesis">
+                  <v-card-text>
+                    <v-form @submit.prevent="handleThesisUpload">
+                      <v-row dense>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="thesisForm.title"
+                            label="Thesis Title"
+                            variant="outlined"
+                            required
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-textarea
+                            v-model="thesisForm.abstract"
+                            label="Abstract"
+                            variant="outlined"
+                            required
+                            rows="2"
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+
+                      <v-row dense>
+                        <v-col cols="12" md="6">
+                          <v-file-input
+                            label="Abstract Image"
+                            variant="outlined"
+                            accept="image/jpeg,image/png"
+                            @change="(e) => handleImageChange(e, 'abstract')"
+                            prepend-icon="mdi-image"
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-file-input
+                            label="Objectives Image"
+                            variant="outlined"
+                            accept="image/jpeg,image/png"
+                            @change="(e) => handleImageChange(e, 'objectives')"
+                            prepend-icon="mdi-image"
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-file-input>
+                        </v-col>
+                      </v-row>
+
+                      <v-row dense>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="thesisForm.acadYear"
+                            label="Academic Year"
+                            :items="['2024-2025', '2023-2024']"
+                            variant="outlined"
+                            required
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="thesisForm.semester"
+                            label="Semester"
+                            :items="['1st Semester', '2nd Semester']"
+                            variant="outlined"
+                            required
+                            density="comfortable"
+                            class="mb-2"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+
+                      <v-alert v-if="uploadError" type="error" class="mb-4">
+                        {{ uploadError }}
+                      </v-alert>
+
+                      <v-btn
+                        color="orange-darken-4"
+                        type="submit"
+                        :loading="isUploading"
+                        :disabled="isUploading"
+                        class="mt-2"
+                        size="large"
+                        block
+                        prepend-icon="mdi-upload"
+                      >
+                        Upload Thesis
+                      </v-btn>
+                    </v-form>
+                  </v-card-text>
+                </v-window-item>
+
+                <!-- User Management Tab -->
+                <v-window-item value="users">
+                  <v-card-text>
+                    <!-- Filters -->
+                    <v-row class="mb-4">
+                      <v-col cols="12" md="4">
+                        <v-text-field
+                          v-model="search"
+                          label="Search users"
+                          prepend-inner-icon="mdi-magnify"
+                          variant="outlined"
+                          density="comfortable"
+                          hide-details
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-select
+                          v-model="statusFilter"
+                          label="Status"
+                          :items="['all', 'active', 'inactive']"
+                          variant="outlined"
+                          density="comfortable"
+                          hide-details
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-select
+                          v-model="departmentFilter"
+                          label="Department"
+                          :items="['all', ...departments]"
+                          variant="outlined"
+                          density="comfortable"
+                          hide-details
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" md="2">
+                        <v-select
+                          v-model="sortBy"
+                          label="Sort by"
+                          :items="[
+                            { title: 'Date', value: 'created_at' },
+                            { title: 'Email', value: 'email' },
+                            { title: 'Name', value: 'user_metadata' },
+                          ]"
+                          variant="outlined"
+                          density="comfortable"
+                          hide-details
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Users Table -->
+                    <v-table>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Department</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="user in filteredUsers" :key="user.id">
+                          <td>{{ user.full_name || 'N/A' }}</td>
+                          <td>{{ user.email }}</td>
+                          <td>{{ user.department || 'N/A' }}</td>
+                          <td>
+                            <v-chip
+                              :color="user.status === 'active' ? 'success' : 'error'"
+                              @click="
+                                updateUserStatus(
+                                  user.id,
+                                  user.status === 'active' ? 'inactive' : 'active',
+                                )
+                              "
+                            >
+                              {{ user.status }}
+                            </v-chip>
+                          </td>
+                          <td>
+                            <v-btn
+                              icon
+                              variant="text"
+                              color="primary"
+                              @click="viewUserDetails(user.id)"
+                            >
+                              <v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </v-table>
+                  </v-card-text>
+                </v-window-item>
+              </v-window>
             </v-card>
           </v-col>
         </v-row>
@@ -616,10 +736,14 @@ const fetchStatistics = async () => {
 
 .v-table {
   border-radius: 8px;
-  overflow: hidden;
+}
+
+.v-btn {
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .v-chip {
-  font-weight: 500;
+  cursor: pointer;
 }
 </style>
