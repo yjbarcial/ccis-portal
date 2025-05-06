@@ -9,26 +9,19 @@ const { mobile, xs, sm } = useDisplay()
 <template>
   <v-container
     fluid
-    class="d-flex flex-column justify-between pa-4"
+    class="d-flex flex-column justify-between pa-0 login-main-container"
     style="min-height: 100vh; position: relative"
   >
     <!-- Background Image -->
     <v-img
       src="/images/background5.png"
       cover
-      class="position-absolute"
-      style="
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-        /* filter: brightness(1) blur(.8px); */
-      "
+      class="position-absolute login-bg-img"
+      style="inset: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1"
     ></v-img>
 
     <!-- Content -->
-    <v-row class="flex-grow-1" align="center" justify="center">
+    <v-row class="flex-grow-1 mt-5" align="center" justify="center">
       <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
         <!-- Logo -->
         <v-img
@@ -56,17 +49,24 @@ const { mobile, xs, sm } = useDisplay()
       </v-col>
     </v-row>
 
-    <v-footer class="py-3" style="background-color: transparent; position: relative; width: 100%">
+    <v-footer
+      class="login-footer mt-auto"
+      style="background-color: transparent; position: relative; width: 100%"
+    >
       <v-row class="d-flex justify-center">
         <v-col class="text-center">
           <v-avatar size="24" class="mr-2">
-            <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+            <v-img src="/images/portalLogo.png" alt="CCIS Logo" />
           </v-avatar>
-          <span class="text-white" :class="{ 'text-body-2': mobile }">
+          <span
+            class="text-white"
+            :class="{ 'text-body-2': mobile }"
+            style="text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5)"
+          >
             &copy; 2025
             <a
               href="https://www.facebook.com/cciscarsu"
-              class="text-orange text-decoration-none"
+              class="text-deep-orange text-decoration-none"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -79,3 +79,35 @@ const { mobile, xs, sm } = useDisplay()
     </v-footer>
   </v-container>
 </template>
+
+<style scoped>
+.login-main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+}
+.login-bg-img {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+  z-index: -1;
+}
+.login-footer {
+  width: 100%;
+  background: transparent;
+  position: relative;
+  margin-top: auto;
+}
+@media (max-width: 600px) {
+  .login-main-container {
+    padding: 0 !important;
+  }
+  .login-footer span {
+    font-size: 0.9rem;
+  }
+}
+</style>
