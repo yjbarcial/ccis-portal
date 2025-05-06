@@ -49,7 +49,7 @@ const onLogin = async () => {
     console.log(data)
     formAction.value.formSuccessMessage = 'You have logged an account!'
     // Add here more actions if you want
-    router.replace('/dashboard')
+    router.replace({ name: 'dashboard', replace: true })
   }
   refVForm.value?.reset()
   formAction.value.formProcess = false
