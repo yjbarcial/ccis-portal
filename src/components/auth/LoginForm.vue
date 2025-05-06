@@ -87,6 +87,7 @@ const getLoggedStatus = async () => {
       variant="solo-filled"
       prepend-inner-icon="mdi-email"
       density="compact"
+      class="mb-2"
       :rules="[requiredValidator, emailValidator]"
     ></v-text-field>
 
@@ -97,6 +98,7 @@ const getLoggedStatus = async () => {
       variant="solo-filled"
       prepend-inner-icon="mdi-lock"
       density="compact"
+      class="mb-2"
       :append-inner-icon="isPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
       :type="isPasswordvisible ? 'text' : 'password'"
       @click:append-inner="isPasswordvisible = !isPasswordvisible"
@@ -116,7 +118,7 @@ const getLoggedStatus = async () => {
       type="submit"
       block
       color="deep-orange"
-      size="small"
+      size="large"
       elevation="3"
       :loading="loading"
       @click="login"
