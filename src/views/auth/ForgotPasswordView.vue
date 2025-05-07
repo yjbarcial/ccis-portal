@@ -46,12 +46,7 @@ const handleSubmit = async () => {
           elevation="6"
           :class="mobile ? 'mx-2' : sm ? 'mx-6' : 'mx-12'"
           class="pa-4"
-          style="
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 16px;
-            max-width: 450px;
-            width: 100%;
-          "
+          style="background-color: #ffffff; border-radius: 16px; max-width: 450px; width: 100%"
         >
           <h2 class="mb-4">Forgot Password</h2>
           <v-form @submit.prevent="handleSubmit">
@@ -68,7 +63,7 @@ const handleSubmit = async () => {
               If your email is registered, you will receive a password reset link.
             </v-alert>
             <v-btn
-              color="orange-darken-3"
+              color="deep-orange"
               type="submit"
               :loading="loading"
               :disabled="success"
