@@ -41,35 +41,6 @@ const { mobile } = useDisplay()
         </v-card>
       </v-col>
     </v-row>
-
-    <v-footer
-      class="register-footer mt-auto"
-      style="background-color: transparent; position: relative; width: 100%"
-    >
-      <v-row class="d-flex justify-center">
-        <v-col class="text-center">
-          <v-avatar size="24" class="mr-2" style="will-change: transform">
-            <v-img src="/images/portalLogo.png" alt="CCIS Logo" style="will-change: transform" />
-          </v-avatar>
-          <span
-            class="text-white"
-            :class="{ 'text-body-2': mobile }"
-            style="text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5)"
-          >
-            &copy; 2025
-            <a
-              href="https://www.facebook.com/cciscarsu"
-              class="text-deep-orange text-decoration-none"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              CCIS.</a
-            >
-            All rights reserved.
-          </span>
-        </v-col>
-      </v-row>
-    </v-footer>
   </v-container>
 </template>
 
