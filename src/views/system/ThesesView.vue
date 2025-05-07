@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 import ThesesList from '@/components/system/ThesesList.vue'
 import { useThesesStore } from '@/stores/theses'
 
@@ -121,11 +120,6 @@ const onRetrieveFromApi = async () => {
 
         <!-- Theses List -->
         <ThesesList v-if="!loading" :theses="filteredTheses" />
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>

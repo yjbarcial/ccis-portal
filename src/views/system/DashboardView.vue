@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 import { useSyllabiStore } from '@/stores/syllabi'
 import { useThesesStore } from '@/stores/theses'
 
@@ -141,11 +140,6 @@ const filteredTheses = computed(() => {
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>

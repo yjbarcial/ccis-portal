@@ -3,7 +3,6 @@ import { ref, onMounted, computed } from 'vue'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 
 const router = useRouter()
 
@@ -724,8 +723,6 @@ const fetchStatistics = async () => {
         </v-row>
       </v-container>
     </v-main>
-
-    <AppFooter />
   </v-app>
 </template>
 

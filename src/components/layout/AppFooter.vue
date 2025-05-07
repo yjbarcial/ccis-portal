@@ -3,19 +3,7 @@ import { ref } from 'vue'
 </script>
 
 <template>
-  <v-footer
-    class="py-3"
-    style="
-      background-color: transparent;
-      width: 100%;
-      bottom: 0px;
-      z-index: 904;
-      transform: translateY(50px);
-      position: absolute;
-      left: 0px;
-      width: calc(100% + 0px);
-    "
-  >
+  <v-footer class="py-3" style="background-color: white; width: 100%">
     <v-row class="d-flex justify-center">
       <v-col class="text-center">
         <hr style="border: 0; height: 1px; background-color: orange" />

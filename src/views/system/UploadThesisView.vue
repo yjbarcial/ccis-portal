@@ -5,7 +5,6 @@ import { supabase } from '@/utils/supabase'
 import { useThesesStore } from '@/stores/theses'
 import { requiredValidator } from '@/utils/validators'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const thesesStore = useThesesStore()
@@ -258,11 +257,6 @@ const handleSubmit = async () => {
             </v-form>
           </v-card-text>
         </v-card>
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>

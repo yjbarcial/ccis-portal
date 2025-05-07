@@ -6,7 +6,6 @@ import { useAuthStore } from '@/stores/auth'
 import { requiredValidator } from '@/utils/validators'
 import { supabase } from '@/utils/supabase'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 
 const syllabiStore = useSyllabiStore()
 const authStore = useAuthStore()
@@ -215,11 +214,6 @@ const handleSubmit = async () => {
             </v-form>
           </v-card-text>
         </v-card>
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>
