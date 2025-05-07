@@ -186,7 +186,7 @@ const onFormSubmit = () => {
   max-width: 450px;
   width: 100%;
   padding: clamp(20px, 4vw, 30px) clamp(15px, 3vw, 20px);
-  border-radius: 16px;
+  border-radius: 12px;
   background: white;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
   margin: 0 auto;

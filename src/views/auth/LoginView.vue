@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
+import ForgotPasswordView from './ForgotPasswordView.vue'
 
 import { useDisplay } from 'vuetify'
 const { mobile, xs, sm } = useDisplay()

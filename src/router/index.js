@@ -8,6 +8,7 @@ import ThesesView from '@/views/system/ThesesView.vue'
 import { isAuthenticated } from '@/utils/supabase'
 import AdminView from '@/views/admin/AdminView.vue'
 import { supabase } from '@/utils/supabase'
+import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 
 // Hardcoded list of admin emails
 const adminEmails = [
@@ -82,6 +83,12 @@ const router = createRouter({
       name: 'settings',
       component: () => import('@/views/system/SettingsView.vue'),
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView,
+      meta: { requiresAuth: false },
     },
     // Catch-all 404 route
     {
