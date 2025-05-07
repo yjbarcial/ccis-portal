@@ -1,6 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { onMounted } from 'vue'
+import AppFooter from './components/layout/AppFooter.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -28,6 +29,7 @@ onMounted(() => {
       <img src="/images/portalLogo.png" alt="preload" />
     </div>
     <RouterView />
+    <AppFooter v-if="!['login', 'register'].includes(route.name)" />
   </div>
 </template>
 
