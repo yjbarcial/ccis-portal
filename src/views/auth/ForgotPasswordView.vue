@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
+import { supabase } from '@/utils/supabase'
 
 const email = ref('')
 const success = ref(false)
@@ -12,16 +13,30 @@ const { mobile, sm } = useDisplay()
 
 const handleSubmit = async () => {
   error.value = ''
+  success.value = false
+
   if (!email.value) {
     error.value = 'Please enter your email.'
     return
   }
+
   loading.value = true
-  // Simulate API call
-  setTimeout(() => {
-    loading.value = false
+
+  try {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.value, {
+      redirectTo: `${window.location.origin}/reset-password`, // Adjust this URL to your reset password page
+    })
+
+    if (resetError) {
+      throw resetError
+    }
+
     success.value = true
-  }, 1200)
+  } catch (err) {
+    error.value = err.message || 'An error occurred. Please try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -31,6 +46,19 @@ const handleSubmit = async () => {
     class="d-flex flex-column justify-between pa-0 login-main-container"
     style="min-height: 100vh; position: relative"
   >
+    <v-img
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/images/background5.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+      "
+    ></v-img>
     <v-row class="flex-grow-1 mt-5" align="center" justify="center">
       <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
         <v-img
@@ -48,7 +76,7 @@ const handleSubmit = async () => {
           class="pa-4"
           style="background-color: #ffffff; border-radius: 16px; max-width: 450px; width: 100%"
         >
-          <h2 class="mb-4">Forgot Password</h2>
+          <h2 class="mb-4">Reset Password</h2>
           <v-form @submit.prevent="handleSubmit">
             <v-text-field
               v-model="email"
@@ -65,13 +93,15 @@ const handleSubmit = async () => {
             <v-btn
               color="deep-orange"
               type="submit"
+              size="large"
               :loading="loading"
               :disabled="success"
               class="mb-2"
               block
             >
-              Send Reset Link
+              Reset Password
             </v-btn>
+
             <v-btn variant="text" block @click="router.push({ name: 'login' })"
               >Back to Login</v-btn
             >

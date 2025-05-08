@@ -123,7 +123,7 @@ const getLoggedStatus = async () => {
       :loading="loading"
       @click="login"
     >
-      Log In
+      LogIn
     </v-btn>
 
     <!-- Divider -->

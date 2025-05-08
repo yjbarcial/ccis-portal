@@ -29,7 +29,7 @@ onMounted(() => {
       <img src="/images/portalLogo.png" alt="preload" />
     </div>
     <RouterView />
-    <AppFooter v-if="!['login', 'register'].includes(route.name)" />
+    <AppFooter v-if="!['login', 'register', 'forgot-password'].includes(route.name)" />
   </div>
 </template>
 
