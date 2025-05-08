@@ -34,6 +34,10 @@ onMounted(() => {
 </template>
 
 <style>
+* {
+  font-family: 'Poppins', sans-serif !important;
+}
+
 .app-container {
   position: relative;
   min-height: 100vh;
