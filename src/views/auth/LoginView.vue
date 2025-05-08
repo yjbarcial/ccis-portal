@@ -13,6 +13,19 @@ const { mobile, xs, sm } = useDisplay()
     class="d-flex flex-column justify-between pa-0 login-main-container"
     style="min-height: 100vh; position: relative"
   >
+    <v-img
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/images/background5.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+      "
+    ></v-img>
     <!-- Content -->
     <v-row class="flex-grow-1 mt-5" align="center" justify="center">
       <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
@@ -60,7 +73,7 @@ const { mobile, xs, sm } = useDisplay()
             &copy; 2025
             <a
               href="https://www.facebook.com/cciscarsu"
-              class="text-deep-orange text-decoration-none"
+              class="text-orange-darken-4 text-decoration-none"
               target="_blank"
               rel="noopener noreferrer"
             >
