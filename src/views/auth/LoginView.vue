@@ -73,7 +73,7 @@ const { mobile, xs, sm } = useDisplay()
             &copy; 2025
             <a
               href="https://www.facebook.com/cciscarsu"
-              class="text-orange-darken-4 text-decoration-none"
+              class="text-deep-orange text-decoration-none"
               target="_blank"
               rel="noopener noreferrer"
             >

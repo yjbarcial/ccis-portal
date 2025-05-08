@@ -174,7 +174,7 @@ const onFormSubmit = () => {
     <v-divider class="my-5"></v-divider>
 
     <!-- Login Link -->
-    <p class="text-center">
+    <p class="text-center text-caption">
       Already have an account?
       <RouterLink class="text-deep-orange font-weight-bold" to="/"> Log in </RouterLink>
     </p>
