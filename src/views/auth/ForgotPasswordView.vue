@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { supabase } from '@/utils/supabase'
+import { requiredValidator, emailValidator } from '@/utils/validators'
 
 const email = ref('')
 const success = ref(false)
@@ -78,14 +79,18 @@ const handleSubmit = async () => {
         >
           <h2 class="mb-4">Reset Password</h2>
           <v-form @submit.prevent="handleSubmit">
+            <!-- Email Input -->
             <v-text-field
               v-model="email"
-              label="Email"
-              type="email"
-              :disabled="success"
-              required
+              label="Email Address"
+              variant="solo-filled"
+              prepend-inner-icon="mdi-email"
+              density="compact"
               class="mb-4"
-            />
+              :rules="[requiredValidator, emailValidator]"
+              :disabled="success"
+            ></v-text-field>
+
             <v-alert v-if="error" type="error" class="mb-2">{{ error }}</v-alert>
             <v-alert v-if="success" type="success" class="mb-2">
               If your email is registered, you will receive a password reset link.
