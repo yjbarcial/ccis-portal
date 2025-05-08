@@ -134,31 +134,37 @@ const props = defineProps({
             </template>
 
             <v-list class="d-flex flex-column align-center" id="listbox">
-              <v-tooltip text="Profile" location="left" content-class="custom-tooltip">
-                <template v-slot:activator="{ props }">
-                  <v-list-item @click="goTo('profile')" class="justify-center">
-                    <v-icon>mdi-account-circle</v-icon>
-                  </v-list-item>
-                </template>
-              </v-tooltip>
+              <div class="position-relative">
+                <v-tooltip text="Profile" location="left" content-class="menu-text-tooltip">
+                  <template v-slot:activator="{ props }">
+                    <v-list-item v-bind="props" @click="goTo('profile')" class="justify-center">
+                      <v-icon>mdi-account-circle</v-icon>
+                    </v-list-item>
+                  </template>
+                </v-tooltip>
+              </div>
 
-              <v-tooltip text="Settings" location="left" content-class="custom-tooltip">
-                <template v-slot:activator="{ props }">
-                  <v-list-item @click="goTo('settings')" class="justify-center">
-                    <v-icon>mdi-cog</v-icon>
-                  </v-list-item>
-                </template>
-              </v-tooltip>
+              <div class="position-relative">
+                <v-tooltip text="Settings" location="left" content-class="menu-text-tooltip">
+                  <template v-slot:activator="{ props }">
+                    <v-list-item v-bind="props" @click="goTo('settings')" class="justify-center">
+                      <v-icon>mdi-cog</v-icon>
+                    </v-list-item>
+                  </template>
+                </v-tooltip>
+              </div>
 
               <v-divider />
 
-              <v-tooltip text="Logout" location="left" content-class="custom-tooltip">
-                <template v-slot:activator="{ props }">
-                  <v-list-item @click="handleLogout" class="justify-center">
-                    <v-icon>mdi-logout</v-icon>
-                  </v-list-item>
-                </template>
-              </v-tooltip>
+              <div class="position-relative">
+                <v-tooltip text="Logout" location="left" content-class="menu-text-tooltip">
+                  <template v-slot:activator="{ props }">
+                    <v-list-item v-bind="props" @click="handleLogout" class="justify-center">
+                      <v-icon>mdi-logout</v-icon>
+                    </v-list-item>
+                  </template>
+                </v-tooltip>
+              </div>
             </v-list>
           </v-menu>
         </div>
@@ -178,7 +184,18 @@ const props = defineProps({
   color: white;
 }
 
-/* Tonal-style tooltip */
+/* Text popup style with shadow */
+::v-deep(.menu-text-tooltip.v-overlay__content) {
+  background-color: transparent !important;
+  color: #f1702b !important;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 4px;
+  text-shadow: 2px 2px 4px rgba(156, 142, 142, 0.7);
+  box-shadow: none;
+}
+
+/* Keep existing custom tooltip style for reference */
 ::v-deep(.custom-tooltip.v-overlay__content) {
   background-color: #fff3e0 !important; /* light orange */
   color: #e65100 !important; /* dark orange text */
