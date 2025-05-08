@@ -9,6 +9,7 @@ import { isAuthenticated } from '@/utils/supabase'
 import AdminView from '@/views/admin/AdminView.vue'
 import { supabase } from '@/utils/supabase'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
+import ResetPasswordView from '@/views/auth/ResetPasswordView.vue'
 
 // Hardcoded list of admin emails
 const adminEmails = [
@@ -88,6 +89,12 @@ const router = createRouter({
       path: '/forgot-password',
       name: 'forgot-password',
       component: ForgotPasswordView,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/Reset-password',
+      name: 'Reset-password',
+      component: ResetPasswordView,
       meta: { requiresAuth: false },
     },
     // Catch-all 404 route
