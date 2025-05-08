@@ -47,7 +47,7 @@ onMounted(() => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/images/background5.png');
+  /* background-image: url('/images/background5.png'); */
   background-size: cover;
   background-position: center;
   z-index: -1;

@@ -12,6 +12,19 @@ const { mobile } = useDisplay()
     class="d-flex flex-column justify-between pa-0 register-main-container"
     style="min-height: 100vh; position: relative"
   >
+    <v-img
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/images/background5.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+      "
+    ></v-img>
     <!-- Content -->
     <v-row class="flex-grow-1 mt-5" align="center" justify="center">
       <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
