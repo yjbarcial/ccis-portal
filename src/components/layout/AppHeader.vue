@@ -70,7 +70,7 @@ const props = defineProps({
     <v-container fluid class="d-flex align-center justify-space-between">
       <!-- Logo and Title -->
       <v-toolbar-title>
-        <div class="d-flex align-center" style="cursor: pointer" @click="goTo('dashboard')">
+        <div class="d-flex align-center hover-container" @click="goTo('home')">
           <v-img
             src="/images/portalLogo.png"
             alt="CCIS Logo"
@@ -204,5 +204,15 @@ const props = defineProps({
   padding: 6px 12px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hover-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hover-container > v-img,
+.hover-container > span {
+  cursor: pointer; /* Pointer cursor only on the logo and title */
 }
 </style>
