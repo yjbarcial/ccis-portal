@@ -9,7 +9,7 @@ import { ref } from 'vue'
         <hr style="border: 0; height: 1px; background-color: orange" />
         <br />
         <v-avatar size="28" class="mr-2 mb-1">
-          <v-img src="/images/ccisLogo.png" alt="CCIS Logo" />
+          <v-img src="/images/portalLogo.png" alt="CCIS Logo" />
         </v-avatar>
         <span>
           &copy; 2025

@@ -363,7 +363,7 @@ const fetchStatistics = async () => {
 
 <template>
   <v-app>
-    <AppHeader title="Admin Dashboard" />
+    <AppHeader title="CCIS Portal" />
 
     <v-main>
       <v-container class="py-8">

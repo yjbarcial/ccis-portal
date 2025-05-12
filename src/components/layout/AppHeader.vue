@@ -70,17 +70,22 @@ const props = defineProps({
     <v-container fluid class="d-flex align-center justify-space-between">
       <!-- Logo and Title -->
       <v-toolbar-title>
-        <div class="d-flex align-center hover-container" @click="goTo('home')">
+        <div
+          class="d-flex align-center hover-container"
+          @click="goTo('dashboard')"
+          style="cursor: pointer"
+        >
+          <!-- Clickable Image -->
           <v-img
-            src="/images/portalLogo.png"
+            src="/images/ccisLogo7.png"
             alt="CCIS Logo"
-            max-width="25"
-            height="25"
-            class="mr-2 rounded-circle"
+            max-width="160"
+            height="160"
+            class="mr-2"
             transition="none"
             cover
           />
-          <span>{{ title }}</span>
+          <!-- Clickable Text -->
         </div>
       </v-toolbar-title>
 
