@@ -15,6 +15,9 @@ const isAdmin = ref(false)
 const theme = useTheme()
 const isDark = ref(false)
 
+// Drawer state for mobile navigation
+const drawer = ref(false)
+
 // Toggle dark mode function
 const toggleDarkMode = () => {
   isDark.value = !isDark.value
@@ -104,7 +107,6 @@ const props = defineProps({
           @click="goTo('dashboard')"
           style="cursor: pointer"
         >
-          <!-- Clickable Image -->
           <v-img
             src="/images/ccisLogo7.png"
             alt="CCIS Logo"
@@ -114,12 +116,11 @@ const props = defineProps({
             transition="none"
             cover
           />
-          <!-- Clickable Text -->
         </div>
       </v-toolbar-title>
 
-      <!-- Navigation Buttons -->
-      <div class="d-flex align-center gap-4">
+      <!-- Desktop Navigation -->
+      <div class="d-none d-md-flex align-center gap-4">
         <v-btn
           variant="text"
           @click="goTo('dashboard')"
@@ -144,7 +145,6 @@ const props = defineProps({
         >
           Theses
         </v-btn>
-
         <!-- Admin Button (Visible Only to Admin Emails) -->
         <v-btn
           v-if="!isLoading && isAdmin"
@@ -155,77 +155,73 @@ const props = defineProps({
         >
           Admin
         </v-btn>
-
-        <!-- User Menu with Tonal Tooltips -->
-        <div class="d-flex justify-center align-center">
-          <v-menu location="bottom center">
-            <template v-slot:activator="{ props }">
-              <v-btn icon v-bind="props">
-                <v-avatar color="orange-darken-2" size="36">
-                  <v-icon>mdi-menu</v-icon>
-                </v-avatar>
-              </v-btn>
-            </template>
-
-            <v-list class="d-flex flex-column align-center" id="listbox">
-              <div class="position-relative">
-                <v-tooltip text="Profile" location="left" content-class="menu-text-tooltip">
-                  <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" @click="goTo('profile')" class="justify-center">
-                      <v-icon>mdi-account-circle</v-icon>
-                    </v-list-item>
-                  </template>
-                </v-tooltip>
-              </div>
-
-              <div class="position-relative">
-                <v-tooltip text="Settings" location="left" content-class="menu-text-tooltip">
-                  <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" @click="goTo('settings')" class="justify-center">
-                      <v-icon>mdi-cog</v-icon>
-                    </v-list-item>
-                  </template>
-                </v-tooltip>
-              </div>
-
-              <v-divider />
-
-              <div class="position-relative">
-                <v-tooltip text="Logout" location="left" content-class="menu-text-tooltip">
-                  <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" @click="handleLogout" class="justify-center">
-                      <v-icon>mdi-logout</v-icon>
-                    </v-list-item>
-                  </template>
-                </v-tooltip>
-              </div>
-            </v-list>
-          </v-menu>
-        </div>
-        <!-- From Uiverse.io by JustCode14 -->
-        <label class="switch">
-          <input
-            type="checkbox"
-            :checked="!isDark"
-            @change="toggleDarkMode"
-            style="z-index: 2; position: relative"
-          />
-          <span class="slider">
-            <div class="star star_1"></div>
-            <div class="star star_2"></div>
-            <div class="star star_3"></div>
-            <svg viewBox="0 0 16 16" class="cloud_1 cloud">
-              <path
-                transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-                fill="#fff"
-                d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-              ></path>
-            </svg>
-          </span>
-        </label>
+        <v-btn icon @click="drawer = !drawer">
+          <v-icon>mdi-menu</v-icon>
+        </v-btn>
       </div>
+
+      <!-- Mobile Navigation -->
+      <v-btn icon class="d-md-none" @click="drawer = !drawer">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
     </v-container>
   </v-app-bar>
+
+  <!-- Navigation Drawer -->
+  <v-navigation-drawer v-model="drawer" app temporary class="mobile-drawer">
+    <v-list>
+      <v-list-item @click="goTo('dashboard')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-widgets</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Dashboard</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item @click="goTo('syllabi')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-book-open-page-variant</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Syllabi</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item @click="goTo('theses')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-clipboard-text</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Theses</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item v-if="!isLoading && isAdmin" @click="goTo('admin')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-shield-account</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Admin</v-list-item-title>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list-item @click="goTo('profile')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-account-circle</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Profile</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item @click="goTo('settings')">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-cog</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Settings</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item @click="handleLogout">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-logout</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Logout</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <style scoped>
@@ -366,5 +362,15 @@ const props = defineProps({
 
 .switch input:checked ~ .slider .cloud {
   opacity: 1;
+}
+
+/* Mobile Drawer Background */
+.mobile-drawer {
+  background-color: white; /* Set the background to white */
+}
+
+/* Orange Text for Mobile Drawer */
+.orange-text {
+  color: #e65100 !important; /* orange-darken-4 */
 }
 </style>
