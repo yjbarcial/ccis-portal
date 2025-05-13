@@ -43,7 +43,6 @@ const departments = [
   'Computer Science',
   'Information Technology',
   'Information Systems',
-  'Computer Engineering',
 ]
 
 const activeTab = ref('thesis')
