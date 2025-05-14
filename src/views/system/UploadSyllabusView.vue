@@ -113,7 +113,7 @@ const handleSubmit = async () => {
             <h1 class="text-h5 font-weight-bold">Upload Syllabus</h1>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="auto">
+          <v-col cols="auto" class="me-5">
             <v-btn
               variant="flat"
               density="comfortable"

@@ -16,16 +16,6 @@ const statistics = ref({
   recentSyllabi: [],
 })
 
-// Add new state for thesis upload
-const thesisForm = ref({
-  title: '',
-  abstract: '',
-  abstractImage: null,
-  objectivesImage: null,
-  acadYear: null,
-  semester: null,
-})
-
 const users = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -33,102 +23,129 @@ const search = ref('')
 const statusFilter = ref('all')
 const departmentFilter = ref('all')
 const sortBy = ref('created_at')
-
-const uploadProgress = ref(0)
-const isUploading = ref(false)
-const uploadError = ref(null)
+const showResetDialog = ref(false)
+const resetType = ref('')
+const resetLoading = ref(false)
 
 // Departments for filtering
-const departments = [
-  'Computer Science',
-  'Information Technology',
-  'Information Systems',
-]
+const departments = ['Computer Science', 'Information Technology', 'Information Systems']
 
-const activeTab = ref('thesis')
+const activeTab = ref('users')
 
 // Fetch statistics and user data
 onMounted(async () => {
   try {
+    console.log('Starting to fetch admin data...')
+
     // Fetch total users
-    const { count: userCount } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact', head: true })
-    statistics.value.totalUsers = userCount || 0
-
-    // Fetch active users (logged in within last 30 days)
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    const { count: activeUserCount } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact', head: true })
-      .gte('last_sign_in_at', thirtyDaysAgo.toISOString())
-    statistics.value.activeUsers = activeUserCount || 0
-
-    // Fetch total theses
-    const { count: thesisCount } = await supabase
-      .from('theses')
-      .select('*', { count: 'exact', head: true })
-    statistics.value.totalTheses = thesisCount || 0
-
-    // Fetch total syllabi
-    const { count: syllabiCount } = await supabase
-      .from('syllabi')
-      .select('*', { count: 'exact', head: true })
-    statistics.value.totalSyllabi = syllabiCount || 0
-
-    // Fetch recent uploads (last 24 hours)
-    const twentyFourHoursAgo = new Date()
-    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24)
-    const { count: pendingCount } = await supabase
-      .from('theses')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', twentyFourHoursAgo.toISOString())
-    statistics.value.pendingUploads = pendingCount || 0
-
-    // Fetch recent uploads with user information
-    const { data: recentUploads } = await supabase
-      .from('theses')
-      .select(
-        `
-        *,
-        profiles:user_id (
-          email,
-          full_name,
-          department
-        )
-      `,
-      )
-      .order('created_at', { ascending: false })
-      .limit(5)
-    statistics.value.recentUploads = recentUploads || []
-
-    // Fetch recent syllabi uploads
-    const { data: recentSyllabi } = await supabase
-      .from('syllabi')
-      .select(
-        `
-        *,
-        profiles:user_id (
-          email,
-          full_name,
-          department
-        )
-      `,
-      )
-      .order('created_at', { ascending: false })
-      .limit(5)
-    statistics.value.recentSyllabi = recentSyllabi || []
-
-    // Fetch users
-    const { data: usersData } = await supabase
+    console.log('Fetching users...')
+    const { data: usersData, error: usersError } = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
+
+    if (usersError) {
+      console.error('Error fetching users:', usersError)
+      throw usersError
+    }
+    console.log('Users fetched successfully:', usersData?.length || 0)
     users.value = usersData || []
+    statistics.value.totalUsers = usersData?.length || 0
+
+    // Fetch active users (logged in within last 30 days)
+    console.log('Fetching active users...')
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    const { count: activeUserCount, error: activeUsersError } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true })
+      .gte('last_sign_in_at', thirtyDaysAgo.toISOString())
+
+    if (activeUsersError) {
+      console.error('Error fetching active users:', activeUsersError)
+      throw activeUsersError
+    }
+    console.log('Active users fetched successfully:', activeUserCount)
+    statistics.value.activeUsers = activeUserCount || 0
+
+    // Fetch total theses
+    console.log('Fetching total theses...')
+    const { count: thesisCount, error: thesisError } = await supabase
+      .from('theses')
+      .select('*', { count: 'exact', head: true })
+
+    if (thesisError) {
+      console.error('Error fetching total theses:', thesisError)
+      throw thesisError
+    }
+    console.log('Total theses fetched successfully:', thesisCount)
+    statistics.value.totalTheses = thesisCount || 0
+
+    // Fetch total syllabi
+    console.log('Fetching total syllabi...')
+    const { count: syllabiCount, error: syllabiError } = await supabase
+      .from('syllabi')
+      .select('*', { count: 'exact', head: true })
+
+    if (syllabiError) {
+      console.error('Error fetching total syllabi:', syllabiError)
+      throw syllabiError
+    }
+    console.log('Total syllabi fetched successfully:', syllabiCount)
+    statistics.value.totalSyllabi = syllabiCount || 0
+
+    // Fetch recent uploads with user information
+    console.log('Fetching recent thesis uploads...')
+    const { data: recentUploads, error: uploadsError } = await supabase
+      .from('theses')
+      .select(
+        `
+        *,
+        profiles:user_id (
+          email,
+          full_name,
+          department
+        )
+      `,
+      )
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    if (uploadsError) {
+      console.error('Error fetching recent uploads:', uploadsError)
+      throw uploadsError
+    }
+    console.log('Recent uploads fetched successfully:', recentUploads?.length || 0)
+    statistics.value.recentUploads = recentUploads || []
+
+    // Fetch recent syllabi uploads with user information
+    console.log('Fetching recent syllabi uploads...')
+    const { data: recentSyllabi, error: syllabiUploadsError } = await supabase
+      .from('syllabi')
+      .select(
+        `
+        *,
+        profiles:user_id (
+          email,
+          full_name,
+          department
+        )
+      `,
+      )
+      .order('created_at', { ascending: false })
+      .limit(5)
+
+    if (syllabiUploadsError) {
+      console.error('Error fetching recent syllabi:', syllabiUploadsError)
+      throw syllabiUploadsError
+    }
+    console.log('Recent syllabi fetched successfully:', recentSyllabi?.length || 0)
+    statistics.value.recentSyllabi = recentSyllabi || []
+
+    console.log('All data fetched successfully')
   } catch (err) {
-    console.error('Error fetching admin data:', err)
-    error.value = 'Failed to load dashboard data'
+    console.error('Error in onMounted:', err)
+    error.value = `Failed to load dashboard data: ${err.message}`
   } finally {
     loading.value = false
   }
@@ -208,102 +225,6 @@ const viewUserDetails = (userId) => {
 // Navigation helper
 const goTo = (route, params = {}) => {
   router.push({ name: route, params })
-}
-
-// Add thesis upload handler
-const handleThesisUpload = async () => {
-  if (!thesisForm.value.title || !thesisForm.value.abstract) {
-    uploadError.value = 'Please fill in all required fields'
-    return
-  }
-
-  isUploading.value = true
-  uploadError.value = null
-
-  try {
-    // Get current user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('User not authenticated')
-
-    // Upload abstract image if provided
-    let abstractImageUrl = null
-    if (thesisForm.value.abstractImage) {
-      const fileExt = thesisForm.value.abstractImage.name.split('.').pop()
-      const fileName = `abstracts/${user.id}/${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase.storage
-        .from('theses')
-        .upload(fileName, thesisForm.value.abstractImage)
-      if (uploadError) throw uploadError
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('theses').getPublicUrl(fileName)
-      abstractImageUrl = publicUrl
-    }
-
-    // Upload objectives image if provided
-    let objectivesImageUrl = null
-    if (thesisForm.value.objectivesImage) {
-      const fileExt = thesisForm.value.objectivesImage.name.split('.').pop()
-      const fileName = `objectives/${user.id}/${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase.storage
-        .from('theses')
-        .upload(fileName, thesisForm.value.objectivesImage)
-      if (uploadError) throw uploadError
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('theses').getPublicUrl(fileName)
-      objectivesImageUrl = publicUrl
-    }
-
-    // Insert thesis record
-    const { error: insertError } = await supabase.from('theses').insert({
-      title: thesisForm.value.title,
-      abstract: thesisForm.value.abstract,
-      abstract_image: abstractImageUrl,
-      objectives_image: objectivesImageUrl,
-      acad_year: thesisForm.value.acadYear,
-      semester: thesisForm.value.semester,
-      user_id: user.id,
-      status: 'approved', // Auto-approve admin uploads
-    })
-
-    if (insertError) throw insertError
-
-    // Reset form
-    thesisForm.value = {
-      title: '',
-      abstract: '',
-      abstractImage: null,
-      objectivesImage: null,
-      acadYear: null,
-      semester: null,
-    }
-
-    // Refresh statistics
-    await fetchStatistics()
-  } catch (err) {
-    console.error('Error uploading thesis:', err)
-    uploadError.value = 'Failed to upload thesis. Please try again.'
-  } finally {
-    isUploading.value = false
-    uploadProgress.value = 0
-  }
-}
-
-// Add image change handler
-const handleImageChange = (event, type) => {
-  const file = event.target.files[0]
-  if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-    if (type === 'abstract') {
-      thesisForm.value.abstractImage = file
-    } else {
-      thesisForm.value.objectivesImage = file
-    }
-  } else {
-    uploadError.value = 'Please select a valid image file (JPEG or PNG)'
-  }
 }
 
 // Add fetch statistics function
@@ -451,21 +372,13 @@ const fetchStatistics = async () => {
                               <th>Title</th>
                               <th>Uploaded By</th>
                               <th>Date</th>
-                              <th>Status</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="upload in statistics.recentUploads" :key="upload.id">
                               <td>{{ upload.title }}</td>
-                              <td>{{ upload.profiles?.email }}</td>
+                              <td>{{ upload.profiles?.full_name || upload.profiles?.email }}</td>
                               <td>{{ formatDate(upload.created_at) }}</td>
-                              <td>
-                                <v-chip
-                                  :color="upload.status === 'approved' ? 'success' : 'warning'"
-                                >
-                                  {{ upload.status }}
-                                </v-chip>
-                              </td>
                             </tr>
                           </tbody>
                         </v-table>
@@ -486,21 +399,15 @@ const fetchStatistics = async () => {
                               <th>Title</th>
                               <th>Uploaded By</th>
                               <th>Date</th>
-                              <th>Status</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr v-for="syllabus in statistics.recentSyllabi" :key="syllabus.id">
-                              <td>{{ syllabus.title }}</td>
-                              <td>{{ syllabus.profiles?.email }}</td>
-                              <td>{{ formatDate(syllabus.created_at) }}</td>
+                              <td>{{ syllabus.descriptive_title }}</td>
                               <td>
-                                <v-chip
-                                  :color="syllabus.status === 'approved' ? 'success' : 'warning'"
-                                >
-                                  {{ syllabus.status }}
-                                </v-chip>
+                                {{ syllabus.profiles?.full_name || syllabus.profiles?.email }}
                               </td>
+                              <td>{{ formatDate(syllabus.created_at) }}</td>
                             </tr>
                           </tbody>
                         </v-table>
@@ -518,109 +425,10 @@ const fetchStatistics = async () => {
           <v-col cols="12">
             <v-card>
               <v-tabs v-model="activeTab" color="primary">
-                <v-tab value="thesis">Thesis Management</v-tab>
                 <v-tab value="users">User Management</v-tab>
               </v-tabs>
 
               <v-window v-model="activeTab">
-                <!-- Thesis Management Tab -->
-                <v-window-item value="thesis">
-                  <v-card-text>
-                    <v-form @submit.prevent="handleThesisUpload">
-                      <v-row dense>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="thesisForm.title"
-                            label="Thesis Title"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-textarea
-                            v-model="thesisForm.abstract"
-                            label="Abstract"
-                            variant="outlined"
-                            required
-                            rows="2"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-textarea>
-                        </v-col>
-                      </v-row>
-
-                      <v-row dense>
-                        <v-col cols="12" md="6">
-                          <v-file-input
-                            label="Abstract Image"
-                            variant="outlined"
-                            accept="image/jpeg,image/png"
-                            @change="(e) => handleImageChange(e, 'abstract')"
-                            prepend-icon="mdi-image"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-file-input>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                          <v-file-input
-                            label="Objectives Image"
-                            variant="outlined"
-                            accept="image/jpeg,image/png"
-                            @change="(e) => handleImageChange(e, 'objectives')"
-                            prepend-icon="mdi-image"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-file-input>
-                        </v-col>
-                      </v-row>
-
-                      <v-row dense>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="thesisForm.acadYear"
-                            label="Academic Year"
-                            :items="['2024-2025', '2023-2024']"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="thesisForm.semester"
-                            label="Semester"
-                            :items="['1st Semester', '2nd Semester']"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-
-                      <v-alert v-if="uploadError" type="error" class="mb-4">
-                        {{ uploadError }}
-                      </v-alert>
-
-                      <v-btn
-                        color="orange-darken-4"
-                        type="submit"
-                        :loading="isUploading"
-                        :disabled="isUploading"
-                        class="mt-2"
-                        size="large"
-                        block
-                        prepend-icon="mdi-upload"
-                      >
-                        Upload Thesis
-                      </v-btn>
-                    </v-form>
-                  </v-card-text>
-                </v-window-item>
-
                 <!-- User Management Tab -->
                 <v-window-item value="users">
                   <v-card-text>
@@ -698,7 +506,7 @@ const fetchStatistics = async () => {
                                 )
                               "
                             >
-                              {{ user.status }}
+                              {{ user.status || 'active' }}
                             </v-chip>
                           </td>
                           <td>

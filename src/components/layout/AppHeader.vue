@@ -223,58 +223,122 @@ const props = defineProps({
 
   <!-- Mobile Navigation Drawer -->
   <v-navigation-drawer v-model="drawer" app temporary class="mobile-drawer d-md-none">
-    <v-list>
-      <v-list-item @click="goTo('dashboard')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-widgets</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Dashboard</v-list-item-title>
+    <v-list class="pa-0">
+      <!-- User Profile Section -->
+      <v-list-item class="user-profile-section">
+        <v-avatar color="orange-darken-4" size="48" class="mb-2">
+          <v-icon size="24" color="white">mdi-account</v-icon>
+        </v-avatar>
+        <v-list-item-title class="text-subtitle-1 font-weight-bold text-white">
+          {{ user?.user_metadata?.full_name || 'Guest' }}
+        </v-list-item-title>
+        <v-list-item-subtitle class="text-caption text-white">
+          {{ user?.user_metadata?.department || 'Department' }}
+        </v-list-item-subtitle>
+        <v-list-item-subtitle class="text-caption text-white">
+          {{ user?.user_metadata?.position || 'Position' }}
+        </v-list-item-subtitle>
       </v-list-item>
 
-      <v-list-item @click="goTo('syllabi')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-book-open-page-variant</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Syllabi</v-list-item-title>
-      </v-list-item>
+      <v-divider class="my-2"></v-divider>
 
-      <v-list-item @click="goTo('theses')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-clipboard-text</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Theses</v-list-item-title>
-      </v-list-item>
+      <!-- Navigation Section -->
+      <v-list-subheader class="text-uppercase font-weight-bold text-orange-darken-4">
+        Navigation
+      </v-list-subheader>
 
-      <v-list-item v-if="!isLoading && isAdmin" @click="goTo('admin')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-shield-account</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Admin</v-list-item-title>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <!-- Profile Dropdown -->
-      <v-list-group v-model="profileDropdown" prepend-icon="mdi-account-circle" class="orange-text">
-        <template v-slot:activator>
-          <v-list-item-title class="orange-text">Profile</v-list-item-title>
+      <v-list-item
+        @click="goTo('dashboard')"
+        :class="{ 'active-item': currentRoute === 'dashboard' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-widgets" color="orange-darken-4" class="me-3"></v-icon>
         </template>
-        <v-list-item @click="goTo('profile')">
-          <v-list-item-title>View Profile</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="goTo('settings')">
-          <v-list-item-title>Settings</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="handleLogout">
-          <v-list-item-title>Logout</v-list-item-title>
-        </v-list-item>
-      </v-list-group>
+        <v-list-item-title class="text-body-1">Dashboard</v-list-item-title>
+      </v-list-item>
 
-      <v-divider></v-divider>
+      <v-list-item
+        @click="goTo('syllabi')"
+        :class="{ 'active-item': currentRoute === 'syllabi' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-book-open-page-variant" color="orange-darken-4" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1">Syllabi</v-list-item-title>
+      </v-list-item>
 
-      <!-- Dark Mode Switch -->
-      <v-list-item>
-        <v-list-item-title>
+      <v-list-item
+        @click="goTo('theses')"
+        :class="{ 'active-item': currentRoute === 'theses' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-clipboard-text" color="orange-darken-4" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1">Theses</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
+        v-if="!isLoading && isAdmin"
+        @click="goTo('admin')"
+        :class="{ 'active-item': currentRoute === 'admin' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-shield-account" color="orange-darken-4" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1">Admin</v-list-item-title>
+      </v-list-item>
+
+      <v-divider class="my-2"></v-divider>
+
+      <!-- User Actions Section -->
+      <v-list-subheader class="text-uppercase font-weight-bold text-orange-darken-4">
+        User Actions
+      </v-list-subheader>
+
+      <v-list-item
+        @click="goTo('profile')"
+        :class="{ 'active-item': currentRoute === 'profile' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-account-circle" color="orange-darken-4" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1">Profile</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
+        @click="goTo('settings')"
+        :class="{ 'active-item': currentRoute === 'settings' }"
+        class="list-item-centered"
+        rounded="lg"
+      >
+        <template v-slot:prepend>
+          <v-icon icon="mdi-cog" color="orange-darken-4" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1">Settings</v-list-item-title>
+      </v-list-item>
+
+      <v-divider class="my-2"></v-divider>
+
+      <!-- Preferences Section -->
+      <v-list-subheader class="text-uppercase font-weight-bold text-orange-darken-4">
+        Preferences
+      </v-list-subheader>
+
+      <v-list-item class="list-item-centered" rounded="lg">
+        <div class="d-flex flex-column align-start w-100">
+          <v-list-item-title class="text-body-1 text-orange-darken-4 mb-2"
+            >Dark Mode</v-list-item-title
+          >
           <label class="switch">
             <input
               type="checkbox"
@@ -295,7 +359,14 @@ const props = defineProps({
               </svg>
             </span>
           </label>
-        </v-list-item-title>
+        </div>
+      </v-list-item>
+
+      <v-list-item @click="handleLogout" class="list-item-centered mt-4" rounded="lg">
+        <template v-slot:prepend>
+          <v-icon icon="mdi-logout" color="error" class="me-3"></v-icon>
+        </template>
+        <v-list-item-title class="text-body-1 text-error">Logout</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -441,38 +512,77 @@ const props = defineProps({
   opacity: 1;
 }
 
-/* Mobile Drawer Background */
+/* Modern Mobile Drawer Styling */
 .mobile-drawer {
-  background-color: white; /* Set the background to white */
+  background-color: rgb(var(--v-theme-background));
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Orange Text for Mobile Drawer */
-.orange-text {
-  color: #e65100 !important; /* orange-darken-4 */
+.user-profile-section {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-orange-darken-4)) 0%,
+    rgb(var(--v-theme-orange)) 100%
+  );
+  padding: 20px 16px;
+  text-align: center;
+  color: white;
 }
 
-/* Menu Item Styling */
-.menu-item {
-  position: relative;
-  overflow: visible;
+.user-profile-section .v-list-item-title,
+.user-profile-section .v-list-item-subtitle {
+  color: black !important;
+  line-height: 1.2;
 }
 
-/* Popped-Out Text */
-.menu-text {
-  position: absolute;
-  left: -100px; /* Adjust this value to control how far the text pops out */
-  top: 50%;
-  transform: translateY(-50%);
-  color: #e65100; /* orange-darken-4 */
-  font-weight: bold;
-  white-space: nowrap;
+.v-list-subheader {
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+  padding: 16px 16px 8px;
+}
+
+.list-item-centered {
+  margin: 4px 8px;
   transition: all 0.3s ease;
-  opacity: 0;
+  padding: 12px 16px;
 }
 
-/* Show Text on Hover */
-.menu-item:hover .menu-text {
-  opacity: 1;
-  left: -120px; /* Adjust this value for hover animation */
+.list-item-centered:hover {
+  background-color: rgb(var(--v-theme-orange-lighten-5));
+  transform: translateX(4px);
 }
+
+.active-item {
+  background-color: rgb(var(--v-theme-orange-lighten-5));
+  border-left: 4px solid rgb(var(--v-theme-orange-darken-4));
+}
+
+.active-item .v-list-item-title {
+  color: rgb(var(--v-theme-orange-darken-4));
+  font-weight: 500;
+}
+
+.v-list-item-title {
+  font-size: 0.95rem;
+  font-weight: 400;
+  transition: color 0.3s ease;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.v-divider {
+  opacity: 0.1;
+}
+
+/* Keep the original Uiverse dark mode switch styles */
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 4em;
+  height: 2.2em;
+  border-radius: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ... rest of the Uiverse switch styles ... */
 </style>
