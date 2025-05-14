@@ -95,23 +95,25 @@ const onFormSubmit = () => {
     </div>
 
     <!-- Full Name & Email -->
-    <v-row>
-      <v-col cols="12" sm="6">
+    <v-row class="form-row">
+      <v-col cols="12" sm="6" class="form-col">
         <v-text-field
           v-model="formData.fullname"
           label="Full Name"
           variant="solo-filled"
           prepend-inner-icon="mdi-account"
           :rules="[requiredValidator]"
+          class="form-field"
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="12" sm="6" class="form-col">
         <v-text-field
           v-model="formData.email"
           label="Email Address"
           variant="solo-filled"
           prepend-inner-icon="mdi-email"
           :rules="[requiredValidator, emailValidator]"
+          class="form-field"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -123,11 +125,11 @@ const onFormSubmit = () => {
       variant="solo-filled"
       prepend-inner-icon="mdi-office-building"
       :rules="[requiredValidator]"
-      class="mb-3"
+      class="form-field mb-3"
     ></v-text-field>
 
-    <v-row>
-      <v-col cols="12" sm="6">
+    <v-row class="form-row">
+      <v-col cols="12" sm="6" class="form-col">
         <!-- Password -->
         <v-text-field
           v-model="formData.password"
@@ -138,9 +140,10 @@ const onFormSubmit = () => {
           :type="isPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isPasswordvisible = !isPasswordvisible"
           :rules="[requiredValidator, passwordValidator]"
+          class="form-field"
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6">
+      <v-col cols="12" sm="6" class="form-col">
         <!-- Confirm Password -->
         <v-text-field
           v-model="formData.password_confirmation"
@@ -151,6 +154,7 @@ const onFormSubmit = () => {
           :type="isConfirmPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isConfirmPasswordvisible = !isConfirmPasswordvisible"
           :rules="[requiredValidator, confirmedValidator(password_confirmation)]"
+          class="form-field"
         />
       </v-col>
     </v-row>
@@ -162,7 +166,6 @@ const onFormSubmit = () => {
       color="deep-orange"
       size="large"
       elevation="3"
-      class="mt-2"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
@@ -170,7 +173,7 @@ const onFormSubmit = () => {
     </v-btn>
 
     <!-- Divider -->
-    <v-divider class="my-5"></v-divider>
+    <v-divider class="my-3"></v-divider>
 
     <!-- Login Link -->
     <p class="text-center text-caption">
@@ -193,6 +196,22 @@ const onFormSubmit = () => {
   flex-direction: column;
   align-items: stretch;
 }
+
+.form-row {
+  margin: 0 -8px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-col {
+  padding: 0 8px;
+  margin-bottom: 16px;
+}
+
+.form-field {
+  margin-bottom: 0;
+}
+
 :deep(.v-field__input) {
   font-size: 0.75rem;
 }
@@ -227,6 +246,12 @@ const onFormSubmit = () => {
   .register-form {
     padding: 20px 15px;
   }
+
+  .form-col {
+    padding: 0 6px;
+    margin-bottom: 12px;
+  }
+
   :deep(.v-field__input),
   :deep(.v-label),
   :deep(.v-btn),
