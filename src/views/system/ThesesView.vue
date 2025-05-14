@@ -1,11 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 import ThesesList from '@/components/system/ThesesList.vue'
 import { useThesesStore } from '@/stores/theses'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
 const thesesStore = useThesesStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
 const search = ref('')
 const selectedYear = ref(null)
@@ -32,30 +35,48 @@ onMounted(async () => {
   }
 })
 
-const filteredTheses = computed(() => {
-  console.log('Filtering theses:', thesesStore.theses)
-  return thesesStore.theses.filter((t) => {
-    return (
-      (!search.value || t.abstract.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!selectedYear.value || t.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || t.semester === selectedSemester.value)
-    )
-  })
-})
-
-const onRetrieveFromApi = async () => {
+const fetchData = async () => {
   loading.value = true
-  error.value = null
-
   try {
     await thesesStore.getTheses()
   } catch (err) {
-    console.error('Error refreshing theses:', err)
-    error.value = 'Failed to refresh theses. Please try again.'
+    console.error('Error fetching theses:', err)
+    error.value = 'Failed to load theses. Please try again.'
   } finally {
     loading.value = false
   }
 }
+
+const filteredTheses = computed(() => {
+  let filtered = thesesStore.theses
+
+  if (search.value) {
+    const searchLower = search.value.toLowerCase()
+    filtered = filtered.filter((thesis) => thesis.title.toLowerCase().includes(searchLower))
+  }
+
+  if (selectedYear.value) {
+    filtered = filtered.filter((thesis) => thesis.acad_year === selectedYear.value)
+  }
+
+  if (selectedSemester.value) {
+    filtered = filtered.filter((thesis) => thesis.semester === selectedSemester.value)
+  }
+
+  return filtered
+})
+
+const isAdmin = computed(() => {
+  const adminEmails = [
+    'yssahjulianah.barcial@carsu.edu.ph',
+    'lovellhudson.clavel@carsu.edu.ph',
+    'altheaguila.gorres@carsu.edu.ph',
+    'magnoliajamkee.masong@carsu.edu.ph',
+  ]
+  return authStore.user?.email && adminEmails.includes(authStore.user.email)
+})
+
+const goTo = (route) => router.push({ name: route })
 </script>
 
 <template>
@@ -63,32 +84,32 @@ const onRetrieveFromApi = async () => {
     <app-header title="CCIS Portal" />
     <v-main>
       <v-container fluid class="py-6">
-        <!-- Title and Refresh Button -->
+        <!-- Title and Upload Button -->
         <v-row class="mb-4" align="center">
           <v-col cols="auto">
             <h1 class="text-h5 font-weight-bold">Theses Repository</h1>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="auto">
+          <v-col cols="auto" class="me-5">
+            <v-btn
+              v-if="isAdmin"
+              variant="outlined"
+              color="orange-darken-3"
+              size="small"
+              @click="goTo('upload-thesis')"
+              class="text-capitalize me-3"
+            >
+              <v-icon start>mdi-plus</v-icon>
+              Upload Thesis
+            </v-btn>
             <v-btn
               variant="flat"
               density="comfortable"
               color="orange-darken-3"
               size="small"
-              @click="onRetrieveFromApi"
+              @click="fetchData"
               icon="mdi-refresh"
               :loading="loading"
-            >
-            </v-btn>
-          </v-col>
-          <v-col cols="auto">
-            <v-btn
-              variant="flat"
-              density="comfortable"
-              color="orange-darken-3"
-              size="small"
-              @click="$router.push({ name: 'upload-thesis' })"
-              icon="mdi-plus"
             >
             </v-btn>
           </v-col>
@@ -132,11 +153,6 @@ const onRetrieveFromApi = async () => {
 
         <!-- Theses List -->
         <ThesesList v-if="!loading" :theses="filteredTheses" />
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>

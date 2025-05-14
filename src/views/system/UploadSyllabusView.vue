@@ -6,7 +6,6 @@ import { useAuthStore } from '@/stores/auth'
 import { requiredValidator } from '@/utils/validators'
 import { supabase } from '@/utils/supabase'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 
 const syllabiStore = useSyllabiStore()
 const authStore = useAuthStore()
@@ -114,7 +113,7 @@ const handleSubmit = async () => {
             <h1 class="text-h5 font-weight-bold">Upload Syllabus</h1>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="auto">
+          <v-col cols="auto" class="me-5">
             <v-btn
               variant="flat"
               density="comfortable"
@@ -215,11 +214,6 @@ const handleSubmit = async () => {
             </v-form>
           </v-card-text>
         </v-card>
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>

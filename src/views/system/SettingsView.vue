@@ -4,23 +4,14 @@ import { useTheme } from 'vuetify'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
-const theme = useTheme()
-const isDark = ref(false)
 const notifications = ref(true)
 const emailNotifications = ref(true)
 const loading = ref(false)
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-  theme.global.name.value = isDark.value ? 'dark' : 'light'
-  saveSettings()
-}
 
 const saveSettings = () => {
   loading.value = true
   try {
     // Save settings to localStorage
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
     localStorage.setItem('notifications', notifications.value)
     localStorage.setItem('emailNotifications', emailNotifications.value)
   } finally {
@@ -30,12 +21,6 @@ const saveSettings = () => {
 
 onMounted(() => {
   // Load settings from localStorage
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme) {
-    isDark.value = savedTheme === 'dark'
-    theme.global.name.value = savedTheme
-  }
-
   const savedNotifications = localStorage.getItem('notifications')
   if (savedNotifications) {
     notifications.value = savedNotifications === 'true'
@@ -61,29 +46,6 @@ onMounted(() => {
 
         <v-row>
           <v-col cols="12" md="8" lg="6">
-            <v-card class="mb-4">
-              <v-card-title class="text-h6">Appearance</v-card-title>
-              <v-divider />
-              <v-card-text>
-                <v-list>
-                  <v-list-item>
-                    <template v-slot:prepend>
-                      <v-icon>mdi-theme-light-dark</v-icon>
-                    </template>
-                    <v-list-item-title>Dark Mode</v-list-item-title>
-                    <template v-slot:append>
-                      <v-switch
-                        v-model="isDark"
-                        color="orange-darken-3"
-                        @change="toggleTheme"
-                        :loading="loading"
-                      />
-                    </template>
-                  </v-list-item>
-                </v-list>
-              </v-card-text>
-            </v-card>
-
             <v-card class="mb-4">
               <v-card-title class="text-h6">Notifications</v-card-title>
               <v-divider />

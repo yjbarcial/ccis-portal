@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { supabase } from '@/utils/supabase'
+import { useAuthStore } from './auth'
 
 export const useThesesStore = defineStore('theses', () => {
   const theses = ref([])
+  const authStore = useAuthStore()
   const loading = ref(false)
   const error = ref(null)
 
@@ -17,7 +19,6 @@ export const useThesesStore = defineStore('theses', () => {
     console.log('Fetching all theses...')
 
     try {
-      console.log('Making Supabase query...')
       const { data, error } = await supabase
         .from('theses')
         .select('*')
@@ -28,22 +29,16 @@ export const useThesesStore = defineStore('theses', () => {
         throw error
       }
 
-      console.log('Raw Supabase response:', {
+      console.log('Supabase response:', {
         data,
         count: data?.length,
         firstItem: data?.[0],
-        query: `SELECT * FROM theses ORDER BY created_at DESC`,
       })
-
-      if (!data || data.length === 0) {
-        console.log('No data returned from Supabase')
-      }
 
       theses.value = data || []
       console.log('Updated theses store:', {
         value: theses.value,
         length: theses.value.length,
-        firstItem: theses.value[0],
       })
     } catch (err) {
       console.error('Error in getTheses:', err)
@@ -51,5 +46,29 @@ export const useThesesStore = defineStore('theses', () => {
     }
   }
 
-  return { theses, $reset, getTheses, loading, error }
+  // Insert thesis
+  async function insertThesis(thesisData) {
+    if (!authStore.user || !authStore.user.id) {
+      console.error('User is not authenticated')
+      return
+    }
+
+    const fullData = {
+      ...thesisData,
+      user_id: authStore.user.id,
+      created_at: new Date().toISOString(),
+    }
+
+    const { error } = await supabase.from('theses').insert(fullData)
+
+    if (error) {
+      console.error('Insert failed:', error)
+      throw error
+    } else {
+      console.log('Thesis inserted successfully')
+      await getTheses() // <- fetch latest data
+    }
+  }
+
+  return { theses, $reset, getTheses, insertThesis, loading, error }
 })

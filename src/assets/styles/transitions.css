@@ -1,0 +1,33 @@
+/* Disable all transitions and animations */
+* {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Disable Vue Router transitions */
+.v-enter-active,
+.v-leave-active {
+  transition: none !important;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 1 !important;
+}
+
+/* Disable Vuetify transitions */
+.v-overlay__scrim,
+.v-overlay__content {
+  transition: none !important;
+}
+
+/* Disable page transitions */
+.page-enter-active,
+.page-leave-active {
+  transition: none !important;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 1 !important;
+}

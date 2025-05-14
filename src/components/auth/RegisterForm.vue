@@ -15,7 +15,7 @@ const router = useRouter()
 const formDataDefault = {
   fullname: '',
   email: '',
-  employeeID: '',
+  department: '',
   password: '',
   password_confirmation: '',
 }
@@ -38,11 +38,11 @@ const onSubmit = async () => {
 
   const { data, error } = await supabase.auth.signUp({
     email: formData.value.email,
-    employeeID: formData.value.employeeID,
     password: formData.value.password,
     options: {
       data: {
-        fullname: formData.value.fullname,
+        full_name: formData.value.fullname,
+        department: formData.value.department,
       },
     },
   })
@@ -61,7 +61,7 @@ const onSubmit = async () => {
       JSON.stringify({
         fullname: formData.value.fullname,
         email: formData.value.email,
-        employeeID: formData.value.employeeID,
+        department: formData.value.department,
       }),
     )
 
@@ -90,22 +90,21 @@ const onFormSubmit = () => {
   <v-form @submit.prevent="onFormSubmit" ref="refVForm" class="register-form">
     <!-- Form Header -->
     <div class="text-center mb-5">
-      <v-icon size="36" color="deep-orange">mdi-account-plus</v-icon>
+      <v-icon size="28" color="deep-orange">mdi-account-plus</v-icon>
       <h2 class="font-weight-bold mt-2">Create an Account</h2>
     </div>
 
-    <!-- Full Name -->
-    <v-text-field
-      v-model="formData.fullname"
-      label="Full Name"
-      variant="solo-filled"
-      prepend-inner-icon="mdi-account"
-      class="mb-3"
-      :rules="[requiredValidator]"
-    ></v-text-field>
-
-    <!-- Employee ID & Email -->
+    <!-- Full Name & Email -->
     <v-row>
+      <v-col cols="12" sm="6">
+        <v-text-field
+          v-model="formData.fullname"
+          label="Full Name"
+          variant="solo-filled"
+          prepend-inner-icon="mdi-account"
+          :rules="[requiredValidator]"
+        ></v-text-field>
+      </v-col>
       <v-col cols="12" sm="6">
         <v-text-field
           v-model="formData.email"
@@ -115,16 +114,18 @@ const onFormSubmit = () => {
           :rules="[requiredValidator, emailValidator]"
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6">
-        <v-text-field
-          v-model="formData.employeeID"
-          label="Employee ID"
-          variant="solo-filled"
-          prepend-inner-icon="mdi-account-tie"
-          :rules="[requiredValidator]"
-        ></v-text-field>
-      </v-col>
     </v-row>
+
+    <!-- Department -->
+    <v-text-field
+      v-model="formData.department"
+      label="Department"
+      variant="solo-filled"
+      prepend-inner-icon="mdi-office-building"
+      :rules="[requiredValidator]"
+      class="mb-3"
+    ></v-text-field>
+
     <v-row>
       <v-col cols="12" sm="6">
         <!-- Password -->
@@ -133,7 +134,6 @@ const onFormSubmit = () => {
           label="Password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock"
-          class="mb-3"
           :append-inner-icon="isPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
           :type="isPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isPasswordvisible = !isPasswordvisible"
@@ -147,7 +147,6 @@ const onFormSubmit = () => {
           label="Confirm Password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock-check"
-          class="mb-3"
           :append-inner-icon="isConfirmPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
           :type="isConfirmPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isConfirmPasswordvisible = !isConfirmPasswordvisible"
@@ -163,6 +162,7 @@ const onFormSubmit = () => {
       color="deep-orange"
       size="large"
       elevation="3"
+      class="mt-2"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
@@ -173,7 +173,7 @@ const onFormSubmit = () => {
     <v-divider class="my-5"></v-divider>
 
     <!-- Login Link -->
-    <p class="text-center">
+    <p class="text-center text-caption">
       Already have an account?
       <RouterLink class="text-deep-orange font-weight-bold" to="/"> Log in </RouterLink>
     </p>
@@ -182,11 +182,67 @@ const onFormSubmit = () => {
 
 <style scoped>
 .register-form {
-  max-width: 520px; /* Increased max-width */
+  max-width: 450px;
   width: 100%;
-  padding: 30px;
+  padding: clamp(20px, 4vw, 30px) clamp(15px, 3vw, 20px);
   border-radius: 12px;
   background: white;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+:deep(.v-field__input) {
+  font-size: 0.75rem;
+}
+:deep(.v-label) {
+  font-size: 0.75rem;
+}
+:deep(.v-btn) {
+  font-size: 0.75rem;
+}
+:deep(.v-field__prepend-inner) {
+  padding-top: 0;
+  align-items: center;
+  justify-content: center;
+}
+:deep(.v-field__append-inner) {
+  padding-top: 0;
+  align-items: center;
+  justify-content: center;
+}
+:deep(.v-icon) {
+  font-size: 18px;
+}
+.register-form h2 {
+  font-size: 1.1rem;
+}
+.register-form p,
+.register-form .v-divider,
+.register-form .text-center {
+  font-size: 0.85rem;
+}
+@media (max-width: 600px) {
+  .register-form {
+    padding: 20px 15px;
+  }
+  :deep(.v-field__input),
+  :deep(.v-label),
+  :deep(.v-btn),
+  :deep(.text-caption) {
+    font-size: 0.75rem;
+  }
+  :deep(.v-icon) {
+    font-size: 16px;
+  }
+  .register-form h2 {
+    font-size: 1rem;
+  }
+  .register-form p,
+  .register-form .v-divider,
+  .register-form .text-center {
+    font-size: 0.8rem;
+  }
 }
 </style>

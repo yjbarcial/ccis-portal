@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
-import AppFooter from '@/components/layout/AppFooter.vue'
 import SyllabiList from '@/components/system/SyllabiList.vue'
 import { useSyllabiStore } from '@/stores/syllabi'
 import { useAuthStore } from '@/stores/auth'
@@ -81,7 +80,7 @@ const onRetrieveFromApi = async () => {
             <h1 class="text-h5 font-weight-bold">Syllabi Repository</h1>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="auto">
+          <v-col cols="auto" class="me-5">
             <v-btn
               variant="outlined"
               color="orange-darken-3"
@@ -143,11 +142,6 @@ const onRetrieveFromApi = async () => {
 
         <!-- Syllabi List -->
         <SyllabiList v-if="!loading" :syllabi="filteredSyllabi" />
-
-        <!-- Footer -->
-        <div class="my-1 text-black">
-          <AppFooter />
-        </div>
       </v-container>
     </v-main>
   </v-app>
