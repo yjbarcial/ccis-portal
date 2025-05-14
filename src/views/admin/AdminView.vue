@@ -16,16 +16,6 @@ const statistics = ref({
   recentSyllabi: [],
 })
 
-// Add new state for thesis upload
-const thesisForm = ref({
-  title: '',
-  abstract: '',
-  abstractImage: null,
-  objectivesImage: null,
-  acadYear: null,
-  semester: null,
-})
-
 const users = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -33,19 +23,17 @@ const search = ref('')
 const statusFilter = ref('all')
 const departmentFilter = ref('all')
 const sortBy = ref('created_at')
-
-const uploadProgress = ref(0)
-const isUploading = ref(false)
-const uploadError = ref(null)
+const showResetDialog = ref(false)
+const resetType = ref('')
+const resetLoading = ref(false)
 
 // Departments for filtering
-const departments = [
-  'Computer Science',
-  'Information Technology',
-  'Information Systems',
-]
+const departments = ['Computer Science', 'Information Technology', 'Information Systems']
 
 const activeTab = ref('thesis')
+
+// Add new state for data management
+const dataManagementTab = ref('theses') // 'theses' or 'syllabi'
 
 // Fetch statistics and user data
 onMounted(async () => {
@@ -210,102 +198,6 @@ const goTo = (route, params = {}) => {
   router.push({ name: route, params })
 }
 
-// Add thesis upload handler
-const handleThesisUpload = async () => {
-  if (!thesisForm.value.title || !thesisForm.value.abstract) {
-    uploadError.value = 'Please fill in all required fields'
-    return
-  }
-
-  isUploading.value = true
-  uploadError.value = null
-
-  try {
-    // Get current user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('User not authenticated')
-
-    // Upload abstract image if provided
-    let abstractImageUrl = null
-    if (thesisForm.value.abstractImage) {
-      const fileExt = thesisForm.value.abstractImage.name.split('.').pop()
-      const fileName = `abstracts/${user.id}/${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase.storage
-        .from('theses')
-        .upload(fileName, thesisForm.value.abstractImage)
-      if (uploadError) throw uploadError
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('theses').getPublicUrl(fileName)
-      abstractImageUrl = publicUrl
-    }
-
-    // Upload objectives image if provided
-    let objectivesImageUrl = null
-    if (thesisForm.value.objectivesImage) {
-      const fileExt = thesisForm.value.objectivesImage.name.split('.').pop()
-      const fileName = `objectives/${user.id}/${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase.storage
-        .from('theses')
-        .upload(fileName, thesisForm.value.objectivesImage)
-      if (uploadError) throw uploadError
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('theses').getPublicUrl(fileName)
-      objectivesImageUrl = publicUrl
-    }
-
-    // Insert thesis record
-    const { error: insertError } = await supabase.from('theses').insert({
-      title: thesisForm.value.title,
-      abstract: thesisForm.value.abstract,
-      abstract_image: abstractImageUrl,
-      objectives_image: objectivesImageUrl,
-      acad_year: thesisForm.value.acadYear,
-      semester: thesisForm.value.semester,
-      user_id: user.id,
-      status: 'approved', // Auto-approve admin uploads
-    })
-
-    if (insertError) throw insertError
-
-    // Reset form
-    thesisForm.value = {
-      title: '',
-      abstract: '',
-      abstractImage: null,
-      objectivesImage: null,
-      acadYear: null,
-      semester: null,
-    }
-
-    // Refresh statistics
-    await fetchStatistics()
-  } catch (err) {
-    console.error('Error uploading thesis:', err)
-    uploadError.value = 'Failed to upload thesis. Please try again.'
-  } finally {
-    isUploading.value = false
-    uploadProgress.value = 0
-  }
-}
-
-// Add image change handler
-const handleImageChange = (event, type) => {
-  const file = event.target.files[0]
-  if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-    if (type === 'abstract') {
-      thesisForm.value.abstractImage = file
-    } else {
-      thesisForm.value.objectivesImage = file
-    }
-  } else {
-    uploadError.value = 'Please select a valid image file (JPEG or PNG)'
-  }
-}
-
 // Add fetch statistics function
 const fetchStatistics = async () => {
   try {
@@ -356,6 +248,76 @@ const fetchStatistics = async () => {
     statistics.value.recentSyllabi = recentSyllabi || []
   } catch (err) {
     console.error('Error fetching statistics:', err)
+  }
+}
+
+// Add reset data function
+const resetData = async (type) => {
+  resetType.value = type
+  showResetDialog.value = true
+}
+
+const confirmReset = async () => {
+  resetLoading.value = true
+  error.value = null
+
+  try {
+    if (resetType.value === 'theses') {
+      // First, delete all records from the theses table
+      const { error: deleteError } = await supabase.from('theses').delete().neq('id', 0)
+
+      if (deleteError) throw deleteError
+
+      // Then delete all files from storage
+      const { data: thesesFiles, error: listError } = await supabase.storage.from('theses').list()
+
+      if (listError) throw listError
+
+      // Delete all files from storage
+      if (thesesFiles && thesesFiles.length > 0) {
+        const filePaths = thesesFiles.map((file) => file.name)
+        const { error: deleteStorageError } = await supabase.storage
+          .from('theses')
+          .remove(filePaths)
+
+        if (deleteStorageError) throw deleteStorageError
+      }
+    } else if (resetType.value === 'syllabi') {
+      // First, delete all records from the syllabi table
+      const { error: deleteError } = await supabase.from('syllabi').delete().neq('id', 0)
+
+      if (deleteError) throw deleteError
+
+      // Then delete all files from storage
+      const { data: syllabiFiles, error: listError } = await supabase.storage.from('syllabi').list()
+
+      if (listError) throw listError
+
+      // Delete all files from storage
+      if (syllabiFiles && syllabiFiles.length > 0) {
+        const filePaths = syllabiFiles.map((file) => file.name)
+        const { error: deleteStorageError } = await supabase.storage
+          .from('syllabi')
+          .remove(filePaths)
+
+        if (deleteStorageError) throw deleteStorageError
+      }
+    }
+
+    // Refresh statistics after reset
+    await fetchStatistics()
+
+    // Show success message
+    error.value = null
+    const successMessage = `${resetType.value === 'theses' ? 'Theses' : 'Syllabi'} data has been successfully reset.`
+    // You might want to add a success alert component to show this message
+  } catch (err) {
+    console.error('Error resetting data:', err)
+    error.value = `Failed to reset ${resetType.value} data: ${err.message}`
+  } finally {
+    resetLoading.value = false
+    showResetDialog.value = false
+    resetType.value = ''
   }
 }
 </script>
@@ -451,7 +413,6 @@ const fetchStatistics = async () => {
                               <th>Title</th>
                               <th>Uploaded By</th>
                               <th>Date</th>
-                              <th>Status</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -459,13 +420,6 @@ const fetchStatistics = async () => {
                               <td>{{ upload.title }}</td>
                               <td>{{ upload.profiles?.email }}</td>
                               <td>{{ formatDate(upload.created_at) }}</td>
-                              <td>
-                                <v-chip
-                                  :color="upload.status === 'approved' ? 'success' : 'warning'"
-                                >
-                                  {{ upload.status }}
-                                </v-chip>
-                              </td>
                             </tr>
                           </tbody>
                         </v-table>
@@ -486,7 +440,6 @@ const fetchStatistics = async () => {
                               <th>Title</th>
                               <th>Uploaded By</th>
                               <th>Date</th>
-                              <th>Status</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -494,13 +447,6 @@ const fetchStatistics = async () => {
                               <td>{{ syllabus.title }}</td>
                               <td>{{ syllabus.profiles?.email }}</td>
                               <td>{{ formatDate(syllabus.created_at) }}</td>
-                              <td>
-                                <v-chip
-                                  :color="syllabus.status === 'approved' ? 'success' : 'warning'"
-                                >
-                                  {{ syllabus.status }}
-                                </v-chip>
-                              </td>
                             </tr>
                           </tbody>
                         </v-table>
@@ -520,105 +466,36 @@ const fetchStatistics = async () => {
               <v-tabs v-model="activeTab" color="primary">
                 <v-tab value="thesis">Thesis Management</v-tab>
                 <v-tab value="users">User Management</v-tab>
+                <v-tab value="data">Data Management</v-tab>
               </v-tabs>
 
               <v-window v-model="activeTab">
                 <!-- Thesis Management Tab -->
                 <v-window-item value="thesis">
-                  <v-card-text>
-                    <v-form @submit.prevent="handleThesisUpload">
-                      <v-row dense>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="thesisForm.title"
-                            label="Thesis Title"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-textarea
-                            v-model="thesisForm.abstract"
-                            label="Abstract"
-                            variant="outlined"
-                            required
-                            rows="2"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-textarea>
-                        </v-col>
-                      </v-row>
-
-                      <v-row dense>
-                        <v-col cols="12" md="6">
-                          <v-file-input
-                            label="Abstract Image"
-                            variant="outlined"
-                            accept="image/jpeg,image/png"
-                            @change="(e) => handleImageChange(e, 'abstract')"
-                            prepend-icon="mdi-image"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-file-input>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                          <v-file-input
-                            label="Objectives Image"
-                            variant="outlined"
-                            accept="image/jpeg,image/png"
-                            @change="(e) => handleImageChange(e, 'objectives')"
-                            prepend-icon="mdi-image"
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-file-input>
-                        </v-col>
-                      </v-row>
-
-                      <v-row dense>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="thesisForm.acadYear"
-                            label="Academic Year"
-                            :items="['2024-2025', '2023-2024']"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="thesisForm.semester"
-                            label="Semester"
-                            :items="['1st Semester', '2nd Semester']"
-                            variant="outlined"
-                            required
-                            density="comfortable"
-                            class="mb-2"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-
-                      <v-alert v-if="uploadError" type="error" class="mb-4">
-                        {{ uploadError }}
+                  <v-card class="mb-4">
+                    <v-card-title class="text-h6">
+                      <v-icon class="mr-2" color="primary">mdi-clipboard-text</v-icon>
+                      Thesis Management
+                    </v-card-title>
+                    <v-card-text>
+                      <p class="text-body-1 mb-4">
+                        Current total theses: <strong>{{ statistics.totalTheses }}</strong>
+                      </p>
+                      <v-alert type="warning" class="mb-4">
+                        <strong>Warning:</strong> Resetting thesis data will permanently delete all
+                        thesis records from the system. This action cannot be undone.
                       </v-alert>
-
                       <v-btn
-                        color="orange-darken-4"
-                        type="submit"
-                        :loading="isUploading"
-                        :disabled="isUploading"
-                        class="mt-2"
-                        size="large"
+                        color="error"
+                        variant="outlined"
+                        prepend-icon="mdi-delete"
+                        @click="resetData('theses')"
                         block
-                        prepend-icon="mdi-upload"
                       >
-                        Upload Thesis
+                        Reset All Thesis Data
                       </v-btn>
-                    </v-form>
-                  </v-card-text>
+                    </v-card-text>
+                  </v-card>
                 </v-window-item>
 
                 <!-- User Management Tab -->
@@ -716,10 +593,118 @@ const fetchStatistics = async () => {
                     </v-table>
                   </v-card-text>
                 </v-window-item>
+
+                <!-- Data Management Tab -->
+                <v-window-item value="data">
+                  <v-card-text>
+                    <v-tabs v-model="dataManagementTab" color="primary" class="mb-4">
+                      <v-tab value="theses">Theses Data</v-tab>
+                      <v-tab value="syllabi">Syllabi Data</v-tab>
+                    </v-tabs>
+
+                    <v-window v-model="dataManagementTab">
+                      <!-- Theses Data Management -->
+                      <v-window-item value="theses">
+                        <v-card class="mb-4">
+                          <v-card-title class="text-h6">
+                            <v-icon class="mr-2" color="primary">mdi-file-document</v-icon>
+                            Theses Data Management
+                          </v-card-title>
+                          <v-card-text>
+                            <p class="text-body-1 mb-4">
+                              Current total theses: <strong>{{ statistics.totalTheses }}</strong>
+                            </p>
+                            <v-alert type="warning" class="mb-4">
+                              <strong>Warning:</strong> Resetting theses data will permanently
+                              delete all thesis records from the system. This action cannot be
+                              undone.
+                            </v-alert>
+                            <v-btn
+                              color="error"
+                              variant="outlined"
+                              prepend-icon="mdi-delete"
+                              @click="resetData('theses')"
+                              block
+                            >
+                              Reset All Theses Data
+                            </v-btn>
+                          </v-card-text>
+                        </v-card>
+                      </v-window-item>
+
+                      <!-- Syllabi Data Management -->
+                      <v-window-item value="syllabi">
+                        <v-card class="mb-4">
+                          <v-card-title class="text-h6">
+                            <v-icon class="mr-2" color="primary">mdi-book-open-page-variant</v-icon>
+                            Syllabi Data Management
+                          </v-card-title>
+                          <v-card-text>
+                            <p class="text-body-1 mb-4">
+                              Current total syllabi: <strong>{{ statistics.totalSyllabi }}</strong>
+                            </p>
+                            <v-alert type="warning" class="mb-4">
+                              <strong>Warning:</strong> Resetting syllabi data will permanently
+                              delete all syllabi records from the system. This action cannot be
+                              undone.
+                            </v-alert>
+                            <v-btn
+                              color="error"
+                              variant="outlined"
+                              prepend-icon="mdi-delete"
+                              @click="resetData('syllabi')"
+                              block
+                            >
+                              Reset All Syllabi Data
+                            </v-btn>
+                          </v-card-text>
+                        </v-card>
+                      </v-window-item>
+                    </v-window>
+                  </v-card-text>
+                </v-window-item>
               </v-window>
             </v-card>
           </v-col>
         </v-row>
+
+        <!-- Reset Confirmation Dialog -->
+        <v-dialog v-model="showResetDialog" max-width="500">
+          <v-card>
+            <v-card-title class="text-h5"> Confirm Reset </v-card-title>
+            <v-card-text>
+              <p class="mb-4">
+                Are you sure you want to reset
+                {{ resetType === 'theses' ? 'theses' : 'syllabi' }} data? This action cannot be
+                undone.
+              </p>
+              <v-alert type="warning" class="mb-0">
+                <strong>Warning:</strong> This will permanently delete all {{ resetType }} data from
+                the system.
+              </v-alert>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="grey-darken-1"
+                variant="text"
+                @click="showResetDialog = false"
+                :disabled="resetLoading"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="error"
+                variant="flat"
+                @click="confirmReset"
+                :loading="resetLoading"
+                :disabled="resetLoading"
+              >
+                Confirm Reset
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>

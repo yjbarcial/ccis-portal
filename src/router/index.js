@@ -59,7 +59,10 @@ const router = createRouter({
       path: '/theses/upload',
       name: 'upload-thesis',
       component: () => import('@/views/system/UploadThesisView.vue'),
-      meta: { requiresAuth: true },
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true,
+      },
     },
     {
       path: '/syllabi',
@@ -107,32 +110,29 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to) => {
-  const isLoggedIn = await isAuthenticated()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  const isAdmin = user?.email && adminEmails.includes(user.email)
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin)
 
-  if (to.name === 'home') {
-    return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
+  if (requiresAuth) {
+    const isLoggedIn = await isAuthenticated()
+    if (!isLoggedIn) {
+      next({ name: 'login' })
+      return
+    }
+
+    if (requiresAdmin) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user || !adminEmails.includes(user.email)) {
+        next({ name: 'theses' })
+        return
+      }
+    }
   }
 
-  if (isLoggedIn && to.meta.requiresAuth === false) {
-    return { name: 'dashboard' }
-  }
-
-  if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
-    return { name: 'dashboard' }
-  }
-
-  if (!isLoggedIn && to.meta.requiresAuth) {
-    return { name: 'login' }
-  }
-
-  if (to.meta.requiresAdmin && !isAdmin) {
-    return { name: 'dashboard' }
-  }
+  next()
 })
 
 export default router
