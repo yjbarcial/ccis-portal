@@ -17,6 +17,7 @@ const isDark = ref(false)
 
 // Drawer state for mobile navigation
 const drawer = ref(false)
+const profileDropdown = ref(false) // State for profile dropdown in mobile drawer
 
 // Toggle dark mode function
 const toggleDarkMode = () => {
@@ -145,7 +146,6 @@ const props = defineProps({
         >
           Theses
         </v-btn>
-        <!-- Admin Button (Visible Only to Admin Emails) -->
         <v-btn
           v-if="!isLoading && isAdmin"
           variant="text"
@@ -155,42 +155,64 @@ const props = defineProps({
         >
           Admin
         </v-btn>
-        <v-btn icon @click="drawer = !drawer">
-          <v-icon>mdi-menu</v-icon>
-        </v-btn>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn icon v-bind="props">
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="goTo('profile')">
+              <v-list-item-icon>
+                <v-icon>mdi-account-circle</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Profile</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="goTo('settings')">
+              <v-list-item-icon>
+                <v-icon>mdi-cog</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="handleLogout">
+              <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <label class="switch">
+          <input
+            type="checkbox"
+            :checked="!isDark"
+            @change="toggleDarkMode"
+            style="z-index: 2; position: relative"
+          />
+          <span class="slider">
+            <div class="star star_1"></div>
+            <div class="star star_2"></div>
+            <div class="star star_3"></div>
+            <svg viewBox="0 0 16 16" class="cloud_1 cloud">
+              <path
+                transform="matrix(.77976 0 0 .78395-299.99-418.63)"
+                fill="#fff"
+                d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
+              ></path>
+            </svg>
+          </span>
+        </label>
       </div>
 
       <!-- Mobile Navigation -->
       <v-btn icon class="d-md-none" @click="drawer = !drawer">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
-
-      <!-- From Uiverse.io by JustCode14 -->
-      <label class="switch">
-        <input
-          type="checkbox"
-          :checked="!isDark"
-          @change="toggleDarkMode"
-          style="z-index: 2; position: relative"
-        />
-        <span class="slider">
-          <div class="star star_1"></div>
-          <div class="star star_2"></div>
-          <div class="star star_3"></div>
-          <svg viewBox="0 0 16 16" class="cloud_1 cloud">
-            <path
-              transform="matrix(.77976 0 0 .78395-299.99-418.63)"
-              fill="#fff"
-              d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
-            ></path>
-          </svg>
-        </span>
-      </label>
     </v-container>
   </v-app-bar>
 
-  <!-- Navigation Drawer -->
-  <v-navigation-drawer v-model="drawer" app temporary class="mobile-drawer">
+  <!-- Mobile Navigation Drawer -->
+  <v-navigation-drawer v-model="drawer" app temporary class="mobile-drawer d-md-none">
     <v-list>
       <v-list-item @click="goTo('dashboard')">
         <v-list-item-icon>
@@ -222,25 +244,48 @@ const props = defineProps({
 
       <v-divider></v-divider>
 
-      <v-list-item @click="goTo('profile')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-account-circle</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Profile</v-list-item-title>
-      </v-list-item>
+      <!-- Profile Dropdown -->
+      <v-list-group v-model="profileDropdown" prepend-icon="mdi-account-circle" class="orange-text">
+        <template v-slot:activator>
+          <v-list-item-title class="orange-text">Profile</v-list-item-title>
+        </template>
+        <v-list-item @click="goTo('profile')">
+          <v-list-item-title>View Profile</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="goTo('settings')">
+          <v-list-item-title>Settings</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="handleLogout">
+          <v-list-item-title>Logout</v-list-item-title>
+        </v-list-item>
+      </v-list-group>
 
-      <v-list-item @click="goTo('settings')">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-cog</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Settings</v-list-item-title>
-      </v-list-item>
+      <v-divider></v-divider>
 
-      <v-list-item @click="handleLogout">
-        <v-list-item-icon>
-          <v-icon class="orange-text">mdi-logout</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title class="orange-text">Logout</v-list-item-title>
+      <!-- Dark Mode Switch -->
+      <v-list-item>
+        <v-list-item-title>
+          <label class="switch">
+            <input
+              type="checkbox"
+              :checked="!isDark"
+              @change="toggleDarkMode"
+              style="z-index: 2; position: relative"
+            />
+            <span class="slider">
+              <div class="star star_1"></div>
+              <div class="star star_2"></div>
+              <div class="star star_3"></div>
+              <svg viewBox="0 0 16 16" class="cloud_1 cloud">
+                <path
+                  transform="matrix(.77976 0 0 .78395-299.99-418.63)"
+                  fill="#fff"
+                  d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925"
+                ></path>
+              </svg>
+            </span>
+          </label>
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
