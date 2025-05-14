@@ -94,17 +94,6 @@ const onFormSubmit = () => {
       <h2 class="font-weight-bold mt-2">Create an Account</h2>
     </div>
 
-    <!-- Full Name -->
-    <!--<v-text-field
-      v-model="formData.fullname"
-      label="Full Name"
-      variant="solo-filled"
-      prepend-inner-icon="mdi-account"
-      class="mb-3"
-      :rules="[requiredValidator]"
-    ></v-text-field> -->
-
-    <!-- Employee ID & Email -->
     <v-row>
       <v-col cols="12" sm="6">
         <v-text-field
@@ -133,7 +122,6 @@ const onFormSubmit = () => {
           label="Password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock"
-          class="mb-3"
           :append-inner-icon="isPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
           :type="isPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isPasswordvisible = !isPasswordvisible"
@@ -147,7 +135,6 @@ const onFormSubmit = () => {
           label="Confirm Password"
           variant="solo-filled"
           prepend-inner-icon="mdi-lock-check"
-          class="mb-3"
           :append-inner-icon="isConfirmPasswordvisible ? 'mdi-eye' : 'mdi-eye-off'"
           :type="isConfirmPasswordvisible ? 'text' : 'password'"
           @click:append-inner="isConfirmPasswordvisible = !isConfirmPasswordvisible"
@@ -163,7 +150,7 @@ const onFormSubmit = () => {
       color="deep-orange"
       size="large"
       elevation="3"
-      class="mt-3"
+      class="mt-2"
       :disabled="formAction.formProcess"
       :loading="formAction.formProcess"
     >
