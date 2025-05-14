@@ -192,7 +192,7 @@ const props = defineProps({
             </v-tooltip>
           </v-list>
         </v-menu>
-        <label class="switch">
+        <label class="switch mx-3">
           <input
             type="checkbox"
             :checked="!isDark"
