@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import { useThesesStore } from '@/stores/theses'
@@ -35,7 +35,20 @@ const uploadProgress = ref(0)
 const abstractExpanded = ref(false)
 
 const canUpload = computed(() => {
-  return authStore.user?.role === 'admin' || authStore.user?.role === 'faculty'
+  const adminEmails = [
+    'yssahjulianah.barcial@carsu.edu.ph',
+    'lovellhudson.clavel@carsu.edu.ph',
+    'altheaguila.gorres@carsu.edu.ph',
+    'magnoliajamkee.masong@carsu.edu.ph',
+  ]
+  return authStore.user?.email && adminEmails.includes(authStore.user.email)
+})
+
+// Add navigation guard
+onMounted(() => {
+  if (!canUpload.value) {
+    router.push({ name: 'theses' })
+  }
 })
 
 const handleImageChange = (event, type) => {
@@ -74,12 +87,20 @@ const handleSubmit = async () => {
   uploadProgress.value = 0
 
   try {
-    // Generate unique filenames
-    const abstractFileName = `abstract_${Date.now()}.${abstractImage.value.name.split('.').pop()}`
-    const objectivesFileName = `objectives_${Date.now()}.${objectivesImage.value.name.split('.').pop()}`
+    // Get current user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
+    if (userError) throw userError
+    if (!user) throw new Error('User not authenticated')
+
+    // Generate unique filenames with user ID
+    const abstractFileName = `abstracts/${user.id}/${Date.now()}.${abstractImage.value.name.split('.').pop()}`
+    const objectivesFileName = `objectives/${user.id}/${Date.now()}.${objectivesImage.value.name.split('.').pop()}`
 
     // Upload abstract image
-    const { data: abstractUploadData, error: abstractUploadError } = await supabase.storage
+    const { error: abstractUploadError } = await supabase.storage
       .from('theses')
       .upload(abstractFileName, abstractImage.value, {
         cacheControl: '3600',
@@ -89,7 +110,7 @@ const handleSubmit = async () => {
     if (abstractUploadError) throw abstractUploadError
 
     // Upload objectives image
-    const { data: objectivesUploadData, error: objectivesUploadError } = await supabase.storage
+    const { error: objectivesUploadError } = await supabase.storage
       .from('theses')
       .upload(objectivesFileName, objectivesImage.value, {
         cacheControl: '3600',
@@ -107,8 +128,8 @@ const handleSubmit = async () => {
       data: { publicUrl: objectivesUrl },
     } = supabase.storage.from('theses').getPublicUrl(objectivesFileName)
 
-    // Insert thesis record
-    const { error: insertError } = await supabase.from('theses').insert({
+    // Insert thesis record using the store
+    await thesesStore.insertThesis({
       title: title.value,
       abstract: abstract.value,
       file_url_abstract: abstractUrl,
@@ -117,14 +138,11 @@ const handleSubmit = async () => {
       semester: semester.value,
     })
 
-    if (insertError) throw insertError
-
-    // Refresh theses list
-    await thesesStore.getTheses()
+    // Navigate back to theses view
     router.push({ name: 'theses' })
   } catch (err) {
-    console.error('Upload error:', err)
-    error.value = 'Upload failed. Please try again.'
+    console.error('Error uploading thesis:', err)
+    error.value = `Failed to upload thesis: ${err.message}`
   } finally {
     loading.value = false
     uploadProgress.value = 0
@@ -143,7 +161,7 @@ const handleSubmit = async () => {
             <h1 class="text-h5 font-weight-bold">Upload Thesis</h1>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="auto">
+          <v-col cols="auto" class="me-5">
             <v-btn
               variant="flat"
               density="comfortable"

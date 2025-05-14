@@ -12,15 +12,28 @@ const { mobile } = useDisplay()
     class="d-flex flex-column justify-between pa-0 register-main-container"
     style="min-height: 100vh; position: relative"
   >
+    <v-img
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('/images/background5.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+      "
+    ></v-img>
     <!-- Content -->
-    <v-row class="flex-grow-1 mt-5" align="center" justify="center">
-      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
+    <v-row class="flex-grow-1 mt-2" align="center" justify="center">
+      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-0': mobile }">
         <!-- Logo -->
         <v-img
           src="/images/ccisPortal.svg"
           width="86%"
           :width="mobile ? '65%' : sm ? '150px' : '200px'"
-          class="mx-auto mb-4"
+          class="mx-auto portal-logo"
           style="will-change: transform"
         />
       </v-col>
@@ -79,6 +92,7 @@ const { mobile } = useDisplay()
   flex-direction: column;
   padding: 0 !important;
 }
+
 .register-footer {
   width: 100%;
   background: transparent;
@@ -87,7 +101,11 @@ const { mobile } = useDisplay()
 }
 @media (max-width: 600px) {
   .register-main-container {
-    padding: 0 !important;
+    padding: 10px !important;
+  }
+
+  .portal-logo {
+    max-height: 130px;
   }
   .register-footer span {
     font-size: 0.9rem;

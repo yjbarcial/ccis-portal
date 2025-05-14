@@ -29,11 +29,15 @@ onMounted(() => {
       <img src="/images/portalLogo.png" alt="preload" />
     </div>
     <RouterView />
-    <AppFooter v-if="!['login', 'register'].includes(route.name)" />
+    <AppFooter v-if="!['login', 'register', 'forgot-password'].includes(route.name)" />
   </div>
 </template>
 
 <style>
+* {
+  font-family: 'Poppins', sans-serif !important;
+}
+
 .app-container {
   position: relative;
   min-height: 100vh;
@@ -47,7 +51,7 @@ onMounted(() => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/images/background5.png');
+  /* background-image: url('/images/background5.png'); */
   background-size: cover;
   background-position: center;
   z-index: -1;
