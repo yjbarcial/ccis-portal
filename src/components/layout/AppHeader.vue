@@ -223,57 +223,103 @@ const props = defineProps({
 
   <!-- Mobile Navigation Drawer -->
   <v-navigation-drawer v-model="drawer" app temporary class="mobile-drawer d-md-none">
-    <v-list>
-      <v-list-item @click="goTo('dashboard')">
+    <v-list class="d-flex flex-column align-start ms-2">
+      <!-- Section Header: Navigation -->
+      <v-subheader class="orange-text font-weight-bold text-center">Navigation</v-subheader>
+
+      <!-- Dashboard -->
+      <v-list-item
+        @click="goTo('dashboard')"
+        :class="{ 'active-item': currentRoute === 'dashboard' }"
+        class="list-item-centered"
+      >
         <v-list-item-icon>
           <v-icon class="orange-text">mdi-widgets</v-icon>
         </v-list-item-icon>
         <v-list-item-title class="orange-text">Dashboard</v-list-item-title>
       </v-list-item>
 
-      <v-list-item @click="goTo('syllabi')">
+      <!-- Syllabi -->
+      <v-list-item
+        @click="goTo('syllabi')"
+        :class="{ 'active-item': currentRoute === 'syllabi' }"
+        class="list-item-centered"
+      >
         <v-list-item-icon>
           <v-icon class="orange-text">mdi-book-open-page-variant</v-icon>
         </v-list-item-icon>
         <v-list-item-title class="orange-text">Syllabi</v-list-item-title>
       </v-list-item>
 
-      <v-list-item @click="goTo('theses')">
+      <!-- Theses -->
+      <v-list-item
+        @click="goTo('theses')"
+        :class="{ 'active-item': currentRoute === 'theses' }"
+        class="list-item-centered"
+      >
         <v-list-item-icon>
           <v-icon class="orange-text">mdi-clipboard-text</v-icon>
         </v-list-item-icon>
         <v-list-item-title class="orange-text">Theses</v-list-item-title>
       </v-list-item>
 
-      <v-list-item v-if="!isLoading && isAdmin" @click="goTo('admin')">
+      <!-- Admin (if applicable) -->
+      <v-list-item
+        v-if="!isLoading && isAdmin"
+        @click="goTo('admin')"
+        :class="{ 'active-item': currentRoute === 'admin' }"
+        class="list-item-centered"
+      >
         <v-list-item-icon>
           <v-icon class="orange-text">mdi-shield-account</v-icon>
         </v-list-item-icon>
         <v-list-item-title class="orange-text">Admin</v-list-item-title>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider class="my-3"></v-divider>
 
-      <!-- Profile Dropdown -->
-      <v-list-group v-model="profileDropdown" prepend-icon="mdi-account-circle" class="orange-text">
-        <template v-slot:activator>
-          <v-list-item-title class="orange-text">Profile</v-list-item-title>
-        </template>
-        <v-list-item @click="goTo('profile')">
-          <v-list-item-title>View Profile</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="goTo('settings')">
-          <v-list-item-title>Settings</v-list-item-title>
-        </v-list-item>
-        <v-list-item @click="handleLogout">
-          <v-list-item-title>Logout</v-list-item-title>
-        </v-list-item>
-      </v-list-group>
+      <!-- Section Header: User Actions -->
+      <v-subheader class="orange-text font-weight-bold text-center">User Actions</v-subheader>
 
-      <v-divider></v-divider>
+      <!-- Profile -->
+      <v-list-item
+        @click="goTo('profile')"
+        :class="{ 'active-item': currentRoute === 'profile' }"
+        class="list-item-centered"
+      >
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-account-circle</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Profile</v-list-item-title>
+      </v-list-item>
+
+      <!-- Settings -->
+      <v-list-item
+        @click="goTo('settings')"
+        :class="{ 'active-item': currentRoute === 'settings' }"
+        class="list-item-centered"
+      >
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-cog</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Settings</v-list-item-title>
+      </v-list-item>
+
+      <!-- Logout -->
+      <v-list-item @click="handleLogout" class="list-item-centered">
+        <v-list-item-icon>
+          <v-icon class="orange-text">mdi-logout</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title class="orange-text">Logout</v-list-item-title>
+      </v-list-item>
+
+      <v-divider class="my-3"></v-divider>
+
+      <!-- Section Header: Preferences -->
+      <v-subheader class="orange-text font-weight-bold text-center">Preferences</v-subheader>
 
       <!-- Dark Mode Switch -->
-      <v-list-item>
+      <v-list-item class="list-item-centered">
         <v-list-item-title>
           <label class="switch">
             <input
@@ -474,5 +520,60 @@ const props = defineProps({
 .menu-item:hover .menu-text {
   opacity: 1;
   left: -120px; /* Adjust this value for hover animation */
+}
+
+/* Active Item Highlight */
+.active-item {
+  background-color: #ffe0b2; /* Light orange background */
+  border-radius: 8px;
+}
+
+/* Section Header Styling */
+.v-subheader {
+  font-size: 1rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Drawer Background */
+.mobile-drawer {
+  background-color: #ffffff; /* White background */
+}
+
+/* Orange Text */
+.orange-text {
+  color: #e65100 !important; /* Orange-darken-4 */
+}
+
+/* Center and align list items */
+.list-item-centered {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Icons on the left */
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+/* Highlight active items */
+.active-item {
+  background-color: #ffe0b2; /* Light orange background */
+}
+
+/* Center section headers */
+.v-subheader {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+/* Drawer background */
+.mobile-drawer {
+  background-color: #ffffff; /* White background */
+}
+
+/* Orange text for icons and titles */
+.orange-text {
+  color: #e65100 !important; /* Orange-darken-4 */
 }
 </style>
