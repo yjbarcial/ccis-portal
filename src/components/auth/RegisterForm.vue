@@ -15,7 +15,7 @@ const router = useRouter()
 const formDataDefault = {
   fullname: '',
   email: '',
-  employeeID: '',
+  department: '',
   password: '',
   password_confirmation: '',
 }
@@ -38,11 +38,11 @@ const onSubmit = async () => {
 
   const { data, error } = await supabase.auth.signUp({
     email: formData.value.email,
-    employeeID: formData.value.employeeID,
     password: formData.value.password,
     options: {
       data: {
-        fullname: formData.value.fullname,
+        full_name: formData.value.fullname,
+        department: formData.value.department,
       },
     },
   })
@@ -61,7 +61,7 @@ const onSubmit = async () => {
       JSON.stringify({
         fullname: formData.value.fullname,
         email: formData.value.email,
-        employeeID: formData.value.employeeID,
+        department: formData.value.department,
       }),
     )
 
@@ -94,18 +94,17 @@ const onFormSubmit = () => {
       <h2 class="font-weight-bold mt-2">Create an Account</h2>
     </div>
 
-    <!-- Full Name -->
-    <!--<v-text-field
-      v-model="formData.fullname"
-      label="Full Name"
-      variant="solo-filled"
-      prepend-inner-icon="mdi-account"
-      class="mb-3"
-      :rules="[requiredValidator]"
-    ></v-text-field> -->
-
-    <!-- Employee ID & Email -->
+    <!-- Full Name & Email -->
     <v-row>
+      <v-col cols="12" sm="6">
+        <v-text-field
+          v-model="formData.fullname"
+          label="Full Name"
+          variant="solo-filled"
+          prepend-inner-icon="mdi-account"
+          :rules="[requiredValidator]"
+        ></v-text-field>
+      </v-col>
       <v-col cols="12" sm="6">
         <v-text-field
           v-model="formData.email"
@@ -115,16 +114,18 @@ const onFormSubmit = () => {
           :rules="[requiredValidator, emailValidator]"
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6">
-        <v-text-field
-          v-model="formData.employeeID"
-          label="Employee ID"
-          variant="solo-filled"
-          prepend-inner-icon="mdi-account-tie"
-          :rules="[requiredValidator]"
-        ></v-text-field>
-      </v-col>
     </v-row>
+
+    <!-- Department -->
+    <v-text-field
+      v-model="formData.department"
+      label="Department"
+      variant="solo-filled"
+      prepend-inner-icon="mdi-office-building"
+      :rules="[requiredValidator]"
+      class="mb-3"
+    ></v-text-field>
+
     <v-row>
       <v-col cols="12" sm="6">
         <!-- Password -->
