@@ -155,31 +155,41 @@ const props = defineProps({
         >
           Admin
         </v-btn>
-        <v-menu>
+        <v-menu location="bottom center">
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props">
-              <v-icon>mdi-menu</v-icon>
+              <v-avatar color="orange-darken-4" size="36">
+                <v-icon>mdi-menu</v-icon>
+              </v-avatar>
             </v-btn>
           </template>
-          <v-list>
-            <v-list-item @click="goTo('profile')">
-              <v-list-item-icon>
-                <v-icon>mdi-account-circle</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Profile</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="goTo('settings')">
-              <v-list-item-icon>
-                <v-icon>mdi-cog</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="handleLogout">
-              <v-list-item-icon>
-                <v-icon>mdi-logout</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Logout</v-list-item-title>
-            </v-list-item>
+
+          <v-list class="d-flex flex-column align-center" id="listbox">
+            <v-tooltip text="Profile" location="left" content-class="custom-tooltip">
+              <template v-slot:activator="{ props }">
+                <v-list-item @click="goTo('profile')" class="justify-center">
+                  <v-icon>mdi-account-circle</v-icon>
+                </v-list-item>
+              </template>
+            </v-tooltip>
+
+            <v-tooltip text="Settings" location="left" content-class="custom-tooltip">
+              <template v-slot:activator="{ props }">
+                <v-list-item @click="goTo('settings')" class="justify-center">
+                  <v-icon>mdi-cog</v-icon>
+                </v-list-item>
+              </template>
+            </v-tooltip>
+
+            <v-divider />
+
+            <v-tooltip text="Logout" location="left" content-class="custom-tooltip">
+              <template v-slot:activator="{ props }">
+                <v-list-item @click="handleLogout" class="justify-center">
+                  <v-icon>mdi-logout</v-icon>
+                </v-list-item>
+              </template>
+            </v-tooltip>
           </v-list>
         </v-menu>
         <label class="switch">
@@ -439,5 +449,30 @@ const props = defineProps({
 /* Orange Text for Mobile Drawer */
 .orange-text {
   color: #e65100 !important; /* orange-darken-4 */
+}
+
+/* Menu Item Styling */
+.menu-item {
+  position: relative;
+  overflow: visible;
+}
+
+/* Popped-Out Text */
+.menu-text {
+  position: absolute;
+  left: -100px; /* Adjust this value to control how far the text pops out */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e65100; /* orange-darken-4 */
+  font-weight: bold;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+/* Show Text on Hover */
+.menu-item:hover .menu-text {
+  opacity: 1;
+  left: -120px; /* Adjust this value for hover animation */
 }
 </style>
