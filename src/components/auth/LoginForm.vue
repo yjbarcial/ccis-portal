@@ -130,7 +130,7 @@ const getLoggedStatus = async () => {
     </v-btn>
 
     <!-- Divider -->
-    <v-divider class="my-5"></v-divider>
+    <v-divider class="my-3"></v-divider>
 
     <!-- Sign Up Link -->
     <p class="text-center text-caption">

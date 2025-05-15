@@ -27,14 +27,14 @@ const { mobile, xs, sm } = useDisplay()
       "
     ></v-img>
     <!-- Content -->
-    <v-row class="flex-grow-1 mt-5" align="center" justify="center">
-      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
+    <v-row class="flex-grow-1 mt-2" align="center" justify="center">
+      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-0': mobile }">
         <!-- Logo -->
         <v-img
           src="/images/ccisPortal.svg"
           width="86%"
           :width="mobile ? '65%' : sm ? '150px' : '200px'"
-          class="mx-auto mb-4"
+          class="mx-auto image-portal"
           style="will-change: transform"
         />
       </v-col>
@@ -43,7 +43,7 @@ const { mobile, xs, sm } = useDisplay()
         <v-card
           elevation="6"
           :class="mobile ? 'mx-2' : sm ? 'mx-6' : 'mx-12'"
-          class="pa-4"
+          class="pa-4 login-form"
           style="
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 16px;
@@ -94,6 +94,7 @@ const { mobile, xs, sm } = useDisplay()
   flex-direction: column;
   padding: 0 !important;
 }
+
 .login-footer {
   width: 100%;
   background: transparent;
@@ -102,8 +103,13 @@ const { mobile, xs, sm } = useDisplay()
 }
 @media (max-width: 600px) {
   .login-main-container {
-    padding: 0 !important;
+    padding: 10px !important;
   }
+
+  .image-portal {
+    max-height: 150px;
+  }
+
   .login-footer span {
     font-size: 0.9rem;
   }

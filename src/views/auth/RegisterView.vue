@@ -26,18 +26,18 @@ const { mobile } = useDisplay()
       "
     ></v-img>
     <!-- Content -->
-    <v-row class="flex-grow-1 mt-5" align="center" justify="center">
-      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-8': mobile }">
+    <v-row class="flex-grow-1 mt-2" align="center" justify="center">
+      <v-col cols="12" sm="5" md="4" class="text-center" :class="{ 'mb-0': mobile }">
         <!-- Logo -->
         <v-img
           src="/images/ccisPortal.svg"
           width="86%"
           :width="mobile ? '65%' : sm ? '150px' : '200px'"
-          class="mx-auto mb-4"
+          class="mx-auto portal-logo"
           style="will-change: transform"
         />
       </v-col>
-      <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center">
+      <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center second-col">
         <!-- Form -->
         <v-card
           elevation="6"
@@ -92,6 +92,7 @@ const { mobile } = useDisplay()
   flex-direction: column;
   padding: 0 !important;
 }
+
 .register-footer {
   width: 100%;
   background: transparent;
@@ -100,10 +101,18 @@ const { mobile } = useDisplay()
 }
 @media (max-width: 600px) {
   .register-main-container {
-    padding: 0 !important;
+    padding: 10px !important;
+  }
+
+  .portal-logo {
+    max-height: 100px;
   }
   .register-footer span {
     font-size: 0.9rem;
+  }
+
+  .second-col {
+    margin-bottom: 10px !important;
   }
 }
 </style>
