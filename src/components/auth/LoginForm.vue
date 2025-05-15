@@ -106,11 +106,14 @@ const getLoggedStatus = async () => {
     ></v-text-field>
 
     <!-- Actions -->
+
     <div class="d-flex justify-space-between align-center">
       <v-checkbox label="Remember me" density="compact"></v-checkbox>
+      <!--
       <RouterLink to="/forgot-password" class="text-deep-orange text-caption font-weight-medium">
         Forgot Password?
       </RouterLink>
+        -->
     </div>
 
     <!-- Login Button -->

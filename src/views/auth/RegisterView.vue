@@ -37,7 +37,7 @@ const { mobile } = useDisplay()
           style="will-change: transform"
         />
       </v-col>
-      <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center">
+      <v-col cols="12" sm="7" md="6" class="text-center d-flex justify-center second-col">
         <!-- Form -->
         <v-card
           elevation="6"
@@ -105,10 +105,14 @@ const { mobile } = useDisplay()
   }
 
   .portal-logo {
-    max-height: 130px;
+    max-height: 100px;
   }
   .register-footer span {
     font-size: 0.9rem;
+  }
+
+  .second-col {
+    margin-bottom: 10px !important;
   }
 }
 </style>
