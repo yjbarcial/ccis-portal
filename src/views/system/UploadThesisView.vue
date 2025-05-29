@@ -6,6 +6,7 @@ import { useThesesStore } from '@/stores/theses'
 import { requiredValidator } from '@/utils/validators'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { useAuthStore } from '@/stores/auth'
+import { ADMIN_EMAILS } from '@/utils/constants'
 
 const thesesStore = useThesesStore()
 const router = useRouter()
@@ -34,26 +35,32 @@ const loading = ref(false)
 const error = ref('')
 const uploadProgress = ref(0)
 const abstractExpanded = ref(false)
+const isAdmin = ref(false)
 
 const canUpload = computed(() => {
-  const adminEmails = [
-    'yssahjulianah.barcial@carsu.edu.ph',
-    'lovellhudson.clavel@carsu.edu.ph',
-    'altheaguila.gorres@carsu.edu.ph',
-    'magnoliajamkee.masong@carsu.edu.ph',
-    'jesilou.felisco@carsu.edu.ph',
-    'ersiajara.libiano@carsu.edu.ph',
-    'augustencarl.delvo@carsu.edu.ph',
-    'shanraquelmae.paqueo@carsu.edu.ph',
-    'darlpatrick.magatao@carsu.edu.ph',
-    'yvonne.piencenaves@carsu.edu.ph',
-  ]
-  return authStore.user?.email && adminEmails.includes(authStore.user.email)
+  return isAdmin.value
 })
 
-// Add navigation guard
-onMounted(() => {
-  if (!canUpload.value) {
+// Watch for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN') {
+    isAdmin.value = ADMIN_EMAILS.includes(session.user?.email)
+  } else if (event === 'SIGNED_OUT') {
+    isAdmin.value = false
+  }
+})
+
+onMounted(async () => {
+  // Ensure user data is loaded
+  if (!authStore.user) {
+    await authStore.fetchUser()
+  }
+
+  // Check if user is admin
+  isAdmin.value = authStore.user?.email && ADMIN_EMAILS.includes(authStore.user.email)
+  console.log('User admin status:', { email: authStore.user?.email, isAdmin: isAdmin.value })
+
+  if (!isAdmin.value) {
     router.push({ name: 'theses' })
   }
 })

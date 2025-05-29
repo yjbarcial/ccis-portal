@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import { ref, onMounted, watch } from 'vue'
 import { useTheme } from 'vuetify'
+import { ADMIN_EMAILS } from '@/utils/constants'
 
 const router = useRouter()
 
@@ -36,14 +37,6 @@ const saveSettings = () => {
   }
 }
 
-// Hardcoded list of admin emails
-const adminEmails = [
-  'yssahjulianah.barcial@carsu.edu.ph',
-  'lovellhudson.clavel@carsu.edu.ph',
-  'altheaguila.gorres@carsu.edu.ph',
-  'magnoliajamkee.masong@carsu.edu.ph',
-]
-
 // Fetch the current user from Supabase
 const fetchCurrentUser = async () => {
   const { data, error } = await supabase.auth.getUser()
@@ -52,7 +45,7 @@ const fetchCurrentUser = async () => {
     return
   }
   user.value = data.user
-  isAdmin.value = adminEmails.includes(data.user?.email)
+  isAdmin.value = ADMIN_EMAILS.includes(data.user?.email)
 }
 
 // Fetch user on component mount
@@ -72,7 +65,7 @@ onMounted(async () => {
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN') {
     user.value = session.user
-    isAdmin.value = adminEmails.includes(session.user?.email)
+    isAdmin.value = ADMIN_EMAILS.includes(session.user?.email)
   } else if (event === 'SIGNED_OUT') {
     user.value = null
     isAdmin.value = false
