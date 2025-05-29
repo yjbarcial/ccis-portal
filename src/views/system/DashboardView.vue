@@ -43,9 +43,9 @@ const handleLogout = () => {
 
 const search = ref('')
 const selectedYear = ref(null)
-const selectedSemester = ref(null)
+const selectedDepartment = ref(null)
 const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
+const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 
 const totalSyllabi = computed(() => syllabiStore.syllabi.length)
 const totalTheses = computed(() => thesesStore.theses.length)
@@ -67,7 +67,7 @@ const filteredTheses = computed(() => {
     return (
       (!search.value || t.title.toLowerCase().includes(search.value.toLowerCase())) &&
       (!selectedYear.value || t.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || t.semester === selectedSemester.value)
+      (!selectedDepartment.value || t.department === selectedDepartment.value)
     )
   })
 })
@@ -176,10 +176,20 @@ const filteredTheses = computed(() => {
                   v-for="(item, index) in filteredTheses"
                   :key="index"
                   :title="item.title"
-                  :subtitle="`${item.acad_year} • ${item.semester}`"
+                  :subtitle="`${item.acad_year} • ${item.department}`"
                   :class="{ 'dark-list-item': isDark }"
                 >
                   <template #append>
+                    <v-btn
+                      icon
+                      :href="item.file_url_front_page"
+                      target="_blank"
+                      variant="text"
+                      :color="isDark ? 'orange-lighten-1' : 'orange-darken-2'"
+                      class="me-2"
+                    >
+                      <v-icon>mdi-file-document</v-icon>
+                    </v-btn>
                     <v-btn
                       icon
                       :href="item.file_url_abstract"

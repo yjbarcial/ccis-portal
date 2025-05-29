@@ -12,12 +12,12 @@ const router = useRouter()
 
 const search = ref('')
 const selectedYear = ref(null)
-const selectedSemester = ref(null)
+const selectedDepartment = ref(null)
 const loading = ref(false)
 const error = ref(null)
 
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
+const yearOptions = ['2020', '2021', '2022', '2023', '2024']
+const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 
 onMounted(async () => {
   loading.value = true
@@ -59,8 +59,8 @@ const filteredTheses = computed(() => {
     filtered = filtered.filter((thesis) => thesis.acad_year === selectedYear.value)
   }
 
-  if (selectedSemester.value) {
-    filtered = filtered.filter((thesis) => thesis.semester === selectedSemester.value)
+  if (selectedDepartment.value) {
+    filtered = filtered.filter((thesis) => thesis.department === selectedDepartment.value)
   }
 
   return filtered
@@ -143,9 +143,9 @@ const goTo = (route) => router.push({ name: route })
           </v-col>
           <v-col cols="6" md="4">
             <v-select
-              v-model="selectedSemester"
-              :items="semesterOptions"
-              label="Semester"
+              v-model="selectedDepartment"
+              :items="departmentOptions"
+              label="Department"
               clearable
             />
           </v-col>
