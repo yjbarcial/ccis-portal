@@ -5,6 +5,8 @@ import ThesesList from '@/components/system/ThesesList.vue'
 import { useThesesStore } from '@/stores/theses'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { ADMIN_EMAILS } from '@/utils/constants'
+import { supabase } from '@/utils/supabase'
 
 const thesesStore = useThesesStore()
 const authStore = useAuthStore()
@@ -15,11 +17,30 @@ const selectedYear = ref(null)
 const selectedDepartment = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const isAdmin = ref(false)
 
 const yearOptions = ['2020', '2021', '2022', '2023', '2024']
 const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 
+// Watch for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN') {
+    isAdmin.value = ADMIN_EMAILS.includes(session.user?.email)
+  } else if (event === 'SIGNED_OUT') {
+    isAdmin.value = false
+  }
+})
+
 onMounted(async () => {
+  // Ensure user data is loaded
+  if (!authStore.user) {
+    await authStore.fetchUser()
+  }
+
+  // Check if user is admin
+  isAdmin.value = authStore.user?.email && ADMIN_EMAILS.includes(authStore.user.email)
+  console.log('User admin status:', { email: authStore.user?.email, isAdmin: isAdmin.value })
+
   loading.value = true
   error.value = null
 
@@ -64,16 +85,6 @@ const filteredTheses = computed(() => {
   }
 
   return filtered
-})
-
-const isAdmin = computed(() => {
-  const adminEmails = [
-    'yssahjulianah.barcial@carsu.edu.ph',
-    'lovellhudson.clavel@carsu.edu.ph',
-    'altheaguila.gorres@carsu.edu.ph',
-    'magnoliajamkee.masong@carsu.edu.ph',
-  ]
-  return authStore.user?.email && adminEmails.includes(authStore.user.email)
 })
 
 const goTo = (route) => router.push({ name: route })

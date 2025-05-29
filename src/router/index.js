@@ -10,14 +10,7 @@ import AdminView from '@/views/admin/AdminView.vue'
 import { supabase } from '@/utils/supabase'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import ResetPasswordView from '@/views/auth/ResetPasswordView.vue'
-
-// Hardcoded list of admin emails
-const adminEmails = [
-  'yssahjulianah.barcial@carsu.edu.ph',
-  'lovellhudson.clavel@carsu.edu.ph',
-  'altheaguila.gorres@carsu.edu.ph',
-  'magnoliajamkee.masong@carsu.edu.ph',
-]
+import { ADMIN_EMAILS } from '@/utils/constants'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -125,7 +118,7 @@ router.beforeEach(async (to, from, next) => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (!user || !adminEmails.includes(user.email)) {
+      if (!user || !ADMIN_EMAILS.includes(user.email)) {
         next({ name: 'theses' })
         return
       }
