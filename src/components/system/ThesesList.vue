@@ -67,11 +67,20 @@ const showThesisDetails = (thesis) => {
         <v-card-text>
           <div class="text-body-2">
             <p><strong>Academic Year:</strong> {{ thesis.acad_year }}</p>
-            <p><strong>Semester:</strong> {{ thesis.semester }}</p>
+            <p><strong>Department:</strong> {{ thesis.department }}</p>
           </div>
         </v-card-text>
 
         <v-card-actions class="mt-auto">
+          <v-btn
+            :href="thesis.file_url_front_page"
+            target="_blank"
+            color="orange-darken-3"
+            class="me-2"
+            prepend-icon="mdi-file-document"
+          >
+            Front Page
+          </v-btn>
           <v-btn
             :href="thesis.file_url_abstract"
             target="_blank"

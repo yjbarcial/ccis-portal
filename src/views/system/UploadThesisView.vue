@@ -16,12 +16,13 @@ const title = ref('')
 const abstract = ref('')
 const abstractImage = ref(null)
 const objectivesImage = ref(null)
+const frontPageImage = ref(null)
 const acadYear = ref(null)
-const semester = ref(null)
+const department = ref(null)
 
 // Options
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
+const yearOptions = ['2020', '2021', '2022', '2023', '2024']
+const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 
 // Validation rules
 const rules = {
@@ -40,6 +41,12 @@ const canUpload = computed(() => {
     'lovellhudson.clavel@carsu.edu.ph',
     'altheaguila.gorres@carsu.edu.ph',
     'magnoliajamkee.masong@carsu.edu.ph',
+    'jesilou.felisco@carsu.edu.ph',
+    'ersiajara.libiano@carsu.edu.ph',
+    'augustencarl.delvo@carsu.edu.ph',
+    'shanraquelmae.paqueo@carsu.edu.ph',
+    'darlpatrick.magatao@carsu.edu.ph',
+    'yvonne.piencenaves@carsu.edu.ph',
   ]
   return authStore.user?.email && adminEmails.includes(authStore.user.email)
 })
@@ -56,15 +63,19 @@ const handleImageChange = (event, type) => {
   if (selectedFile && (selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/png')) {
     if (type === 'abstract') {
       abstractImage.value = selectedFile
-    } else {
+    } else if (type === 'objectives') {
       objectivesImage.value = selectedFile
+    } else if (type === 'frontPage') {
+      frontPageImage.value = selectedFile
     }
   } else {
     error.value = 'Please select a valid image file (JPEG or PNG)'
     if (type === 'abstract') {
       abstractImage.value = null
-    } else {
+    } else if (type === 'objectives') {
       objectivesImage.value = null
+    } else if (type === 'frontPage') {
+      frontPageImage.value = null
     }
   }
 }
@@ -78,8 +89,8 @@ const handleSubmit = async () => {
     return
   }
 
-  if (!abstractImage.value || !objectivesImage.value) {
-    error.value = 'Please upload both abstract and objectives images'
+  if (!abstractImage.value || !objectivesImage.value || !frontPageImage.value) {
+    error.value = 'Please upload all required images (abstract, objectives, and front page)'
     return
   }
 
@@ -98,6 +109,7 @@ const handleSubmit = async () => {
     // Generate unique filenames with user ID
     const abstractFileName = `abstracts/${user.id}/${Date.now()}.${abstractImage.value.name.split('.').pop()}`
     const objectivesFileName = `objectives/${user.id}/${Date.now()}.${objectivesImage.value.name.split('.').pop()}`
+    const frontPageFileName = `front_pages/${user.id}/${Date.now()}.${frontPageImage.value.name.split('.').pop()}`
 
     // Upload abstract image
     const { error: abstractUploadError } = await supabase.storage
@@ -119,6 +131,16 @@ const handleSubmit = async () => {
 
     if (objectivesUploadError) throw objectivesUploadError
 
+    // Upload front page image
+    const { error: frontPageUploadError } = await supabase.storage
+      .from('theses')
+      .upload(frontPageFileName, frontPageImage.value, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+
+    if (frontPageUploadError) throw frontPageUploadError
+
     // Get public URLs
     const {
       data: { publicUrl: abstractUrl },
@@ -128,14 +150,19 @@ const handleSubmit = async () => {
       data: { publicUrl: objectivesUrl },
     } = supabase.storage.from('theses').getPublicUrl(objectivesFileName)
 
+    const {
+      data: { publicUrl: frontPageUrl },
+    } = supabase.storage.from('theses').getPublicUrl(frontPageFileName)
+
     // Insert thesis record using the store
     await thesesStore.insertThesis({
       title: title.value,
       abstract: abstract.value,
       file_url_abstract: abstractUrl,
       file_url_objectives: objectivesUrl,
+      file_url_front_page: frontPageUrl,
       acad_year: acadYear.value,
-      semester: semester.value,
+      department: department.value,
     })
 
     // Navigate back to theses view
@@ -198,7 +225,19 @@ const handleSubmit = async () => {
               />
 
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="4">
+                  <v-file-input
+                    v-model="frontPageImage"
+                    label="Front Page Image"
+                    accept="image/jpeg,image/png"
+                    :rules="rules.required"
+                    @change="(e) => handleImageChange(e, 'frontPage')"
+                    prepend-icon="mdi-file-document"
+                    :loading="loading"
+                    class="mb-4"
+                  />
+                </v-col>
+                <v-col cols="12" md="4">
                   <v-file-input
                     v-model="abstractImage"
                     label="Abstract Image"
@@ -210,7 +249,7 @@ const handleSubmit = async () => {
                     class="mb-4"
                   />
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="4">
                   <v-file-input
                     v-model="objectivesImage"
                     label="Objectives Image"
@@ -227,18 +266,18 @@ const handleSubmit = async () => {
               <v-row>
                 <v-col cols="12" md="6">
                   <v-select
-                    v-model="acadYear"
-                    :items="yearOptions"
-                    label="Academic Year"
+                    v-model="department"
+                    :items="departmentOptions"
+                    label="Department"
                     :rules="rules.required"
                     class="mb-4"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-select
-                    v-model="semester"
-                    :items="semesterOptions"
-                    label="Semester"
+                    v-model="acadYear"
+                    :items="yearOptions"
+                    label="Academic Year"
                     :rules="rules.required"
                     class="mb-4"
                   />
