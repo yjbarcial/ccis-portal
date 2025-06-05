@@ -18,9 +18,16 @@ const selectedDepartment = ref(null)
 const loading = ref(false)
 const error = ref(null)
 const isAdmin = ref(false)
+const sortBy = ref('latest')
 
 const yearOptions = ['2020', '2021', '2022', '2023', '2024']
 const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
+const sortOptions = [
+  { title: 'Latest Year First', value: 'latest' },
+  { title: 'Oldest Year First', value: 'oldest' },
+  { title: 'Title (A-Z)', value: 'title-asc' },
+  { title: 'Title (Z-A)', value: 'title-desc' },
+]
 
 // Watch for auth state changes
 supabase.auth.onAuthStateChange((event, session) => {
@@ -73,7 +80,11 @@ const filteredTheses = computed(() => {
 
   if (search.value) {
     const searchLower = search.value.toLowerCase()
-    filtered = filtered.filter((thesis) => thesis.title.toLowerCase().includes(searchLower))
+    filtered = filtered.filter(
+      (thesis) =>
+        thesis.title.toLowerCase().includes(searchLower) ||
+        thesis.abstract.toLowerCase().includes(searchLower),
+    )
   }
 
   if (selectedYear.value) {
@@ -83,6 +94,22 @@ const filteredTheses = computed(() => {
   if (selectedDepartment.value) {
     filtered = filtered.filter((thesis) => thesis.department === selectedDepartment.value)
   }
+
+  // Apply sorting
+  filtered = [...filtered].sort((a, b) => {
+    switch (sortBy.value) {
+      case 'latest':
+        return b.acad_year.localeCompare(a.acad_year)
+      case 'oldest':
+        return a.acad_year.localeCompare(b.acad_year)
+      case 'title-asc':
+        return a.title.localeCompare(b.title)
+      case 'title-desc':
+        return b.title.localeCompare(a.title)
+      default:
+        return 0
+    }
+  })
 
   return filtered
 })
@@ -141,7 +168,7 @@ const goTo = (route) => router.push({ name: route })
 
         <!-- Filters -->
         <v-row v-if="!loading" class="mb-4" dense>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="3">
             <v-text-field
               v-model="search"
               label="Search Theses..."
@@ -149,15 +176,23 @@ const goTo = (route) => router.push({ name: route })
               clearable
             />
           </v-col>
-          <v-col cols="6" md="4">
+          <v-col cols="6" md="3">
             <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
           </v-col>
-          <v-col cols="6" md="4">
+          <v-col cols="6" md="3">
             <v-select
               v-model="selectedDepartment"
               :items="departmentOptions"
               label="Department"
               clearable
+            />
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-select
+              v-model="sortBy"
+              :items="sortOptions"
+              label="Sort By"
+              prepend-inner-icon="mdi-sort"
             />
           </v-col>
         </v-row>
