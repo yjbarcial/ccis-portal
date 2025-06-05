@@ -26,6 +26,11 @@ const sortBy = ref('created_at')
 const showResetDialog = ref(false)
 const resetType = ref('')
 const resetLoading = ref(false)
+const dialog = ref(false)
+const selectedThesis = ref(null)
+const showAllDialog = ref(false)
+const showAllType = ref('')
+const allRecords = ref([])
 
 // Departments for filtering
 const departments = ['Computer Science', 'Information Technology', 'Information Systems']
@@ -279,6 +284,47 @@ const fetchStatistics = async () => {
     console.error('Error fetching statistics:', err)
   }
 }
+
+// Add fetch all records function
+const fetchAllRecords = async (type) => {
+  try {
+    showAllType.value = type
+    if (type === 'theses') {
+      const { data } = await supabase
+        .from('theses')
+        .select(
+          `
+          *,
+          profiles:user_id (
+            email,
+            full_name,
+            department
+          )
+        `,
+        )
+        .order('created_at', { ascending: false })
+      allRecords.value = data || []
+    } else if (type === 'syllabi') {
+      const { data } = await supabase
+        .from('syllabi')
+        .select(
+          `
+          *,
+          profiles:user_id (
+            email,
+            full_name,
+            department
+          )
+        `,
+        )
+        .order('created_at', { ascending: false })
+      allRecords.value = data || []
+    }
+    showAllDialog.value = true
+  } catch (err) {
+    console.error('Error fetching all records:', err)
+  }
+}
 </script>
 
 <template>
@@ -369,7 +415,7 @@ const fetchStatistics = async () => {
                         <v-btn
                           variant="text"
                           color="primary"
-                          @click="goTo('syllabi')"
+                          @click="fetchAllRecords('syllabi')"
                           class="text-none"
                         >
                           View All
@@ -380,6 +426,7 @@ const fetchStatistics = async () => {
                         <v-table>
                           <thead>
                             <tr>
+                              <th class="text-center" style="width: 60px">#</th>
                               <th>Title</th>
                               <th>Course Code</th>
                               <th>Academic Year</th>
@@ -388,7 +435,11 @@ const fetchStatistics = async () => {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr v-for="syllabus in statistics.recentSyllabi" :key="syllabus.id">
+                            <tr
+                              v-for="(syllabus, index) in statistics.recentSyllabi"
+                              :key="syllabus.id"
+                            >
+                              <td class="text-center">{{ index + 1 }}</td>
                               <td>{{ syllabus.descriptive_title }}</td>
                               <td>{{ syllabus.course_code }}</td>
                               <td>{{ syllabus.acad_year }}</td>
@@ -413,7 +464,7 @@ const fetchStatistics = async () => {
                         <v-btn
                           variant="text"
                           color="primary"
-                          @click="goTo('theses')"
+                          @click="fetchAllRecords('theses')"
                           class="text-none"
                         >
                           View All
@@ -424,6 +475,7 @@ const fetchStatistics = async () => {
                         <v-table>
                           <thead>
                             <tr>
+                              <th class="text-center" style="width: 60px">#</th>
                               <th>Title</th>
                               <th>Department</th>
                               <th>Academic Year</th>
@@ -432,7 +484,11 @@ const fetchStatistics = async () => {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr v-for="upload in statistics.recentUploads" :key="upload.id">
+                            <tr
+                              v-for="(upload, index) in statistics.recentUploads"
+                              :key="upload.id"
+                            >
+                              <td class="text-center">{{ index + 1 }}</td>
                               <td>{{ upload.title }}</td>
                               <td>{{ upload.department }}</td>
                               <td>{{ upload.acad_year }}</td>
@@ -445,6 +501,61 @@ const fetchStatistics = async () => {
                     </v-card>
                   </v-col>
                 </v-row>
+
+                <!-- View All Dialog -->
+                <v-dialog v-model="showAllDialog" max-width="1200">
+                  <v-card>
+                    <v-card-title class="text-h5 d-flex justify-space-between align-center pa-4">
+                      <div>
+                        <v-icon class="mr-2" color="primary">
+                          {{
+                            showAllType === 'theses'
+                              ? 'mdi-clipboard-text'
+                              : 'mdi-book-open-page-variant'
+                          }}
+                        </v-icon>
+                        All {{ showAllType === 'theses' ? 'Thesis' : 'Syllabi' }} Uploads
+                      </div>
+                      <v-btn icon @click="showAllDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </v-card-title>
+                    <v-card-text class="pa-4">
+                      <v-table>
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 60px">#</th>
+                            <th v-if="showAllType === 'theses'">Title</th>
+                            <th v-else>Title</th>
+                            <th v-if="showAllType === 'theses'">Department</th>
+                            <th v-else>Course Code</th>
+                            <th>Academic Year</th>
+                            <th>Uploaded By</th>
+                            <th>Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(record, index) in allRecords" :key="record.id">
+                            <td class="text-center">{{ index + 1 }}</td>
+                            <td>
+                              {{
+                                showAllType === 'theses' ? record.title : record.descriptive_title
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                showAllType === 'theses' ? record.department : record.course_code
+                              }}
+                            </td>
+                            <td>{{ record.acad_year }}</td>
+                            <td>{{ record.profiles?.full_name || record.profiles?.email }}</td>
+                            <td>{{ formatDate(record.created_at) }}</td>
+                          </tr>
+                        </tbody>
+                      </v-table>
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
               </v-card-text>
             </v-card>
           </v-col>
