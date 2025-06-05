@@ -54,50 +54,76 @@ const showThesisDetails = (thesis) => {
     <v-alert type="info"> No theses found. Upload a thesis to get started. </v-alert>
   </div>
 
-  <v-row v-else>
-    <v-col v-for="(thesis, index) in theses" :key="index" cols="12" md="6" lg="4">
-      <v-card class="h-100">
+  <v-row v-else class="d-flex justify-center mx-auto" dense>
+    <v-col
+      v-for="(thesis, index) in theses"
+      :key="index"
+      cols="12"
+      sm="10"
+      md="6"
+      lg="4"
+      class="pa-3"
+    >
+      <v-card class="h-100 mx-auto" elevation="2" max-width="450">
         <v-card-title
-          class="text-h6 text-wrap py-2 clickable-title"
+          class="text-h6 text-wrap py-3 clickable-title"
           @click="showThesisDetails(thesis)"
         >
           {{ thesis.title }}
         </v-card-title>
 
-        <v-card-text>
-          <div class="text-body-2">
-            <p><strong>Academic Year:</strong> {{ thesis.acad_year }}</p>
-            <p><strong>Department:</strong> {{ thesis.department }}</p>
+        <v-card-text class="pt-0">
+          <div class="d-flex align-center mb-2">
+            <v-icon size="small" color="grey" class="me-2">mdi-calendar</v-icon>
+            <span class="text-body-2 text-grey">{{ thesis.acad_year }}</span>
+          </div>
+          <div class="d-flex align-center">
+            <v-icon size="small" color="grey" class="me-2">mdi-domain</v-icon>
+            <span class="text-body-2 text-grey">{{ thesis.department }}</span>
           </div>
         </v-card-text>
 
-        <v-card-actions class="mt-auto">
-          <v-btn
-            :href="thesis.file_url_front_page"
-            target="_blank"
-            color="orange-darken-3"
-            class="me-2"
-            prepend-icon="mdi-file-document"
-          >
-            Front Page
-          </v-btn>
-          <v-btn
-            :href="thesis.file_url_abstract"
-            target="_blank"
-            color="orange-darken-3"
-            class="me-2"
-            prepend-icon="mdi-image"
-          >
-            Abstract Image
-          </v-btn>
-          <v-btn
-            :href="thesis.file_url_objectives"
-            target="_blank"
-            color="orange-darken-3"
-            prepend-icon="mdi-image"
-          >
-            Objectives Image
-          </v-btn>
+        <v-divider></v-divider>
+
+        <v-card-actions class="pa-3">
+          <v-row no-gutters>
+            <v-col cols="12" class="d-flex justify-center mb-2">
+              <v-btn
+                :href="thesis.file_url_front_page"
+                target="_blank"
+                color="orange-darken-3"
+                variant="tonal"
+                class="w-100"
+                prepend-icon="mdi-file-document"
+              >
+                Front Page
+              </v-btn>
+            </v-col>
+            <v-col cols="6" class="pe-1">
+              <v-btn
+                :href="thesis.file_url_abstract"
+                target="_blank"
+                color="orange-darken-3"
+                variant="tonal"
+                class="w-100"
+                prepend-icon="mdi-image"
+              >
+                Abstract
+              </v-btn>
+            </v-col>
+            <v-col cols="6" class="ps-1">
+              <v-btn
+                :href="thesis.file_url_objectives"
+                target="_blank"
+                color="orange-darken-3"
+                variant="tonal"
+                class="w-100"
+                prepend-icon="mdi-image"
+              >
+                Objectives
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-col>
