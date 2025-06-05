@@ -15,22 +15,24 @@ const selectedYear = ref(null)
 const selectedSemester = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const isAdmin = ref(false)
+const sortBy = ref('latest')
 
-const yearOptions = ['2024-2025', '2023-2024']
-const semesterOptions = ['1st Semester', '2nd Semester']
+const yearOptions = ['2020', '2021', '2022', '2023', '2024']
+const semesterOptions = ['1st Semester', '2nd Semester', 'Summer']
+const sortOptions = [
+  { title: 'Latest Year First', value: 'latest' },
+  { title: 'Oldest Year First', value: 'oldest' },
+  { title: 'Title (A-Z)', value: 'title-asc' },
+  { title: 'Title (Z-A)', value: 'title-desc' },
+]
 
 onMounted(async () => {
-  if (!authStore.user?.id) {
-    console.error('User not authenticated')
-    error.value = 'Please log in to view syllabi'
-    return
-  }
-
   loading.value = true
   error.value = null
 
   try {
-    console.log('Fetching syllabi for user:', authStore.user.id)
+    console.log('Fetching syllabi...')
     await syllabiStore.getSyllabi()
     console.log('Syllabi fetched successfully')
   } catch (err) {
@@ -44,14 +46,42 @@ onMounted(async () => {
 const goTo = (route) => router.push({ name: route })
 
 const filteredSyllabi = computed(() => {
-  console.log('Filtering syllabi:', syllabiStore.syllabi)
-  return syllabiStore.syllabi.filter((s) => {
-    return (
-      (!search.value || s.descriptive_title.toLowerCase().includes(search.value.toLowerCase())) &&
-      (!selectedYear.value || s.acad_year === selectedYear.value) &&
-      (!selectedSemester.value || s.semester === selectedSemester.value)
+  let filtered = syllabiStore.syllabi
+
+  if (search.value) {
+    const searchLower = search.value.toLowerCase()
+    filtered = filtered.filter(
+      (syllabus) =>
+        syllabus.descriptive_title.toLowerCase().includes(searchLower) ||
+        syllabus.course_code.toLowerCase().includes(searchLower),
     )
+  }
+
+  if (selectedYear.value) {
+    filtered = filtered.filter((syllabus) => syllabus.acad_year === selectedYear.value)
+  }
+
+  if (selectedSemester.value) {
+    filtered = filtered.filter((syllabus) => syllabus.semester === selectedSemester.value)
+  }
+
+  // Apply sorting
+  filtered = [...filtered].sort((a, b) => {
+    switch (sortBy.value) {
+      case 'latest':
+        return b.acad_year.localeCompare(a.acad_year)
+      case 'oldest':
+        return a.acad_year.localeCompare(b.acad_year)
+      case 'title-asc':
+        return a.descriptive_title.localeCompare(b.descriptive_title)
+      case 'title-desc':
+        return b.descriptive_title.localeCompare(a.descriptive_title)
+      default:
+        return 0
+    }
   })
+
+  return filtered
 })
 
 const onRetrieveFromApi = async () => {
@@ -119,7 +149,7 @@ const onRetrieveFromApi = async () => {
 
         <!-- Filters -->
         <v-row v-if="!loading" class="mb-4" dense>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="3">
             <v-text-field
               v-model="search"
               label="Search Syllabi..."
@@ -127,15 +157,23 @@ const onRetrieveFromApi = async () => {
               clearable
             />
           </v-col>
-          <v-col cols="6" md="4">
+          <v-col cols="6" md="3">
             <v-select v-model="selectedYear" :items="yearOptions" label="Academic Year" clearable />
           </v-col>
-          <v-col cols="6" md="4">
+          <v-col cols="6" md="3">
             <v-select
               v-model="selectedSemester"
               :items="semesterOptions"
               label="Semester"
               clearable
+            />
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-select
+              v-model="sortBy"
+              :items="sortOptions"
+              label="Sort By"
+              prepend-inner-icon="mdi-sort"
             />
           </v-col>
         </v-row>
