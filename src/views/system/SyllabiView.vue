@@ -20,17 +20,11 @@ const yearOptions = ['2024-2025', '2023-2024']
 const semesterOptions = ['1st Semester', '2nd Semester']
 
 onMounted(async () => {
-  if (!authStore.user?.id) {
-    console.error('User not authenticated')
-    error.value = 'Please log in to view syllabi'
-    return
-  }
-
   loading.value = true
   error.value = null
 
   try {
-    console.log('Fetching syllabi for user:', authStore.user.id)
+    console.log('Fetching syllabi...')
     await syllabiStore.getSyllabi()
     console.log('Syllabi fetched successfully')
   } catch (err) {

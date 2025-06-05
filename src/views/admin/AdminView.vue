@@ -101,7 +101,7 @@ onMounted(async () => {
       .select(
         `
         *,
-        profiles:user_id (
+        profiles!inner (
           email,
           full_name,
           department
@@ -125,7 +125,7 @@ onMounted(async () => {
       .select(
         `
         *,
-        profiles:user_id (
+        profiles!inner (
           email,
           full_name,
           department
@@ -359,44 +359,30 @@ const fetchStatistics = async () => {
 
                 <!-- Recent Activity -->
                 <v-row class="mt-4">
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
                     <v-card>
-                      <v-card-title class="text-h6">
-                        <v-icon class="mr-2" color="primary">mdi-clipboard-text</v-icon>
-                        Recent Thesis Uploads
+                      <v-card-title class="text-h6 d-flex justify-space-between align-center">
+                        <div>
+                          <v-icon class="mr-2" color="primary">mdi-book-open-page-variant</v-icon>
+                          Recent Syllabi Uploads
+                        </div>
+                        <v-btn
+                          variant="text"
+                          color="primary"
+                          @click="goTo('syllabi')"
+                          class="text-none"
+                        >
+                          View All
+                          <v-icon end>mdi-chevron-right</v-icon>
+                        </v-btn>
                       </v-card-title>
                       <v-card-text>
                         <v-table>
                           <thead>
                             <tr>
                               <th>Title</th>
-                              <th>Uploaded By</th>
-                              <th>Date</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr v-for="upload in statistics.recentUploads" :key="upload.id">
-                              <td>{{ upload.title }}</td>
-                              <td>{{ upload.profiles?.full_name || upload.profiles?.email }}</td>
-                              <td>{{ formatDate(upload.created_at) }}</td>
-                            </tr>
-                          </tbody>
-                        </v-table>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-
-                  <v-col cols="12" md="6">
-                    <v-card>
-                      <v-card-title class="text-h6">
-                        <v-icon class="mr-2" color="primary">mdi-book-open-page-variant</v-icon>
-                        Recent Syllabi Uploads
-                      </v-card-title>
-                      <v-card-text>
-                        <v-table>
-                          <thead>
-                            <tr>
-                              <th>Title</th>
+                              <th>Course Code</th>
+                              <th>Academic Year</th>
                               <th>Uploaded By</th>
                               <th>Date</th>
                             </tr>
@@ -404,10 +390,54 @@ const fetchStatistics = async () => {
                           <tbody>
                             <tr v-for="syllabus in statistics.recentSyllabi" :key="syllabus.id">
                               <td>{{ syllabus.descriptive_title }}</td>
+                              <td>{{ syllabus.course_code }}</td>
+                              <td>{{ syllabus.acad_year }}</td>
                               <td>
                                 {{ syllabus.profiles?.full_name || syllabus.profiles?.email }}
                               </td>
                               <td>{{ formatDate(syllabus.created_at) }}</td>
+                            </tr>
+                          </tbody>
+                        </v-table>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+
+                  <v-col cols="12" class="mt-4">
+                    <v-card>
+                      <v-card-title class="text-h6 d-flex justify-space-between align-center">
+                        <div>
+                          <v-icon class="mr-2" color="primary">mdi-clipboard-text</v-icon>
+                          Recent Thesis Uploads
+                        </div>
+                        <v-btn
+                          variant="text"
+                          color="primary"
+                          @click="goTo('theses')"
+                          class="text-none"
+                        >
+                          View All
+                          <v-icon end>mdi-chevron-right</v-icon>
+                        </v-btn>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-table>
+                          <thead>
+                            <tr>
+                              <th>Title</th>
+                              <th>Department</th>
+                              <th>Academic Year</th>
+                              <th>Uploaded By</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="upload in statistics.recentUploads" :key="upload.id">
+                              <td>{{ upload.title }}</td>
+                              <td>{{ upload.department }}</td>
+                              <td>{{ upload.acad_year }}</td>
+                              <td>{{ upload.profiles?.full_name || upload.profiles?.email }}</td>
+                              <td>{{ formatDate(upload.created_at) }}</td>
                             </tr>
                           </tbody>
                         </v-table>
