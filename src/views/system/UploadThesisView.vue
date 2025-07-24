@@ -22,7 +22,7 @@ const acadYear = ref(null)
 const department = ref(null)
 
 // Options
-const yearOptions = ['2020', '2021', '2022', '2023', '2024']
+const yearOptions = ['2020', '2021', '2022', '2023', '2024', '2025']
 const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 
 // Validation rules
