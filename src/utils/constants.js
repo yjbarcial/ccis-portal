@@ -10,4 +10,6 @@ export const ADMIN_EMAILS = [
   'darlpatrick.magatao@carsu.edu.ph',
   'yvonne.piencenaves@carsu.edu.ph',
   'jdpenalver@carsu.edu.ph',
+  'paqueoshan@gmail.com.ph',
+  'imdarlpatrick@gmail.com',
 ]
