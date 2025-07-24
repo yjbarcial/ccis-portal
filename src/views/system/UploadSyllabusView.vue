@@ -19,7 +19,7 @@ const acadYear = ref(null)
 const semester = ref(null)
 
 // Options
-const yearOptions = ['2024-2025', '2023-2024']
+const yearOptions = ['2024-2025', '2023-2024', '2022-2023', '2021-2022', '2020-2021']
 const semesterOptions = ['1st Semester', '2nd Semester']
 
 // Validation rules

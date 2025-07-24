@@ -20,7 +20,7 @@ const error = ref(null)
 const isAdmin = ref(false)
 const sortBy = ref('latest')
 
-const yearOptions = ['2020', '2021', '2022', '2023', '2024']
+const yearOptions = ['2020', '2021', '2022', '2023', '2024', '2025']
 const departmentOptions = ['Information System', 'Information Technology', 'Computer Science']
 const sortOptions = [
   { title: 'Latest Year First', value: 'latest' },
